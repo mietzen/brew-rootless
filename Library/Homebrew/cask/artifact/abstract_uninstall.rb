@@ -90,7 +90,7 @@ module Cask
 
       # :launchctl must come before :quit/:signal for cases where app would instantly re-launch
       def uninstall_launchctl(*services, command: nil, **_)
-        booleans = [false, true]
+        booleans = [false]
 
         all_services = []
 
