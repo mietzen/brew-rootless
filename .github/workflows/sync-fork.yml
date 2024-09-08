@@ -1,0 +1,20 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch: # on button click
+
+jobs:
+  sync:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: tgymnich/fork-sync@v2.0
+        with:
+          owner: Homebrew
+          repo: brew
+          merge_method: squash
+          base: master
+          head: master
