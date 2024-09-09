@@ -116,7 +116,7 @@ You should only ever sudo a tool you trust. Of course, you can trust Homebrew ðŸ
 
 We use the macOS sandbox to stop this but this doesn't work when run as the `root` user (which also has read and write access to almost everything on the system).
 
-Did you `chown root /Applications/TextMate.app`? Probably not. So is it that important to `chown root wget`?
+Did you `chown root ~/Applications/TextMate.app`? Probably not. So is it that important to `chown root wget`?
 
 If you need to run Homebrew in a multi-user environment, consider creating a separate user account specifically for use of Homebrew.
 

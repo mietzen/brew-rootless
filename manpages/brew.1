@@ -63,7 +63,7 @@ List all installed formulae\.
 Perform a substring search of cask tokens and formula names for \fItext\fP\&\. If \fItext\fP is flanked by slashes, it is interpreted as a regular expression\. The search for \fItext\fP is extended online to \fBhomebrew/core\fP and \fBhomebrew/cask\fP\&\. If no search term is provided, all locally available formulae are listed\.
 .SH "COMMANDS"
 .SS "\fBanalytics\fP \fR[\fIsubcommand\fP]"
-Control Homebrew\[u2019]s anonymous aggregate user behaviour analytics\. Read more at 
+Control Homebrew\[u2019]s anonymous aggregate user behaviour analytics\. Read more at
 .UR https://docs\.brew\.sh/Analytics
 .UE \&\.
 .TP
@@ -104,7 +104,7 @@ List only the names of commands without category headers\.
 \fB\-\-include\-aliases\fP
 Include aliases of internal commands\.
 .SS "\fBcompletions\fP \fR[\fIsubcommand\fP]"
-Control whether Homebrew automatically links external tap shell completion files\. Read more at 
+Control whether Homebrew automatically links external tap shell completion files\. Read more at
 .UR https://docs\.brew\.sh/Shell\-Completion
 .UE \&\.
 .TP
@@ -216,7 +216,7 @@ Display the current state of Homebrew\[u2019]s developer mode\.
 \fBbrew developer\fP (\fBon\fP|\fBoff\fP)
 Turn Homebrew\[u2019]s developer mode on or off respectively\.
 .SS "\fBdocs\fP"
-Open Homebrew\[u2019]s online documentation at 
+Open Homebrew\[u2019]s online documentation at
 .UR https://docs\.brew\.sh
 .UE
 in a browser\.
@@ -313,7 +313,7 @@ Which type of analytics data to retrieve\. The value for \fIcategory\fP must be 
 Open the GitHub source page for \fIformula\fP and \fIcask\fP in a browser\. To view the history locally: \fBbrew log \-p\fP \fIformula\fP or \fIcask\fP
 .TP
 \fB\-\-json\fP
-Print a JSON representation\. Currently the default value for \fIversion\fP is \fBv1\fP for \fIformula\fP\&\. For \fIformula\fP and \fIcask\fP use \fBv2\fP\&\. See the docs for examples of using the JSON output: 
+Print a JSON representation\. Currently the default value for \fIversion\fP is \fBv1\fP for \fIformula\fP\&\. For \fIformula\fP and \fIcask\fP use \fBv2\fP\&\. See the docs for examples of using the JSON output:
 .UR https://docs\.brew\.sh/Querying\-Brew
 .UE
 .TP
@@ -776,7 +776,7 @@ Show detailed information about one or more \fItap\fPs\. If no \fItap\fP names a
 Show information on each installed tap\.
 .TP
 \fB\-\-json\fP
-Print a JSON representation of \fItap\fP\&\. Currently the default and only accepted value for \fIversion\fP is \fBv1\fP\&\. See the docs for examples of using the JSON output: 
+Print a JSON representation of \fItap\fP\&\. Currently the default and only accepted value for \fIversion\fP is \fBv1\fP\&\. See the docs for examples of using the JSON output:
 .UR https://docs\.brew\.sh/Querying\-Brew
 .UE
 .SS "\fBuninstall\fP, \fBremove\fP, \fBrm\fP \fR[\fIoptions\fP] \fIinstalled_formula\fP|\fIinstalled_cask\fP \fR[\.\.\.]"
@@ -1312,7 +1312,7 @@ Specify a comma\-separated list of GitHub usernames or email addresses to find c
 \fB\-\-csv\fP
 Print a CSV of contributions across repositories over the time period\.
 .SS "\fBcreate\fP \fR[\fIoptions\fP] \fIURL\fP"
-Generate a formula or, with \fB\-\-cask\fP, a cask for the downloadable file at \fIURL\fP and open it in the editor\. Homebrew will attempt to automatically derive the formula name and version, but if it fails, you\[u2019]ll have to make your own template\. The \fBwget\fP formula serves as a simple example\. For the complete API, see: 
+Generate a formula or, with \fB\-\-cask\fP, a cask for the downloadable file at \fIURL\fP and open it in the editor\. Homebrew will attempt to automatically derive the formula name and version, but if it fails, you\[u2019]ll have to make your own template\. The \fBwget\fP formula serves as a simple example\. For the complete API, see:
 .UR https://rubydoc\.brew\.sh/Formula
 .UE
 .TP
@@ -1430,14 +1430,14 @@ Overwrite the destination formula if it already exists\.
 .SS "\fBformula\fP \fIformula\fP \fR[\.\.\.]"
 Display the path where \fIformula\fP is located\.
 .SS "\fBgenerate\-cask\-api\fP \fR[\fB\-\-dry\-run\fP]"
-Generate \fBhomebrew/cask\fP API data files for 
+Generate \fBhomebrew/cask\fP API data files for
 .UR https://formulae\.brew\.sh
 .UE \&\. The generated files are written to the current directory\.
 .TP
 \fB\-n\fP, \fB\-\-dry\-run\fP
 Generate API data without writing it to files\.
 .SS "\fBgenerate\-formula\-api\fP \fR[\fB\-\-dry\-run\fP]"
-Generate \fBhomebrew/core\fP API data files for 
+Generate \fBhomebrew/core\fP API data files for
 .UR https://formulae\.brew\.sh
 .UE \&\. The generated files are written to the current directory\.
 .TP
@@ -1888,7 +1888,7 @@ Do not generate a new commit upon completion\.
 These options are applicable to the \fBinstall\fP, \fBreinstall\fP and \fBupgrade\fP subcommands with the \fB\-\-cask\fP switch\.
 .TP
 \fB\-\-appdir\fP
-Target location for Applications (default: \fB/Applications\fP)\.
+Target location for Applications (default: \fB~/Applications\fP)\.
 .TP
 \fB\-\-keyboard\-layoutdir\fP
 Target location for Keyboard Layouts (default: \fB/Library/Keyboard Layouts\fP)\.
@@ -2240,7 +2240,7 @@ Specify a maximum number of formulae to download and update\.
 .SH "CUSTOM EXTERNAL COMMANDS"
 Homebrew, like \fBgit\fP(1), supports external commands\. These are executable scripts that reside somewhere in the \fBPATH\fP, named \fBbrew\-\fP\fIcmdname\fP or \fBbrew\-\fP\fIcmdname\fP\fB\&\.rb\fP, which can be invoked like \fBbrew\fP \fIcmdname\fP\&\. This allows you to create your own commands without modifying Homebrew\[u2019]s internals\.
 .P
-Instructions for creating your own commands can be found in the docs: 
+Instructions for creating your own commands can be found in the docs:
 .UR https://docs\.brew\.sh/External\-Commands
 .UE
 .SH "SPECIFYING FORMULAE"
@@ -2501,9 +2501,9 @@ If set, controls network access to the sandbox for formulae postinstall\. Overri
 If set, controls network access to the sandbox for formulae test\. Overrides any controls set through DSL usage inside formulae\. Must be \fBallow\fP or \fBdeny\fP\&\. If no value is set through this environment variable or DSL usage, the default behavior is \fBallow\fP\&\.
 .TP
 \fBHOMEBREW_GITHUB_API_TOKEN\fP
-Use this personal access token for the GitHub API, for features such as \fBbrew search\fP\&\. You can create one at 
+Use this personal access token for the GitHub API, for features such as \fBbrew search\fP\&\. You can create one at
 .UR https://github\.com/settings/tokens
-.UE \&\. If set, GitHub will allow you a greater number of API requests\. For more information, see: 
+.UE \&\. If set, GitHub will allow you a greater number of API requests\. For more information, see:
 .UR https://docs\.github\.com/en/rest/overview/rate\-limits\-for\-the\-rest\-api
 .UE
 .RS
@@ -2562,7 +2562,7 @@ Use this value as the number of parallel jobs to run when building with \fBmake\
 .RE
 .TP
 \fBHOMEBREW_NO_ANALYTICS\fP
-If set, do not send analytics\. Google Analytics were destroyed\. For more information, see: 
+If set, do not send analytics\. Google Analytics were destroyed\. For more information, see:
 .UR https://docs\.brew\.sh/Analytics
 .UE
 .TP
@@ -2718,11 +2718,11 @@ export http_proxy=http://$USER:$PASSWORD@$HOST:$PORT
 .EE
 .RE
 .SH "SEE ALSO"
-Homebrew Documentation: 
+Homebrew Documentation:
 .UR https://docs\.brew\.sh
 .UE
 .P
-Homebrew API: 
+Homebrew API:
 .UR https://rubydoc\.brew\.sh
 .UE
 .P

@@ -120,8 +120,8 @@ Each cask must declare one or more *artifacts* (i.e. something to install).
 
 | name                             | multiple occurrences allowed? | value |
 | -------------------------------- | :---------------------------: | ----- |
-| [`app`](#stanza-app)             | yes                           | Relative path to an `.app` that should be moved into the `/Applications` folder on installation. |
-| [`suite`](#stanza-suite)         | yes                           | Relative path to a containing directory that should be moved into the `/Applications` folder on installation. |
+| [`app`](#stanza-app)             | yes                           | Relative path to an `.app` that should be moved into the `~/Applications` folder on installation. |
+| [`suite`](#stanza-suite)         | yes                           | Relative path to a containing directory that should be moved into the `~/Applications` folder on installation. |
 | [`pkg`](#stanza-pkg)             | yes                           | Relative path to a `.pkg` file containing the distribution. |
 | [`installer`](#stanza-installer) | yes                           | Describes an executable which must be run to complete the installation. |
 | [`binary`](#stanza-binary)       | yes                           | Relative path to a Binary that should be linked into the `$(brew --prefix)/bin` folder on installation. |
@@ -165,7 +165,7 @@ Each cask must declare one or more *artifacts* (i.e. something to install).
 
 ### Stanza: `app`
 
-In the simple case of a string argument to `app`, the source file is moved to the target `/Applications` directory. For example:
+In the simple case of a string argument to `app`, the source file is moved to the target `~/Applications` directory. For example:
 
 ```ruby
 app "Alfred 2.app"
@@ -174,12 +174,12 @@ app "Alfred 2.app"
 by default moves the source to:
 
 ```bash
-/Applications/Alfred 2.app
+~/Applications/Alfred 2.app
 ```
 
 #### Renaming the target
 
-You can rename the target which appears in your `/Applications` directory by adding a `target:` key to `app`. Example (from [scala-ide.rb](https://github.com/Homebrew/homebrew-cask/blob/aa461148bbb5119af26b82cccf5003e2b4e50d95/Casks/s/scala-ide.rb#L24)):
+You can rename the target which appears in your `~/Applications` directory by adding a `target:` key to `app`. Example (from [scala-ide.rb](https://github.com/Homebrew/homebrew-cask/blob/aa461148bbb5119af26b82cccf5003e2b4e50d95/Casks/s/scala-ide.rb#L24)):
 
 ```ruby
 app "eclipse.app", target: "Scala IDE.app"
@@ -721,7 +721,7 @@ We use a checksum whenever possible.
 
 ### Stanza: `suite`
 
-Some distributions provide a suite of multiple applications, or an application with required data, to be installed together in a subdirectory of `/Applications`.
+Some distributions provide a suite of multiple applications, or an application with required data, to be installed together in a subdirectory of `~/Applications`.
 
 For these casks, use the `suite` stanza to define the directory containing the application suite. Example (from [racket.rb](https://github.com/Homebrew/homebrew-cask/blob/e65e45e94d27d14a78e1bd02b584b0c89c8f9e8b/Casks/r/racket.rb#L18)):
 

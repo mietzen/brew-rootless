@@ -78,7 +78,7 @@ $ brew install --cask --adopt textmate
 ==> Downloading https://github.com/textmate/textmate/releases/download/v2.0.23/TextMate_2.0.23.tbz
 ...
 ==> Installing Cask textmate
-==> Adopting existing App at '/Applications/TextMate.app'
+==> Adopting existing App at '~/Applications/TextMate.app'
 ==> Linking Binary 'mate' to '/opt/homebrew/bin/mate'
 🍺  textmate was successfully installed!
 ```

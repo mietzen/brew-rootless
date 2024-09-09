@@ -186,7 +186,7 @@ Fill in the following stanzas for your cask:
 | `desc`             | one-line description of the software (see [`desc` Stanza Details](Cask-Cookbook.md#stanza-desc)) |
 | `homepage`         | application homepage; used for the `brew home` command |
 | `livecheck`        | Ruby block describing how to find updates for this cask (see [`livecheck` Stanza Details](Cask-Cookbook.md#stanza-livecheck)) |
-| `app`              | relative path to an `.app` bundle that should be moved into the `/Applications` folder on installation (see [`app` Stanza Details](Cask-Cookbook.md#stanza-app)) |
+| `app`              | relative path to an `.app` bundle that should be moved into the `~/Applications` folder on installation (see [`app` Stanza Details](Cask-Cookbook.md#stanza-app)) |
 | `zap`              | additional procedures for a more complete uninstall, including configuration files and shared resources (see [`zap` Stanza Details](Cask-Cookbook.md#stanza-zap)) |
 
 Other commonly used stanzas are:
