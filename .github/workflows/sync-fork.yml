@@ -15,6 +15,5 @@ jobs:
         with:
           owner: Homebrew
           repo: brew
-          merge_method: squash
           base: master
           head: master
