@@ -316,7 +316,7 @@ class Formula
 
   def determine_active_spec(requested)
     spec = send(requested) || stable || head
-    spec || raise(FormulaSpecificationError, "formulae require at least a URL")
+    spec || raise(FormulaSpecificationError, "#{full_name}: formula requires at least a URL")
   end
 
   def validate_attributes!
@@ -1594,8 +1594,7 @@ class Formula
         %w[
           config.log
           CMakeCache.txt
-          CMakeOutput.log
-          CMakeError.log
+          CMakeConfigureLog.yaml
           meson-log.txt
         ].each do |logfile|
           Dir["**/#{logfile}"].each do |logpath|
@@ -1796,7 +1795,7 @@ class Formula
     params(root: T.any(String, Pathname), path: T.any(String, Pathname)).returns(T::Array[String])
   }
   def std_cargo_args(root: prefix, path: ".")
-    ["--locked", "--root=#{root}", "--path=#{path}"]
+    ["--jobs", ENV.make_jobs.to_s, "--locked", "--root=#{root}", "--path=#{path}"]
   end
 
   # Standard parameters for CMake builds.

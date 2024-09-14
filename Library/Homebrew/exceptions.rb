@@ -61,6 +61,18 @@ class NoSuchKegError < RuntimeError
   end
 end
 
+# Raised when a keg from a specific tap doesn't exist.
+class NoSuchKegFromTapError < RuntimeError
+  attr_reader :name, :tap
+
+  sig { params(name: String, tap: Tap).void }
+  def initialize(name, tap)
+    @name = name
+    @tap = tap
+    super "No such keg: #{HOMEBREW_CELLAR}/#{name} from tap #{tap}"
+  end
+end
+
 # Raised when an invalid attribute is used in a formula.
 class FormulaValidationError < StandardError
   attr_reader :attr, :formula
@@ -483,6 +495,8 @@ class BuildError < RuntimeError
 
   sig { returns(T::Array[T.untyped]) }
   def fetch_issues
+    return [] if ENV["HOMEBREW_NO_BUILD_ERROR_ISSUES"].present?
+
     GitHub.issues_for_formula(formula.name, tap: formula.tap, state: "open", type: "issue")
   rescue GitHub::API::Error => e
     opoo "Unable to query GitHub for recent issues on the tap\n#{e.message}"
