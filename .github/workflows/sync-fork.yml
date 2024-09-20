@@ -32,7 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          name=$(gh release list --repo ${GITHUB_REPOSITORY} --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          name=$(gh release list --repo ${{ github.repository }} --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
           echo "Latest rootless brew tag: ${name}"
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: Merge upstream
@@ -41,8 +41,8 @@ jobs:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
         run: |          
           git remote add upstream https://github.com/homebrew/brew.git
-          git fetch upstream master
-          git fetch upstream tag ${LATEST_TAG} --no-tags
+          git fetch --verbose upstream master
+          git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
           git merge --no-edit upstream/${LATEST_TAG}
           git push origin master
           git tag ${LATEST_TAG}
