@@ -8,6 +8,12 @@ https://github.com/mietzen/brew-rootless/blob/2df9a6b29baa6421ebc3f56b8361fad853
 
  Cask uninstallation won't prompt for your password when removing `launchctl` services.
 
+**Features:**
+- **Rootless Optimizations**: Brew can be installed and managed without root access.
+- **Cask installations** default to `~/Applications` for user-level convenience.
+- **Source-based Formulae**: Most formulae will built from source, with some limitations in availability compared to the standard version.
+- **Up-to-date**: This fork is continuously synced with the main repository, including tags, to stay up-to-date with the latest changes.
+
 ## Supported Platforms:
 - MacOS ARM64 (M1)
 
@@ -51,12 +57,6 @@ exec zsh
 sed -i '/### ROOTLESS-BREW/,/### ROOTLESS-BREW/d' $HOME/.zshrc
 rm -rf $HOME/.local/opt/homebrew
 ```
-
-## Key Features:
-- **Rootless Optimizations**: Brew can be installed and managed without root access.
-- **Cask installations** default to `~/Applications` for user-level convenience.
-- **Source-based Formulae**: Most formulae will built from source, with some limitations in availability compared to the standard version.
-- **Up-to-date**: This fork is continuously synced with the main repository, including tags, to stay up-to-date with the latest changes.
 
 ## Issues:
 Please **do not open issues** on the [Homebrew main repository](https://github.com/homebrew/brew) for any problems encountered using this fork. Issues specific to the rootless version should be raised [**here**](https://github.com/mietzen/porkbun-ddns/issues/new/choose) instead.
