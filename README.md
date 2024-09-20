@@ -8,6 +8,9 @@ https://github.com/mietzen/brew-rootless/blob/2df9a6b29baa6421ebc3f56b8361fad853
 
  Cask uninstallation won't prompt for your password when removing `launchctl` services.
 
+## Supported Platforms:
+- MacOS ARM64 (M1)
+
 ## Key Features:
 - **Rootless Optimizations**: Brew can be installed and managed without root access.
 - **Cask installations** default to `~/Applications` for user-level convenience.
