@@ -19,12 +19,24 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           token: ${{ steps.generate-token.outputs.token }}
+      - name: get latest homebrew tag
+        id: latest_homebrew_tag
+        run: |
+          name=$(gh release list --repo homebrew/brew --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          echo "tag=${name}" >> "$GITHUB_OUTPUT"
+      - name: get latest rootless brew tag
+        id: latest_rootless_brew_tag
+        run: |
+          name=$(gh release list --repo ${GITHUB_REPOSITORY} --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: Merge upstream
+        if: ${{ steps.latest_rootless_brew_tag.outputs.tag }} != ${{ steps.latest_homebrew_tag.outputs.tag }}
+        env:
+          LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
         run: |          
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch upstream
-          git fetch --tags upstream
-          
-          git merge --no-edit upstream/master
+          git merge --no-edit upstream/${LATEST_TAG}
+          git tag ${LATEST_TAG}
           git push
           git push --tags
