@@ -1,6 +1,4 @@
 .gitatributes merge=ours
 .gitignore merge=ours
 README.md merge=ours
-CONTRIBUTING.md merge=ours
-CHANGELOG.md merge=ours
 .github/workflows/sync-fork.yml merge=ours
