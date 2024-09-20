@@ -13,11 +13,13 @@ https://github.com/mietzen/brew-rootless/blob/2df9a6b29baa6421ebc3f56b8361fad853
 
 ## Install
 
+**Automatic**
+
 ```shell
 curl -s https://raw.githubusercontent.com/mietzen/brew-rootless/refs/heads/master/install.sh | zsh
 ```
 
-### Manual
+**Manual**
 
 ```shell
 mkdir -p $HOME/.local/opt
