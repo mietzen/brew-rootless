@@ -29,10 +29,8 @@ jobs:
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: get latest rootless brew tag
         id: latest_rootless_brew_tag
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          name=$(gh release list --repo ${{ github.repository }} --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          name=$(git tag --list --sort="-version:refname" | head -n1)
           echo "Latest rootless brew tag: ${name}"
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: Merge upstream
