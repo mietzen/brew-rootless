@@ -25,6 +25,7 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           name=$(gh release list --repo homebrew/brew --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          echo "Latest homebrew brew tag: ${name}"
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: get latest rootless brew tag
         id: latest_rootless_brew_tag
@@ -32,9 +33,10 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           name=$(gh release list --repo ${GITHUB_REPOSITORY} --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          echo "Latest rootless brew tag: ${name}"
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: Merge upstream
-        if: ${{ steps.latest_rootless_brew_tag.outputs.tag }} != ${{ steps.latest_homebrew_tag.outputs.tag }}
+        if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
         env:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
         run: |          
