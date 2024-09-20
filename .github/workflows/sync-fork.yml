@@ -11,8 +11,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - run: gh repo sync $REPOSITORY -b $BRANCH_NAME
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          BRANCH_NAME: master
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Merge upstream
+        run: |
+          git config --local user.email "131801252+merger-bot[bot]@users.noreply.github.com"
+          git config --local user.name "merger-bot[bot]"
+          
+          git remote add upstream https://github.com/homebrew/brew.git
+          git fetch upstream
+          git fetch --tags upstream
+          
+          git merge --no-edit upstream/master
+          git push
+          git push --tags
