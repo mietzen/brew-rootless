@@ -41,8 +41,9 @@ jobs:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
         run: |          
           git remote add upstream https://github.com/homebrew/brew.git
-          git fetch upstream
+          git fetch upstream master
+          git fetch upstream tag ${LATEST_TAG} --no-tags
           git merge --no-edit upstream/${LATEST_TAG}
+          git push origin master
           git tag ${LATEST_TAG}
-          git push
-          git push --tags
+          git push origin tag ${LATEST_TAG}
