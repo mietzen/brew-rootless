@@ -816,18 +816,6 @@ module Homebrew
         end.join("\n")
       end
 
-      def check_homebrew_prefix
-        return if Homebrew.default_prefix?
-
-        <<~EOS
-          Your Homebrew's prefix is not #{Homebrew::DEFAULT_PREFIX}.
-
-          Many of Homebrew's bottles (binary packages) can only be used with the default prefix.
-          Consider uninstalling Homebrew and reinstalling into the default prefix.
-          #{please_create_pull_requests}
-        EOS
-      end
-
       def check_deleted_formula
         kegs = Keg.all
 
