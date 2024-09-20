@@ -316,7 +316,7 @@ class Formula
 
   def determine_active_spec(requested)
     spec = send(requested) || stable || head
-    spec || raise(FormulaSpecificationError, "formulae require at least a URL")
+    spec || raise(FormulaSpecificationError, "#{full_name}: formula requires at least a URL")
   end
 
   def validate_attributes!
@@ -567,7 +567,13 @@ class Formula
     params(name: String, klass: T.class_of(Resource), block: T.nilable(T.proc.bind(Resource).void))
       .returns(T.nilable(Resource))
   }
-  def resource(name, klass = Resource, &block) = active_spec.resource(name, klass, &block)
+  def resource(name = T.unsafe(nil), klass = T.unsafe(nil), &block)
+    if klass.nil?
+      active_spec.resource(*name, &block)
+    else
+      active_spec.resource(name, klass, &block)
+    end
+  end
 
   # Old names for the formula.
   #
@@ -1588,8 +1594,7 @@ class Formula
         %w[
           config.log
           CMakeCache.txt
-          CMakeOutput.log
-          CMakeError.log
+          CMakeConfigureLog.yaml
           meson-log.txt
         ].each do |logfile|
           Dir["**/#{logfile}"].each do |logpath|
@@ -1790,7 +1795,7 @@ class Formula
     params(root: T.any(String, Pathname), path: T.any(String, Pathname)).returns(T::Array[String])
   }
   def std_cargo_args(root: prefix, path: ".")
-    ["--locked", "--root=#{root}", "--path=#{path}"]
+    ["--jobs", ENV.make_jobs.to_s, "--locked", "--root=#{root}", "--path=#{path}"]
   end
 
   # Standard parameters for CMake builds.
@@ -2765,11 +2770,20 @@ class Formula
     self.class.on_system_blocks_exist? || @on_system_blocks_exist
   end
 
-  def fetch(verify_download_integrity: true)
-    active_spec.fetch(verify_download_integrity:)
+  sig {
+    params(
+      verify_download_integrity: T::Boolean,
+      timeout:                   T.nilable(T.any(Integer, Float)),
+      quiet:                     T::Boolean,
+    ).returns(Pathname)
+  }
+  def fetch(verify_download_integrity: true, timeout: nil, quiet: false)
+    # odeprecated "Formula#fetch", "Resource#fetch on Formula#resource"
+    active_spec.fetch(verify_download_integrity:, timeout:, quiet:)
   end
 
   def verify_download_integrity(filename)
+    # odeprecated "Formula#verify_download_integrity", "Resource#verify_download_integrity on Formula#resource"
     active_spec.verify_download_integrity(filename)
   end
 

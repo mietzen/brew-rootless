@@ -4,17 +4,44 @@ on:
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch: # on button click
-
+  
 jobs:
   sync:
-
     runs-on: ubuntu-latest
-
     steps:
-      - uses: tgymnich/fork-sync@v2.0
+      - uses: actions/create-github-app-token@v1
+        id: generate-token
         with:
-          owner: Homebrew
-          repo: brew
-          merge_method: squash
-          base: master
-          head: master
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: get latest homebrew tag
+        id: latest_homebrew_tag
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          name=$(gh release list --repo homebrew/brew --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
+          echo "Latest homebrew brew tag: ${name}"
+          echo "tag=${name}" >> "$GITHUB_OUTPUT"
+      - name: get latest rootless brew tag
+        id: latest_rootless_brew_tag
+        run: |
+          name=$(git tag --list --sort="-version:refname" | head -n1)
+          echo "Latest rootless brew tag: ${name}"
+          echo "tag=${name}" >> "$GITHUB_OUTPUT"
+      - name: Merge upstream
+        if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
+        env:
+          LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
+        run: |          
+          git remote add upstream https://github.com/homebrew/brew.git
+          git fetch --verbose upstream master
+          git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
+          git merge --no-edit upstream/${LATEST_TAG}
+          git tag -f ${LATEST_TAG}
+          git push
+          git push tag ${LATEST_TAG}

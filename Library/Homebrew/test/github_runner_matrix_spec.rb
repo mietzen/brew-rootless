@@ -12,7 +12,7 @@ RSpec.describe GitHubRunnerMatrix do
   end
 
   let(:newest_supported_macos) do
-    MacOSVersion::SYMBOLS.find { |_, v| !MacOSVersion.new(v).prerelease? }
+    MacOSVersion::SYMBOLS.find { |k, _| k == described_class::NEWEST_HOMEBREW_CORE_MACOS_RUNNER }
   end
 
   let(:testball) { TestRunnerFormula.new(Testball.new) }
@@ -135,7 +135,7 @@ RSpec.describe GitHubRunnerMatrix do
 
           expect(runner_matrix.runners.all?(&:active)).to be(false)
           expect(runner_matrix.runners.any?(&:active)).to be(true)
-          expect(get_runner_names(runner_matrix).sort).to eq(["Linux", "macOS #{v}-arm64", "macOS #{v}-x86_64"])
+          expect(get_runner_names(runner_matrix).sort).to eq(["Linux", "macOS #{v}-arm64"])
         end
       end
     end
