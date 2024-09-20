@@ -21,11 +21,15 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
       - name: get latest homebrew tag
         id: latest_homebrew_tag
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           name=$(gh release list --repo homebrew/brew --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: get latest rootless brew tag
         id: latest_rootless_brew_tag
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           name=$(gh release list --repo ${GITHUB_REPOSITORY} --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
