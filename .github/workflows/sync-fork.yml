@@ -42,6 +42,6 @@ jobs:
           git fetch --verbose upstream master
           git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
           git merge --no-edit upstream/${LATEST_TAG}
-          git push origin master
-          git tag ${LATEST_TAG}
-          git push origin tag ${LATEST_TAG}
+          git tag -f ${LATEST_TAG}
+          git push
+          git push tag ${LATEST_TAG}
