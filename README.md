@@ -2,16 +2,16 @@
 
 [![GitHub release](https://img.shields.io/github/release/Homebrew/brew.svg)](https://github.com/mietzen/brew-rootless/tags)
 
-Welcome to **Homebrew - Rootless**, a fork of [Homebrew](https://github.com/homebrew/brew) tailored for users without root permissions on their mac. This version is optimized for rootless installations, with a primary modification to the cask uninstallation process:
+Welcome to **Homebrew - Rootless**, a fork of [Homebrew](https://github.com/homebrew/brew) tailored for users without root permissions on their mac. 
 
-https://github.com/mietzen/brew-rootless/blob/2df9a6b29baa6421ebc3f56b8361fad853672542/Library/Homebrew/cask/artifact/abstract_uninstall.rb#L93
+### Caveats:
 
- Cask uninstallation won't prompt for your password when removing `launchctl` services.
+Using `brew` in a rootless setup has some caveats: Most formulae will be built from source, and some casks and formulae may not be available. If you'd like to know why, read [this](https://docs.brew.sh/Installation#untar-anywhere-unsupported).
 
-**Features:**
-- **Rootless Optimizations**: Brew can be installed and managed without root access.
-- **Cask installations** default to `~/Applications` for user-level convenience.
-- **Source-based Formulae**: Most formulae will built from source, with some limitations in availability compared to the standard version.
+### Features:
+- **Rootless**: Brew can be installed and managed without root access.
+- **Cask installations**: Default to `~/Applications` for user-level convenience.
+- **Cask uninstallation**: Won't prompt for your password when removing `launchctl` services.
 - **Up-to-date**: This fork is continuously synced with the main repository, including tags, to stay up-to-date with the latest changes.
 
 ## Supported Platforms:
