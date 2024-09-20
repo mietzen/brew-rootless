@@ -11,6 +11,45 @@ https://github.com/mietzen/brew-rootless/blob/2df9a6b29baa6421ebc3f56b8361fad853
 ## Supported Platforms:
 - MacOS ARM64 (M1)
 
+## Install
+
+```shell
+curl -s https://raw.githubusercontent.com/mietzen/brew-rootless/refs/heads/master/install.sh | zsh
+```
+
+### Manual
+
+```shell
+mkdir -p $HOME/.local/opt
+mkdir -p $HOME/Applications
+git clone https://github.com/mietzen/brew-rootless.git $HOME/.local/opt/homebrew
+cat << EOF >> $HOME/.zshrc
+
+### ROOTLESS-BREW
+# Homebrew Binary
+export PATH="$HOME/.local/opt/homebrew/bin:$PATH"
+
+## Brew Auto-Completions
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+### ROOTLESS-BREW
+
+EOF
+exec zsh
+```
+
+## Uninstall
+
+```shell
+sed -i '/### ROOTLESS-BREW/,/### ROOTLESS-BREW/d' $HOME/.zshrc
+rm -rf $HOME/.local/opt/homebrew
+```
+
 ## Key Features:
 - **Rootless Optimizations**: Brew can be installed and managed without root access.
 - **Cask installations** default to `~/Applications` for user-level convenience.

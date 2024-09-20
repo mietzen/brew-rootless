@@ -173,4 +173,5 @@
 # Unignore tests' bundle config
 !/Library/Homebrew/test/.bundle/config
 
-# Unignore editor configuration
+# Unignore installer
+!/install.sh
