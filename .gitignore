@@ -156,12 +156,6 @@
 # Unignore our configuration/completions/documentation.
 !/.github/workflows/sync-fork.yml
 !/completions
-!/docs
-!/manpages
-
-# Unignore our packaging files
-!/package
-/package/resources/LICENSE.rtf
 
 # Ignore generated documentation site
 /docs/_site
