@@ -1,6 +1,6 @@
 # Homebrew - Rootless
 
-[![GitHub release](https://img.shields.io/github/release/Homebrew/brew.svg)](https://github.com/mietzen/brew-rootless/releases)
+[![GitHub release](https://img.shields.io/github/release/Homebrew/brew.svg)](https://github.com/mietzen/brew-rootless/tags)
 
 This is a fork of [Homebrew - Brew](https://github.com/homebrew/brew), but it has one important change:
 
