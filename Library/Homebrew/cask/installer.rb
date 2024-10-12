@@ -253,7 +253,8 @@ on_request: true)
         next if artifact.is_a?(Artifact::Binary) && !binaries?
 
         artifact.install_phase(
-          command: @command, verbose: verbose?, adopt: adopt?, force: force?, predecessor:,
+          command: @command, verbose: verbose?, adopt: adopt?, auto_updates: @cask.auto_updates,
+          force: force?, predecessor:
         )
         already_installed_artifacts.unshift(artifact)
       end
@@ -399,7 +400,7 @@ on_request: true)
 
       extension = @cask.loaded_from_api? ? "json" : "rb"
       (metadata_subdir/"#{@cask.token}.#{extension}").write @cask.source
-      old_savedir&.rmtree
+      FileUtils.rm_r(old_savedir) if old_savedir
     end
 
     def save_config_file
@@ -454,8 +455,8 @@ on_request: true)
     def restore_backup
       return if !backup_path.directory? || !backup_metadata_path.directory?
 
-      @cask.staged_path.rmtree if @cask.staged_path.exist?
-      @cask.metadata_versioned_path.rmtree if @cask.metadata_versioned_path.exist?
+      FileUtils.rm_r(@cask.staged_path) if @cask.staged_path.exist?
+      FileUtils.rm_r(@cask.metadata_versioned_path) if @cask.metadata_versioned_path.exist?
 
       backup_path.rename @cask.staged_path
       backup_metadata_path.rename @cask.metadata_versioned_path

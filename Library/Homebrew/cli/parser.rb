@@ -13,10 +13,7 @@ require "utils/formatter"
 module Homebrew
   module CLI
     class Parser
-      # FIXME: Enable cop again when https://github.com/sorbet/sorbet/issues/3532 is fixed.
-      # rubocop:disable Style/MutableConstant
       ArgType = T.type_alias { T.any(NilClass, Symbol, T::Array[String], T::Array[Symbol]) }
-      # rubocop:enable Style/MutableConstant
       HIDDEN_DESC_PLACEHOLDER = "@@HIDDEN@@"
       SYMBOL_TO_USAGE_MAPPING = T.let({
         text_or_regex: "<text>|`/`<regex>`/`",
@@ -169,11 +166,11 @@ module Homebrew
           @command_name = T.let(T.must(cmd_location.label).chomp("_args").tr("_", "-"), String)
           @is_dev_cmd = T.let(T.must(cmd_location.absolute_path).start_with?(Commands::HOMEBREW_DEV_CMD_PATH),
                               T::Boolean)
-          # odeprecated(
-          #   "`brew #{@command_name}'. This command needs to be refactored, as it is written in a style that",
-          #   "inheritance from `Homebrew::AbstractCommand' ( see https://docs.brew.sh/External-Commands )",
-          #   disable_for_developers: false,
-          # )
+          odeprecated(
+            "`brew #{@command_name}'. This command needs to be refactored, as it is written in a style that",
+            "inherits from `Homebrew::AbstractCommand' ( see https://docs.brew.sh/External-Commands )",
+            disable_for_developers: false,
+          )
         end
 
         @constraints = T.let([], T::Array[[String, String]])
