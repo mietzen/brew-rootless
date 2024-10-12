@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch: # on button click
-  
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -37,11 +37,11 @@ jobs:
         if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
         env:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
-        run: |          
+        run: |
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch --verbose upstream master
           git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
-          git merge --no-edit upstream/${LATEST_TAG}
+          git merge --no-edit ${LATEST_TAG}
           git tag -f ${LATEST_TAG}
           git push
-          git push tag ${LATEST_TAG}
+          git push --tags ${LATEST_TAG}
