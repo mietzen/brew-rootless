@@ -411,7 +411,7 @@ module Cask
     end
 
     def discontinued?
-      odisabled "`discontinued?`", "`deprecated?` or `disabled?`"
+      odeprecated "`discontinued?`", "`deprecated?` or `disabled?`"
       @caveats&.discontinued? == true
     end
 

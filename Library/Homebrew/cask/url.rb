@@ -117,8 +117,6 @@ module Cask
         @uri = uri
         @dsl = dsl
         @block = block
-
-        odeprecated "cask `url do` blocks" if @block
       end
 
       sig { returns(T.any(T.any(URI::Generic, String), [T.any(URI::Generic, String), Hash])) }

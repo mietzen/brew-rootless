@@ -31,7 +31,7 @@ module Cask
 
       private
 
-      def move(adopt: false, auto_updates: false, force: false, verbose: false, predecessor: nil, reinstall: false,
+      def move(adopt: false, force: false, verbose: false, predecessor: nil, reinstall: false,
                command: nil, **options)
         unless source.exist?
           raise CaskError, "It seems the #{self.class.english_name} source '#{source}' is not there."
@@ -51,44 +51,42 @@ module Cask
             if adopt
               ohai "Adopting existing #{self.class.english_name} at '#{target}'"
 
-              unless auto_updates
-                source_plist = Pathname("#{source}/Contents/Info.plist")
-                target_plist = Pathname("#{target}/Contents/Info.plist")
-                same = if source_plist.size? &&
-                          (source_bundle_version = Homebrew::BundleVersion.from_info_plist(source_plist)) &&
-                          target_plist.size? &&
-                          (target_bundle_version = Homebrew::BundleVersion.from_info_plist(target_plist))
-                  if source_bundle_version.short_version == target_bundle_version.short_version
-                    if source_bundle_version.version == target_bundle_version.version
-                      true
-                    else
-                      onoe "The bundle version of #{source} is #{source_bundle_version.version} but " \
-                           "is #{target_bundle_version.version} for #{target}!"
-                      false
-                    end
+              source_plist = Pathname("#{source}/Contents/Info.plist")
+              target_plist = Pathname("#{target}/Contents/Info.plist")
+              same = if source_plist.size? &&
+                        (source_bundle_version = Homebrew::BundleVersion.from_info_plist(source_plist)) &&
+                        target_plist.size? &&
+                        (target_bundle_version = Homebrew::BundleVersion.from_info_plist(target_plist))
+                if source_bundle_version.short_version == target_bundle_version.short_version
+                  if source_bundle_version.version == target_bundle_version.version
+                    true
                   else
-                    onoe "The bundle short version of #{source} is #{source_bundle_version.short_version} but " \
-                         "is #{target_bundle_version.short_version} for #{target}!"
+                    onoe "The bundle version of #{source} is #{source_bundle_version.version} but " \
+                         "is #{target_bundle_version.version} for #{target}!"
                     false
                   end
                 else
-                  command.run(
-                    "/usr/bin/diff",
-                    args:         ["--recursive", "--brief", source, target],
-                    verbose:,
-                    print_stdout: verbose,
-                  ).success?
+                  onoe "The bundle short version of #{source} is #{source_bundle_version.short_version} but " \
+                       "is #{target_bundle_version.short_version} for #{target}!"
+                  false
                 end
+              else
+                command.run(
+                  "/usr/bin/diff",
+                  args:         ["--recursive", "--brief", source, target],
+                  verbose:,
+                  print_stdout: verbose,
+                ).success?
+              end
 
-                unless same
-                  raise CaskError,
-                        "It seems the existing #{self.class.english_name} is different from " \
-                        "the one being installed."
-                end
+              unless same
+                raise CaskError,
+                      "It seems the existing #{self.class.english_name} is different from " \
+                      "the one being installed."
               end
 
               # Remove the source as we don't need to move it to the target location
-              FileUtils.rm_r(source)
+              source.rmtree
 
               return post_move(command)
             end
@@ -114,14 +112,14 @@ module Cask
                                     sudo: true)
           end
           Quarantine.copy_xattrs(source, target, command:)
-          FileUtils.rm_r(source)
+          source.rmtree
         elsif target.dirname.writable?
           FileUtils.move(source, target)
         else
           # default sudo user isn't necessarily able to write to Homebrew's locations
           # e.g. with runas_default set in the sudoers (5) file.
           command.run!("/bin/cp", args: ["-pR", source, target], sudo: true)
-          FileUtils.rm_r(source)
+          source.rmtree
         end
 
         post_move(command)

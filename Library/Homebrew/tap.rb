@@ -49,26 +49,26 @@ class Tap
   # Fetch a {Tap} by name.
   #
   # @api public
-  sig { params(user: String, repository: String).returns(Tap) }
-  def self.fetch(user, repository = T.unsafe(nil))
-    user, repository = user.split("/", 2) if repository.nil?
+  sig { params(user: String, repo: String).returns(Tap) }
+  def self.fetch(user, repo = T.unsafe(nil))
+    user, repo = user.split("/", 2) if repo.nil?
 
-    if [user, repository].any? { |part| part.nil? || part.include?("/") }
-      raise InvalidNameError, "Invalid tap name: '#{[*user, *repository].join("/")}'"
+    if [user, repo].any? { |part| part.nil? || part.include?("/") }
+      raise InvalidNameError, "Invalid tap name: '#{[*user, *repo].join("/")}'"
     end
 
     user = T.must(user)
-    repository = T.must(repository)
+    repo = T.must(repo)
 
     # We special case homebrew and linuxbrew so that users don't have to shift in a terminal.
     user = user.capitalize if ["homebrew", "linuxbrew"].include?(user)
-    repository = repository.sub(HOMEBREW_OFFICIAL_REPO_PREFIXES_REGEX, "")
+    repo = repo.sub(HOMEBREW_OFFICIAL_REPO_PREFIXES_REGEX, "")
 
-    return CoreTap.instance if ["Homebrew", "Linuxbrew"].include?(user) && ["core", "homebrew"].include?(repository)
-    return CoreCaskTap.instance if user == "Homebrew" && repository == "cask"
+    return CoreTap.instance if ["Homebrew", "Linuxbrew"].include?(user) && ["core", "homebrew"].include?(repo)
+    return CoreCaskTap.instance if user == "Homebrew" && repo == "cask"
 
-    cache_key = "#{user}/#{repository}".downcase
-    cache.fetch(cache_key) { |key| cache[key] = new(user, repository) }
+    cache_key = "#{user}/#{repo}".downcase
+    cache.fetch(cache_key) { |key| cache[key] = new(user, repo) }
   end
 
   # Get a {Tap} from its path or a path inside of it.
@@ -79,9 +79,9 @@ class Tap
 
     return unless match
     return unless (user = match[:user])
-    return unless (repository = match[:repository])
+    return unless (repo = match[:repo])
 
-    fetch(user, repository)
+    fetch(user, repo)
   end
 
   sig { params(name: String).returns(T.nilable([Tap, String])) }
@@ -89,13 +89,13 @@ class Tap
     return unless (match = name.match(HOMEBREW_TAP_FORMULA_REGEX))
 
     user = T.must(match[:user])
-    repository = T.must(match[:repository])
+    repo = T.must(match[:repo])
     name = T.must(match[:name])
 
     # Relative paths are not taps.
-    return if [user, repository].intersect?([".", ".."])
+    return if [user, repo].intersect?([".", ".."])
 
-    tap = fetch(user, repository)
+    tap = fetch(user, repo)
     [tap, name.downcase]
   end
 
@@ -104,13 +104,13 @@ class Tap
     return unless (match = token.match(HOMEBREW_TAP_CASK_REGEX))
 
     user = T.must(match[:user])
-    repository = T.must(match[:repository])
+    repo = T.must(match[:repo])
     token = T.must(match[:token])
 
     # Relative paths are not taps.
-    return if [user, repository].intersect?([".", ".."])
+    return if [user, repo].intersect?([".", ".."])
 
-    tap = fetch(user, repository)
+    tap = fetch(user, repo)
     [tap, token.downcase]
   end
 
@@ -157,14 +157,8 @@ class Tap
   #
   # @api public
   attr_reader :repository
-
-  # @deprecated
-  sig { returns(T::Boolean) }
-  def repo
-    # delete this whole function when removing odisabled
-    odeprecated "Tap#repo", "Tap#repository"
-    repository
-  end
+  # odeprecated: use repository instead.
+  alias repo repository
 
   # The name of this {Tap}. It combines {#user} and {#repository} with a slash.
   # {#name} is always in lowercase.
@@ -273,20 +267,12 @@ class Tap
   #
   # @api public
   sig { returns(T.nilable(String)) }
-  def remote_repository
+  def remote_repo
     return unless (remote = self.remote)
 
-    @remote_repository ||= remote.delete_prefix("https://github.com/")
-                                 .delete_prefix("git@github.com:")
-                                 .delete_suffix(".git")
-  end
-
-  # @deprecated
-  sig { returns(T.nilable(String)) }
-  def remote_repo
-    # delete this whole function when removing odisabled
-    odeprecated "Tap#remote_repo", "Tap#remote_repository"
-    remote_repository
+    @remote_repo ||= remote.delete_prefix("https://github.com/")
+                           .delete_prefix("git@github.com:")
+                           .delete_suffix(".git")
   end
 
   # The default remote path to this {Tap}.
@@ -302,14 +288,8 @@ class Tap
                                    .tr("^A-Za-z0-9", "_")
                                    .upcase
   end
-
-  # @deprecated
-  sig { returns(String) }
-  def repo_var_suffix
-    # delete this whole function when removing odisabled
-    odeprecated "Tap#repo_var_suffix", "Tap#repository_var_suffix"
-    repository_var_suffix
-  end
+  # odeprecated: use repository_var_suffix instead.
+  alias repo_var_suffix repository_var_suffix
 
   # Check whether this {Tap} is a Git repository.
   #
@@ -346,7 +326,7 @@ class Tap
   end
 
   # The issues URL of this {Tap}.
-  # e.g. `https://github.com/user/homebrew-repository/issues`
+  # e.g. `https://github.com/user/homebrew-repo/issues`
   #
   # @api public
   sig { returns(T.nilable(String)) }
@@ -437,11 +417,11 @@ class Tap
     require "descriptions"
     require "readall"
 
-    if official? && DEPRECATED_OFFICIAL_TAPS.include?(repository)
+    if official? && DEPRECATED_OFFICIAL_TAPS.include?(repo)
       odie "#{name} was deprecated. This tap is now empty and all its contents were either deleted or migrated."
     elsif user == "caskroom" || name == "phinze/cask"
-      new_repository = (repository == "cask") ? "cask" : "cask-#{repository}"
-      odie "#{name} was moved. Tap homebrew/#{new_repository} instead."
+      new_repo = (repo == "cask") ? "cask" : "cask-#{repo}"
+      odie "#{name} was moved. Tap homebrew/#{new_repo} instead."
     end
 
     raise TapNoCustomRemoteError, name if custom_remote && clone_target.nil?
@@ -638,7 +618,7 @@ class Tap
     require "utils/link"
     Utils::Link.unlink_manpages(path)
     Utils::Link.unlink_completions(path)
-    FileUtils.rm_r(path)
+    path.rmtree
     path.parent.rmdir_if_possible
     $stderr.puts "Untapped#{formatted_contents} (#{abv})."
 
@@ -886,8 +866,7 @@ class Tap
     hash = {
       "name"          => name,
       "user"          => user,
-      "repo"          => repository,
-      "repository"    => repository,
+      "repo"          => repo,
       "path"          => path.to_s,
       "installed"     => installed?,
       "official"      => official?,
@@ -902,9 +881,6 @@ class Tap
       hash["remote"] = remote
       hash["custom_remote"] = custom_remote?
       hash["private"] = private?
-      hash["HEAD"] = git_head || "(none)"
-      hash["last_commit"] = git_last_commit || "never"
-      hash["branch"] = git_branch || "(none)"
     end
 
     hash
@@ -1083,7 +1059,7 @@ class Tap
   # An array of all installed {Tap} names.
   sig { returns(T::Array[String]) }
   def self.names
-    odisabled "`#{self}.names`"
+    odeprecated "`#{self}.names`"
 
     map(&:name).sort
   end
@@ -1189,7 +1165,7 @@ class AbstractCoreTap < Tap
 
   sig { void }
   def self.ensure_installed!
-    odisabled "`#{self}.ensure_installed!`", "`#{self}.instance.ensure_installed!`"
+    odeprecated "`#{self}.ensure_installed!`", "`#{self}.instance.ensure_installed!`"
 
     instance.ensure_installed!
   end
@@ -1258,7 +1234,7 @@ class CoreTap < AbstractCoreTap
 
   sig { returns(T::Boolean) }
   def linuxbrew_core?
-    remote_repository.to_s.end_with?("/linuxbrew-core") || remote_repository == "Linuxbrew/homebrew-core"
+    remote_repo.to_s.end_with?("/linuxbrew-core") || remote_repo == "Linuxbrew/homebrew-core"
   end
 
   sig { returns(Pathname) }

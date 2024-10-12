@@ -60,7 +60,7 @@ RSpec.describe Cask::Uninstall, :cask do
 
     expect(cask).to be_installed
 
-    FileUtils.rm_r(cask.config.appdir.join("MyFancyApp.app"))
+    cask.config.appdir.join("MyFancyApp.app").rmtree
 
     expect { described_class.uninstall_casks(cask) }
       .to raise_error(Cask::CaskError, /uninstall script .* does not exist/)

@@ -4,13 +4,13 @@ on:
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch: # on button click
-
+  
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/create-github-app-token@v1
-        id: merge-token
+        id: generate-token
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -18,10 +18,11 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          token: ${{ steps.generate-token.outputs.token }}
       - name: get latest homebrew tag
         id: latest_homebrew_tag
         env:
-          GH_TOKEN: ${{ steps.merge-token.outputs.token }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           name=$(gh release list --repo homebrew/brew --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
           echo "Latest homebrew brew tag: ${name}"
@@ -34,65 +35,13 @@ jobs:
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: Merge upstream
         if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
-        id: merge_upstream
         env:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
-        run: |
+        run: |          
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch --verbose upstream master
           git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
-          for directory in */; do
-              git checkout ${LATEST_TAG} $directory
-          done
-          if ! [ -z "$(git status --porcelain)" ]; then
-            git config --local user.email "131801252+merger-bot[bot]@users.noreply.github.com"
-            git config --local user.name "merger-bot[bot]"
-            git commit -m 'Changes from latest release: ${LATEST_TAG}'
-            echo "change=yes" >> $GITHUB_OUTPUT
-          else
-            echo "Nothing to commit, this shouldn't happen!"
-            echo "change=no" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-      - name: Create Pull Request
-        if: steps.merge_upstream.outputs.change == 'yes'
-        id: pr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ steps.merge-token.outputs.token }}
-          title: "[Merger Bot] Release ${{ steps.latest_homebrew_tag.outputs.tag }}"
-          commit-message: Updated brew rootless to ${{ steps.latest_homebrew_tag.outputs.tag }}
-          committer: merger-bot[bot] <131801252+merger-bot[bot]@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: auto-update
-          labels: |
-            automated pr
-            update
-          body: |
-            Updated brew rootless to ${{ steps.latest_homebrew_tag.outputs.tag }}
-
-      - name: Enable Pull Request auto merge
-        if: steps.pr.outputs.pull-request-operation == 'created'
-        run: gh pr merge --squash --auto "${{ steps.pr.outputs.pull-request-number }}"
-        env:
-          GH_TOKEN: ${{ steps.merge-token.outputs.token }}
-
-      - uses: actions/create-github-app-token@v1
-        if: steps.pr.outputs.pull-request-operation == 'created'
-        id: approve-token
-        with:
-          app-id: ${{ secrets.APP_ID_APPROVE }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY_APPROVE }}
-
-      - name: Auto approve
-        if: steps.pr.outputs.pull-request-operation == 'created'
-        run: gh pr review --approve "${{ steps.pr.outputs.pull-request-number }}"
-        env:
-          GH_TOKEN: ${{ steps.approve-token.outputs.token }}
-
-      - name: Create Release
-        if: steps.pr.outputs.pull-request-operation == 'created'
-        run: gh release create ${{ steps.latest_homebrew_tag.outputs.tag }} --generate-notes
-        env:
-          GH_TOKEN: ${{ steps.merge-token.outputs.token }}
+          git merge --no-edit upstream/${LATEST_TAG}
+          git tag -f ${LATEST_TAG}
+          git push
+          git push tag ${LATEST_TAG}

@@ -76,6 +76,13 @@ class AbstractDownloadStrategy
     @quiet = true
   end
 
+  # Disable any output during downloading.
+  sig { void }
+  def shutup!
+    odisabled "`AbstractDownloadStrategy#shutup!`", "`AbstractDownloadStrategy#quiet!`"
+    quiet!
+  end
+
   def quiet?
     Context.current.quiet? || @quiet
   end

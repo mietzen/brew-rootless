@@ -87,7 +87,7 @@ RSpec.describe Migrator do
   end
 
   specify "#backup_oldname_cellar" do
-    FileUtils.rm_r(old_keg_record.parent)
+    old_keg_record.parent.rmtree
     (new_keg_record/"bin").mkpath
 
     migrator.backup_oldname_cellar

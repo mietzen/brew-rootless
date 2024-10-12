@@ -30,9 +30,6 @@ class Homebrew::Cmd::Info::Args < Homebrew::CLI::Args
   def eval_all?; end
 
   sig { returns(T::Boolean) }
-  def fetch_manifest?; end
-
-  sig { returns(T::Boolean) }
   def formula?; end
 
   sig { returns(T::Boolean) }

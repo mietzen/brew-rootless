@@ -154,8 +154,15 @@
 !/bin/brew
 
 # Unignore our configuration/completions/documentation.
-!/.github/workflows/sync-fork.yml
+!/.devcontainer
+!/.github
 !/completions
+!/docs
+!/manpages
+
+# Unignore our packaging files
+!/package
+/package/resources/LICENSE.rtf
 
 # Ignore generated documentation site
 /docs/_site
@@ -165,13 +172,26 @@
 /docs/Gemfile.lock
 
 # Unignore our root-level metadata files.
+!/.dockerignore
+!/.editorconfig
 !/.gitignore
 !/.gitatributes
+!/.irb_config
+!/.ruby-version
+!/.shellcheckrc
+!/.vale.ini
+!/.yardopts
+!/CHANGELOG.md
+!/CONTRIBUTING.md
+!/Dockerfile
+!/Dockerfile.test.yml
 !/LICENSE.txt
 !/README.md
 
 # Unignore tests' bundle config
 !/Library/Homebrew/test/.bundle/config
 
-# Unignore installer
-!/install.sh
+# Unignore editor configuration
+!/.sublime
+/.sublime/homebrew.sublime-workspace
+!/.vscode

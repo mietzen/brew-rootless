@@ -15,8 +15,8 @@ RSpec.describe Homebrew::Cmd::UpdateReport do
         def initialize(tap)
           @tap = tap
 
-          ENV["HOMEBREW_UPDATE_BEFORE#{tap.repository_var_suffix}"] = "12345678"
-          ENV["HOMEBREW_UPDATE_AFTER#{tap.repository_var_suffix}"] = "abcdef00"
+          ENV["HOMEBREW_UPDATE_BEFORE#{tap.repo_var_suffix}"] = "12345678"
+          ENV["HOMEBREW_UPDATE_AFTER#{tap.repo_var_suffix}"] = "abcdef00"
 
           super
         end
@@ -94,7 +94,7 @@ RSpec.describe Homebrew::Cmd::UpdateReport do
       end
 
       after do
-        FileUtils.rm_r(tap.path.parent)
+        tap.path.parent.rmtree
       end
 
       specify "with restructured Tap" do

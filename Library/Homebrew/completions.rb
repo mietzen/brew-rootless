@@ -1,4 +1,4 @@
-# typed: strict
+# typed: true # rubocop:todo Sorbet/StrictSigil
 # frozen_string_literal: true
 
 require "utils/link"
@@ -16,8 +16,8 @@ module Homebrew
       keyword_init: true,
     )
 
-    COMPLETIONS_DIR = T.let((HOMEBREW_REPOSITORY/"completions").freeze, Pathname)
-    TEMPLATE_DIR = T.let((HOMEBREW_LIBRARY_PATH/"completions").freeze, Pathname)
+    COMPLETIONS_DIR = (HOMEBREW_REPOSITORY/"completions").freeze
+    TEMPLATE_DIR = (HOMEBREW_LIBRARY_PATH/"completions").freeze
 
     SHELLS = %w[bash fish zsh].freeze
     COMPLETIONS_EXCLUSION_LIST = %w[
@@ -26,7 +26,7 @@ module Homebrew
       update-report
     ].freeze
 
-    BASH_NAMED_ARGS_COMPLETION_FUNCTION_MAPPING = T.let({
+    BASH_NAMED_ARGS_COMPLETION_FUNCTION_MAPPING = {
       formula:           "__brew_complete_formulae",
       installed_formula: "__brew_complete_installed_formulae",
       outdated_formula:  "__brew_complete_outdated_formulae",
@@ -38,9 +38,9 @@ module Homebrew
       command:           "__brew_complete_commands",
       diagnostic_check:  '__brewcomp "${__HOMEBREW_DOCTOR_CHECKS=$(brew doctor --list-checks)}"',
       file:              "__brew_complete_files",
-    }.freeze, T::Hash[Symbol, String])
+    }.freeze
 
-    ZSH_NAMED_ARGS_COMPLETION_FUNCTION_MAPPING = T.let({
+    ZSH_NAMED_ARGS_COMPLETION_FUNCTION_MAPPING = {
       formula:           "__brew_formulae",
       installed_formula: "__brew_installed_formulae",
       outdated_formula:  "__brew_outdated_formulae",
@@ -52,9 +52,9 @@ module Homebrew
       command:           "__brew_commands",
       diagnostic_check:  "__brew_diagnostic_checks",
       file:              "__brew_formulae_or_ruby_files",
-    }.freeze, T::Hash[Symbol, String])
+    }.freeze
 
-    FISH_NAMED_ARGS_COMPLETION_FUNCTION_MAPPING = T.let({
+    FISH_NAMED_ARGS_COMPLETION_FUNCTION_MAPPING = {
       formula:           "__fish_brew_suggest_formulae_all",
       installed_formula: "__fish_brew_suggest_formulae_installed",
       outdated_formula:  "__fish_brew_suggest_formulae_outdated",
@@ -65,7 +65,7 @@ module Homebrew
       installed_tap:     "__fish_brew_suggest_taps_installed",
       command:           "__fish_brew_suggest_commands",
       diagnostic_check:  "__fish_brew_suggest_diagnostic_checks",
-    }.freeze, T::Hash[Symbol, String])
+    }.freeze
 
     sig { void }
     def self.link!
@@ -264,12 +264,11 @@ module Homebrew
       COMPLETION
     end
 
-    sig { params(command: String, option: String).returns(String) }
     def self.generate_zsh_option_exclusions(command, option)
-      conflicts = Commands.option_conflicts(command, option.gsub(/^--?/, ""))
+      conflicts = Commands.option_conflicts(command, option.gsub(/^--/, ""))
       return "" unless conflicts.presence
 
-      "(#{conflicts.map { |conflict| "-#{"-" if conflict.size > 1}#{conflict}" }.join(" ")})"
+      "(#{conflicts.map { |conflict| "--#{conflict}" }.join(" ")})"
     end
 
     sig { params(commands: T::Array[String]).returns(String) }

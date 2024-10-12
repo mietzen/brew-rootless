@@ -164,7 +164,7 @@ module Cask
       end
 
       caveat :discontinued do
-        odisabled "`caveats :discontinued`", "`deprecate!`"
+        odeprecated "`caveats :discontinued`", "`deprecate!`"
         @discontinued = true
         <<~EOS
           #{@cask} has been officially discontinued upstream.

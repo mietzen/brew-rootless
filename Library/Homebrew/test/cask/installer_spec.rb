@@ -386,7 +386,7 @@ RSpec.describe Cask::Installer, :cask do
         described_class.new(cask).forbidden_tap_check
       end.to raise_error(Cask::CaskCannotBeInstalledError, /from the #{dep_tap} tap but/)
     ensure
-      FileUtils.rm_r(dep_path.parent.parent)
+      dep_path.parent.parent.rmtree
     end
   end
 

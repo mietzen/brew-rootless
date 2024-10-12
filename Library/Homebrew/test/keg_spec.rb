@@ -47,7 +47,7 @@ RSpec.describe Keg do
     expect(keg).to be_a_directory
     expect(keg).not_to be_an_empty_installation
 
-    FileUtils.rm_r(keg/"bin")
+    (keg/"bin").rmtree
     expect(keg).to be_an_empty_installation
 
     (keg/"bin").mkpath

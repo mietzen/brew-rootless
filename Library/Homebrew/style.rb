@@ -91,11 +91,7 @@ module Homebrew
         run_shfmt(shell_files, fix:)
       end
 
-      has_actionlint_workflow = actionlint_files.any? do |path|
-        path.to_s.end_with?("/.github/workflows/actionlint.yml")
-      end
-      odebug "actionlint workflow detected. Skipping actionlint checks." if has_actionlint_workflow
-      actionlint_result = if files.present? && (has_actionlint_workflow || actionlint_files.empty?)
+      actionlint_result = if files.present? && actionlint_files.empty?
         true
       else
         run_actionlint(actionlint_files)

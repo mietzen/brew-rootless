@@ -69,14 +69,13 @@ module Homebrew
           conflicts "--cask", flag
           conflicts "--versions", flag
           conflicts "--pinned", flag
-          conflicts "-l", flag
         end
         ["-1", "-l", "-r", "-t"].each do |flag|
           conflicts "--versions", flag
           conflicts "--pinned", flag
         end
         ["--versions", "--pinned",
-         "--installed-on-request", "--installed-as-dependency",
+         "---installed-on-request", "--installed-as-dependency",
          "--poured-from-bottle", "--built-from-source",
          "-l", "-r", "-t"].each do |flag|
           conflicts "--full-name", flag
@@ -123,13 +122,7 @@ module Homebrew
 
           raise UsageError, "Cannot use #{flags.join(", ")} with formula arguments." unless args.no_named?
 
-          formulae = if args.t?
-            Formula.installed.sort_by { |formula| test("M", formula.rack) }.reverse!
-          else
-            Formula.installed.sort
-          end
-          formulae.reverse! if args.r?
-          formulae.each do |formula|
+          Formula.installed.sort.each do |formula|
             tab = Tab.for_formula(formula)
 
             statuses = []

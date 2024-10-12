@@ -18,7 +18,6 @@ if ENV["HOMEBREW_TESTS_COVERAGE"]
   end
 end
 
-require_relative "../standalone"
 require_relative "../warnings"
 
 Warnings.ignore :parser_syntax do

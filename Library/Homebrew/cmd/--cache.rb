@@ -17,7 +17,7 @@ module Homebrew
         description <<~EOS
           Display Homebrew's download cache. See also `HOMEBREW_CACHE`.
 
-          If a <formula> or <cask> is provided, display the file or directory used to cache it.
+          If <formula> is provided, display the file or directory used to cache <formula>.
         EOS
         flag   "--os=",
                description: "Show cache file for the given operating system. " \
@@ -113,11 +113,7 @@ module Homebrew
 
           puts bottle.cached_download
         elsif args.HEAD?
-          if (head = formula.head)
-            puts head.cached_download
-          else
-            opoo "No head is defined for #{formula.full_name}."
-          end
+          puts T.must(formula.head).cached_download
         else
           puts formula.cached_download
         end
