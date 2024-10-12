@@ -1,6 +1,6 @@
 .gitatributes merge=ours
 .gitignore merge=ours
 README.md merge=ours
-.github merge=ours
-manpages merge=ours
-docs merge=ours
+.github/**/* merge=ours
+manpages/**/* merge=ours
+docs/**/* merge=ours
