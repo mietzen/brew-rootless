@@ -30,11 +30,11 @@ case "${OSTYPE}" in
 esac
 HOMEBREW_PHYSICAL_PROCESSOR="${HOMEBREW_PROCESSOR}"
 
-HOMEBREW_MACOS_ARM_DEFAULT_PREFIX="${HOME}/.local/opt/homebrew"
+HOMEBREW_MACOS_ARM_DEFAULT_PREFIX="/opt/homebrew"
 HOMEBREW_MACOS_ARM_DEFAULT_REPOSITORY="${HOMEBREW_MACOS_ARM_DEFAULT_PREFIX}"
-HOMEBREW_LINUX_DEFAULT_PREFIX="${HOME}/.local/opt/"
+HOMEBREW_LINUX_DEFAULT_PREFIX="/home/linuxbrew/.linuxbrew"
 HOMEBREW_LINUX_DEFAULT_REPOSITORY="${HOMEBREW_LINUX_DEFAULT_PREFIX}/Homebrew"
-HOMEBREW_GENERIC_DEFAULT_PREFIX="${HOME}/.local/opt/"
+HOMEBREW_GENERIC_DEFAULT_PREFIX="/usr/local"
 HOMEBREW_GENERIC_DEFAULT_REPOSITORY="${HOMEBREW_GENERIC_DEFAULT_PREFIX}/Homebrew"
 if [[ -n "${HOMEBREW_MACOS}" && "${HOMEBREW_PROCESSOR}" == "arm64" ]]
 then
@@ -171,6 +171,12 @@ case "$@" in
   list* | ls*)
     source "${HOMEBREW_LIBRARY}/Homebrew/list.sh"
     homebrew-list "$@" && exit 0
+    ;;
+  # homebrew-tap only handles invocations with no arguments
+  tap)
+    source "${HOMEBREW_LIBRARY}/Homebrew/tap.sh"
+    homebrew-tap "$@"
+    exit 0
     ;;
   # falls back to cmd/help.rb on a non-zero return
   help | --help | -h | --usage | "-?" | "")
@@ -514,6 +520,7 @@ esac
 # TODO: bump version when new macOS is released or announced and update references in:
 # - docs/Installation.md
 # - https://github.com/Homebrew/install/blob/HEAD/install.sh
+# - Library/Homebrew/os/mac.rb (latest_sdk_version)
 # and, if needed:
 # - MacOSVersion::SYMBOLS
 HOMEBREW_MACOS_NEWEST_UNSUPPORTED="16"
