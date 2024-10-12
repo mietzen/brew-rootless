@@ -72,27 +72,27 @@ jobs:
           body: |
             Updated brew rootless to ${{ steps.latest_homebrew_tag.outputs.tag }}
 
-      # - name: Enable Pull Request auto merge
-      #   if: steps.pr.outputs.pull-request-operation == 'created'
-      #   run: gh pr merge --squash --auto "${{ steps.pr.outputs.pull-request-number }}"
-      #   env:
-      #     GH_TOKEN: ${{ steps.merge-token.outputs.token }}
+      - name: Enable Pull Request auto merge
+        if: steps.pr.outputs.pull-request-operation == 'created'
+        run: gh pr merge --squash --auto "${{ steps.pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ steps.merge-token.outputs.token }}
 
-      # - uses: actions/create-github-app-token@v1
-      #   if: steps.pr.outputs.pull-request-operation == 'created'
-      #   id: approve-token
-      #   with:
-      #     app-id: ${{ secrets.APP_ID_APPROVE }}
-      #     private-key: ${{ secrets.APP_PRIVATE_KEY_APPROVE }}
+      - uses: actions/create-github-app-token@v1
+        if: steps.pr.outputs.pull-request-operation == 'created'
+        id: approve-token
+        with:
+          app-id: ${{ secrets.APP_ID_APPROVE }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY_APPROVE }}
 
-      # - name: Auto approve
-      #   if: steps.pr.outputs.pull-request-operation == 'created'
-      #   run: gh pr review --approve "${{ steps.pr.outputs.pull-request-number }}"
-      #   env:
-      #     GH_TOKEN: ${{ steps.approve-token.outputs.token }}
+      - name: Auto approve
+        if: steps.pr.outputs.pull-request-operation == 'created'
+        run: gh pr review --approve "${{ steps.pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ steps.approve-token.outputs.token }}
 
-      # - name: Create Release
-      #   if: steps.pr.outputs.pull-request-operation == 'created'
-      #   run: gh release create ${{ steps.latest_homebrew_tag.outputs.tag }} --generate-notes
-      #   env:
-      #     GH_TOKEN: ${{ steps.merge-token.outputs.token }}
+      - name: Create Release
+        if: steps.pr.outputs.pull-request-operation == 'created'
+        run: gh release create ${{ steps.latest_homebrew_tag.outputs.tag }} --generate-notes
+        env:
+          GH_TOKEN: ${{ steps.merge-token.outputs.token }}
