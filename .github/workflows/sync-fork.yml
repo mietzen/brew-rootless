@@ -38,6 +38,8 @@ jobs:
         env:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
         run: |
+          git config --global user.name "merger-bot[bot]"
+          git config --global user.email "131801252+merger-bot[bot]@users.noreply.github.com"
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch --verbose upstream master
           git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
