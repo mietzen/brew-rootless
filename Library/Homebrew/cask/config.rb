@@ -13,8 +13,8 @@ module Cask
   # @api internal
   class Config
     DEFAULT_DIRS = {
-      appdir:               "~/Applications",
-      keyboard_layoutdir:   "~/Library/Keyboard Layouts",
+      appdir:               "/Applications",
+      keyboard_layoutdir:   "/Library/Keyboard Layouts",
       colorpickerdir:       "~/Library/ColorPickers",
       prefpanedir:          "~/Library/PreferencePanes",
       qlplugindir:          "~/Library/QuickLook",
