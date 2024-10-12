@@ -21,7 +21,7 @@ jobs:
       - name: get latest homebrew tag
         id: latest_homebrew_tag
         env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_TOKEN: ${{ steps.merge-token.outputs.token }}
         run: |
           name=$(gh release list --repo homebrew/brew --exclude-drafts --exclude-pre-releases --limit 1 --json tagName | jq '.[].tagName' -r)
           echo "Latest homebrew brew tag: ${name}"
