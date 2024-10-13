@@ -4,3 +4,6 @@ README.md merge=ours
 CONTRIBUTING.md merge=ours
 CHANGELOG.md merge=ours
 bin/brew merge=ours
+.github/ISSUE_TEMPLATE/feature.yml merge=ours
+.github/ISSUE_TEMPLATE/config.yml merge=ours
+.github/ISSUE_TEMPLATE/bug.yml merge=ours
