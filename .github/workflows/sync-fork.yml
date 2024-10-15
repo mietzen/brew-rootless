@@ -39,8 +39,8 @@ jobs:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          git config --local user.email "<${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>"
-          git config --local user.name "${{ github.actor }}"
+          git config --local user.email "131801252+merger-bot[bot]@users.noreply.github.com"
+          git config --local user.name "merger-bot[bot]"
           git config --local merge.ours.driver "true"
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch --verbose upstream master
