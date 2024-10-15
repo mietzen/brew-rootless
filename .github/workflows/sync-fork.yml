@@ -41,6 +41,7 @@ jobs:
         run: |
           git config --local user.email "<${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>"
           git config --local user.name "${{ github.actor }}"
+          git config merge.ours.driver true
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch --verbose upstream master
           git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
