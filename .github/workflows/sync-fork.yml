@@ -56,7 +56,9 @@ jobs:
           echo "# Upstream Release Notes:" >> release_notes.md
           echo "" >> release_notes.md
           curl -sSL https://api.github.com/repos/homebrew/brew/releases | jq '.[] | select(.tag_name=="${LATEST_TAG}") | .body' -r | sed 's/@//g' >> release_notes.md
+          cat release_notes.md
           gh release create ${LATEST_TAG} \
             --title ${LATEST_TAG} \
             --verify-tag \
+            --repo ${{ github.repository }} \
             --notes-file release_notes.md
