@@ -1229,7 +1229,7 @@ on_request: installed_on_request?, options:)
       sandbox.deny_write_homebrew_repository
       sandbox.allow_write_cellar(formula)
       sandbox.deny_all_network unless formula.network_access_allowed?(:postinstall)
-      Keg::KEG_LINK_DIRECTORIES.each do |dir|
+      Keg.keg_link_directories.each do |dir|
         sandbox.allow_write_path "#{HOMEBREW_PREFIX}/#{dir}"
       end
       sandbox.run(*args)
@@ -1343,6 +1343,21 @@ on_request: installed_on_request?, options:)
       ohai "Verifying attestation for #{formula.name}"
       begin
         Homebrew::Attestation.check_core_attestation T.must(formula.bottle)
+      rescue Homebrew::Attestation::GhIncompatible
+        # A small but significant number of users have developer mode enabled
+        # but *also* haven't upgraded in a long time, meaning that their `gh`
+        # version is too old to perform attestations.
+        raise CannotInstallFormulaError, <<~EOS
+          The bottle for #{formula.name} could not be verified.
+
+          This typically indicates an outdated or incompatible `gh` CLI.
+
+          Please confirm that you're running the latest version of `gh`
+          by performing an upgrade before retrying:
+
+            brew update
+            brew upgrade gh
+        EOS
       rescue Homebrew::Attestation::GhAuthInvalid
         # Only raise an error if we explicitly opted-in to verification.
         raise CannotInstallFormulaError, <<~EOS if Homebrew::EnvConfig.verify_attestations?
@@ -1503,8 +1518,8 @@ on_request: installed_on_request?, options:)
         dep_tap = dep.tap
         next if dep_tap.blank? || (dep_tap.allowed_by_env? && !dep_tap.forbidden_by_env?)
 
-        error_message = +"The installation of #{formula.name} has a dependency #{dep.name}\n" \
-                         "from the #{dep_tap} tap but #{owner} "
+        error_message = "The installation of #{formula.name} has a dependency #{dep.name}\n" \
+                        "from the #{dep_tap} tap but #{owner} "
         error_message << "has not allowed this tap in `HOMEBREW_ALLOWED_TAPS`" unless dep_tap.allowed_by_env?
         error_message << " and\n" if !dep_tap.allowed_by_env? && dep_tap.forbidden_by_env?
         error_message << "has forbidden this tap in `HOMEBREW_FORBIDDEN_TAPS`" if dep_tap.forbidden_by_env?
@@ -1519,8 +1534,8 @@ on_request: installed_on_request?, options:)
     formula_tap = formula.tap
     return if formula_tap.blank? || (formula_tap.allowed_by_env? && !formula_tap.forbidden_by_env?)
 
-    error_message = +"The installation of #{formula.full_name} has the tap #{formula_tap}\n" \
-                     "but #{owner} "
+    error_message = "The installation of #{formula.full_name} has the tap #{formula_tap}\n" \
+                    "but #{owner} "
     error_message << "has not allowed this tap in `HOMEBREW_ALLOWED_TAPS`" unless formula_tap.allowed_by_env?
     error_message << " and\n" if !formula_tap.allowed_by_env? && formula_tap.forbidden_by_env?
     error_message << "has forbidden this tap in `HOMEBREW_FORBIDDEN_TAPS`" if formula_tap.forbidden_by_env?

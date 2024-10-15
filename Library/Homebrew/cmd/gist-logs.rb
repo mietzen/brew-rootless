@@ -31,7 +31,7 @@ module Homebrew
 
       sig { override.void }
       def run
-        Install.perform_preinstall_checks(all_fatal: true)
+        Install.perform_preinstall_checks_once(all_fatal: true)
         Install.perform_build_from_source_checks(all_fatal: true)
         return unless (formula = args.named.to_resolved_formulae.first)
 
@@ -92,7 +92,7 @@ module Homebrew
       sig { params(formula: Formula, with_hostname: T::Boolean).returns(String) }
       def brief_build_info(formula, with_hostname:)
         build_time_string = formula.logs.ctime.strftime("%Y-%m-%d %H:%M:%S")
-        string = +<<~EOS
+        string = <<~EOS
           Homebrew build logs for #{formula.full_name} on #{OS_VERSION}
         EOS
         if with_hostname
