@@ -6,3 +6,4 @@ CHANGELOG.md merge=ours
 .github/ISSUE_TEMPLATE/feature.yml merge=ours
 .github/ISSUE_TEMPLATE/config.yml merge=ours
 .github/ISSUE_TEMPLATE/bug.yml merge=ours
+.github/PULL_REQUEST_TEMPLATE.md merge=ours

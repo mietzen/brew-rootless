@@ -59,7 +59,7 @@ rm -rf $HOME/.local/opt/homebrew
 ```
 
 ## Issues:
-Please **do not open issues** on the [Homebrew main repository](https://github.com/homebrew/brew) for any problems encountered using this fork. Issues specific to the rootless version should be raised [**here**](https://github.com/mietzen/porkbun-ddns/issues/new/choose) instead.
+Please **do not open issues** on the [Homebrew main repository](https://github.com/homebrew/brew) for any problems encountered using this fork. Issues specific to the rootless version should be raised [**here**](https://github.com/mietzen/brew-rootless/issues/new/choose) instead.
 
 
 ## Special Thanks:
