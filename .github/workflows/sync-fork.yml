@@ -19,6 +19,14 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           token: ${{ steps.generate-token.outputs.token }}
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.generate-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - run: |
+          git config --global user.name '${{ steps.generate-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
       - name: get latest homebrew tag
         id: latest_homebrew_tag
         env:
@@ -40,8 +48,6 @@ jobs:
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          git config --local user.email "131801252+merger-bot[bot]@users.noreply.github.com"
-          git config --local user.name "merger-bot[bot]"
           git config --local merge.ours.driver "true"
           git remote add upstream https://github.com/homebrew/brew.git
           git fetch --verbose upstream master
