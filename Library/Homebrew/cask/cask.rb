@@ -173,8 +173,8 @@ module Cask
     sig { returns(T.nilable(Time)) }
     def install_time
       # <caskroom_path>/.metadata/<version>/<timestamp>/Casks/<token>.{rb,json} -> <timestamp>
-      time = installed_caskfile&.dirname&.dirname&.basename&.to_s
-      Time.strptime(time, Metadata::TIMESTAMP_FORMAT) if time
+      caskfile = installed_caskfile
+      Time.strptime(caskfile.dirname.dirname.basename.to_s, Metadata::TIMESTAMP_FORMAT) if caskfile
     end
 
     sig { returns(T.nilable(Pathname)) }
@@ -363,38 +363,40 @@ module Cask
 
     def to_h
       {
-        "token"                => token,
-        "full_token"           => full_name,
-        "old_tokens"           => old_tokens,
-        "tap"                  => tap&.name,
-        "name"                 => name,
-        "desc"                 => desc,
-        "homepage"             => homepage,
-        "url"                  => url,
-        "url_specs"            => url_specs,
-        "version"              => version,
-        "installed"            => installed_version,
-        "installed_time"       => install_time&.to_i,
-        "bundle_version"       => bundle_long_version,
-        "bundle_short_version" => bundle_short_version,
-        "outdated"             => outdated?,
-        "sha256"               => sha256,
-        "artifacts"            => artifacts_list,
-        "caveats"              => (caveats unless caveats.empty?),
-        "depends_on"           => depends_on,
-        "conflicts_with"       => conflicts_with,
-        "container"            => container&.pairs,
-        "auto_updates"         => auto_updates,
-        "deprecated"           => deprecated?,
-        "deprecation_date"     => deprecation_date,
-        "deprecation_reason"   => deprecation_reason,
-        "disabled"             => disabled?,
-        "disable_date"         => disable_date,
-        "disable_reason"       => disable_reason,
-        "tap_git_head"         => tap_git_head,
-        "languages"            => languages,
-        "ruby_source_path"     => ruby_source_path,
-        "ruby_source_checksum" => ruby_source_checksum,
+        "token"                   => token,
+        "full_token"              => full_name,
+        "old_tokens"              => old_tokens,
+        "tap"                     => tap&.name,
+        "name"                    => name,
+        "desc"                    => desc,
+        "homepage"                => homepage,
+        "url"                     => url,
+        "url_specs"               => url_specs,
+        "version"                 => version,
+        "installed"               => installed_version,
+        "installed_time"          => install_time&.to_i,
+        "bundle_version"          => bundle_long_version,
+        "bundle_short_version"    => bundle_short_version,
+        "outdated"                => outdated?,
+        "sha256"                  => sha256,
+        "artifacts"               => artifacts_list,
+        "caveats"                 => (caveats unless caveats.empty?),
+        "depends_on"              => depends_on,
+        "conflicts_with"          => conflicts_with,
+        "container"               => container&.pairs,
+        "auto_updates"            => auto_updates,
+        "deprecated"              => deprecated?,
+        "deprecation_date"        => deprecation_date,
+        "deprecation_reason"      => deprecation_reason,
+        "deprecation_replacement" => deprecation_replacement,
+        "disabled"                => disabled?,
+        "disable_date"            => disable_date,
+        "disable_reason"          => disable_reason,
+        "disable_replacement"     => disable_replacement,
+        "tap_git_head"            => tap_git_head,
+        "languages"               => languages,
+        "ruby_source_path"        => ruby_source_path,
+        "ruby_source_checksum"    => ruby_source_checksum,
       }
     end
 
@@ -415,11 +417,13 @@ module Cask
       if deprecation_date
         api_hash["deprecation_date"] = deprecation_date
         api_hash["deprecation_reason"] = deprecation_reason
+        api_hash["deprecation_replacement"] = deprecation_replacement
       end
 
       if disable_date
         api_hash["disable_date"] = disable_date
         api_hash["disable_reason"] = disable_reason
+        api_hash["disable_replacement"] = disable_replacement
       end
 
       if (url_specs_hash = url_specs).present?
