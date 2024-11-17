@@ -19,14 +19,6 @@ Using `brew` in a rootless setup has some caveats: Most formulae will be built f
 
 ## Install
 
-**Automatic**
-
-```shell
-curl -s https://raw.githubusercontent.com/mietzen/brew-rootless/refs/heads/master/install.sh | zsh
-```
-
-**Manual**
-
 ```shell
 mkdir -p $HOME/.local/opt
 mkdir -p $HOME/Applications
