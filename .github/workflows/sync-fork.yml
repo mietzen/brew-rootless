@@ -7,7 +7,7 @@ on:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/create-github-app-token@v1
         id: generate-token
@@ -42,10 +42,9 @@ jobs:
           name=$(git tag --list --sort="-version:refname" | head -n1)
           echo "Latest rootless brew tag: ${name}"
           echo "tag=${name}" >> "$GITHUB_OUTPUT"
-      - name: Merge upstream
+      - name: Merge upstream release to master
         if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
         env:
-          CURRENT_TAG: ${{ steps.latest_rootless_brew_tag.outputs.tag }}
           LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
@@ -54,8 +53,38 @@ jobs:
           git fetch --verbose upstream master
           git fetch --verbose upstream tag ${LATEST_TAG} --no-tags
           git merge --no-edit ${LATEST_TAG}
-          git tag -f ${LATEST_TAG}
           git push
+      - name: Test new release
+        if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
+        run: |
+          mkdir -p $HOME/.local/opt
+          mkdir -p $HOME/Applications
+          git clone https://github.com/${{ github.repository }} $HOME/.local/opt/homebrew
+          export PATH="$HOME/.local/opt/homebrew/bin:$PATH"
+          brew developer on
+          brew update
+          brew install --cask keka
+          if [ -d $HOME/Applications/Keka.app ]; then
+            echo "Keka exists."
+          else
+            echo "Keka does not exist."
+            exit 1
+          fi
+          brew install --formula cowsay
+          if [ -e $HOME/.local/opt/homebrew/bin/cowsay ]; then
+            echo "cowsay exists."
+          else
+            echo "cowsay does not exist."
+            exit 1
+          fi
+      - name: Tag and Release
+        if: ${{ steps.latest_rootless_brew_tag.outputs.tag != steps.latest_homebrew_tag.outputs.tag }}
+        env:
+          CURRENT_TAG: ${{ steps.latest_rootless_brew_tag.outputs.tag }}
+          LATEST_TAG: ${{ steps.latest_homebrew_tag.outputs.tag }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          git tag -f ${LATEST_TAG}
           git push --tags
           echo "**Automated release via workflow**" > release_notes.md
           echo "" >> release_notes.md
