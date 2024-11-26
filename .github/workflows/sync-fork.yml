@@ -70,11 +70,11 @@ jobs:
             echo "Keka does not exist."
             exit 1
           fi
-          brew install --formula az
-          if [ -e $HOME/.local/opt/homebrew/bin/az ]; then
-            echo "az exists."
+          brew install --formula ca-certificates
+          if [ -f $HOME/.local/opt/homebrew/etc/ca-certificates/cert.pem ]; then
+            echo "ca-certificates exists."
           else
-            echo "az does not exist."
+            echo "ca-certificates does not exist."
             exit 1
           fi
       - name: Tag and Release
