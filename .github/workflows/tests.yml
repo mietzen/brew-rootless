@@ -40,7 +40,7 @@ jobs:
           test-bot: false
 
       - name: Cache Bundler RubyGems
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ runner.os }}-rubygems-syntax-${{ steps.set-up-homebrew.outputs.gems-hash }}
@@ -53,7 +53,7 @@ jobs:
         run: brew install shellcheck shfmt
 
       - name: Cache style cache
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: ~/.cache/Homebrew/style
           key: syntax-style-cache-${{ github.sha }}
@@ -92,7 +92,7 @@ jobs:
           test-bot: true
 
       - name: Cache Bundler RubyGems
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ runner.os }}-rubygems-tap-syntax-${{ steps.set-up-homebrew.outputs.gems-hash }}
@@ -102,7 +102,7 @@ jobs:
         run: brew install-bundler-gems --groups=style
 
       - name: Cache style cache
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: ~/.cache/Homebrew/style
           key: tap-syntax-style-cache-${{ github.sha }}
@@ -285,7 +285,7 @@ jobs:
           test-bot: false
 
       - name: Cache Bundler RubyGems
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ matrix.runs-on }}-tests-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
@@ -300,7 +300,7 @@ jobs:
         run: mkdir tests
 
       - name: Cache parallel tests log
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: tests
           key: ${{ runner.os }}-${{ matrix.test-flags }}-parallel_runtime_rspec-${{ github.sha }}
@@ -356,7 +356,21 @@ jobs:
           HOMEBREW_BUILDPULSE_ACCOUNT_ID: 1503512
           HOMEBREW_BUILDPULSE_REPOSITORY_ID: 53238813
 
-      - uses: codecov/codecov-action@015f24e6818733317a2da2edd6290ab26238649a # v5.0.7
+      - id: junit_xml
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        run: |
+          mkdir -p test/junit
+          filenames=$(find test/junit -name 'rspec*.xml' -print | tr '\n' ',')
+          echo "filenames=${filenames%,}" >> "$GITHUB_OUTPUT"
+
+      - uses: codecov/test-results-action@9739113ad922ea0a9abb4b2c0f8bf6a4aa8ef820 # v1.0.1
+        with:
+          working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+          files: ${{ steps.junit_xml.outputs.filenames }}
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - uses: codecov/codecov-action@c2fcb216de2b0348de0100baa3ea2cad9f100a01 # v5.1.0
         with:
           working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
           files: Library/Homebrew/test/coverage/coverage.xml
