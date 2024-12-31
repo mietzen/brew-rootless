@@ -107,7 +107,8 @@ module Cask
       backup if force? && @cask.staged_path.exist? && @cask.metadata_versioned_path.exist?
 
       oh1 "Installing Cask #{Formatter.identifier(@cask)}"
-      opoo "macOS's Gatekeeper has been disabled for this Cask" unless quarantine?
+      # GitHub Actions globally disables Gatekeeper.
+      opoo "macOS's Gatekeeper has been disabled for this Cask" if !quarantine? && !GitHub::Actions.env_set?
       stage
 
       @cask.config = @cask.default_config.merge(old_config)
@@ -134,11 +135,12 @@ on_request: true)
       raise
     end
 
+    sig { void }
     def check_deprecate_disable
       deprecate_disable_type = DeprecateDisable.type(@cask)
       return if deprecate_disable_type.nil?
 
-      message = DeprecateDisable.message(@cask)
+      message = DeprecateDisable.message(@cask).to_s
       message_full = "#{@cask.token} has been #{message}"
 
       case deprecate_disable_type
