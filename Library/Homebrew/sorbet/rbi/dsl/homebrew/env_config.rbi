@@ -193,6 +193,9 @@ module Homebrew::EnvConfig
     sig { returns(String) }
     def install_badge; end
 
+    sig { returns(T::Boolean) }
+    def livecheck_autobump?; end
+
     sig { returns(String) }
     def livecheck_watchlist; end
 
