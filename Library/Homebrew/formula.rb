@@ -1499,7 +1499,7 @@ class Formula
   # @see .link_overwrite
   def link_overwrite?(path)
     # Don't overwrite files not created by Homebrew.
-    return false if path.stat.uid != HOMEBREW_BREW_FILE.stat.uid
+    return false if path.stat.uid != HOMEBREW_ORIGINAL_BREW_FILE.stat.uid
 
     # Don't overwrite files belong to other keg except when that
     # keg's formula is deleted.
@@ -2903,6 +2903,7 @@ class Formula
             test
           end
         end
+      # Handle all possible exceptions running formula tests.
       rescue Exception # rubocop:disable Lint/RescueException
         staging.retain! if debug?
         raise
