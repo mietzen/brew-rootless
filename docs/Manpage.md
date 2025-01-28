@@ -131,7 +131,7 @@ List all locally installable casks including short names.
 Remove stale lock files and outdated downloads for all formulae and casks, and
 remove old versions of installed formulae. If arguments are specified, only do
 this for the given formulae and casks. Removes all downloads more than 120 days
-old. This can be adjusted with `HOMEBREW_CLEANUP_MAX_AGE_DAYS`.
+old. This can be adjusted with `$HOMEBREW_CLEANUP_MAX_AGE_DAYS`.
 
 `--prune`
 
@@ -322,7 +322,7 @@ first search, making that search slower than subsequent ones.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to search
-  their descriptions. Implied if `HOMEBREW_EVAL_ALL` is set.
+  their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set.
 
 `--formula`
 
@@ -484,8 +484,8 @@ Display brief statistics for your Homebrew installation. If a *`formula`* or
 `--analytics`
 
 : List global Homebrew analytics data or, if specified, installation and build
-  error data for *`formula`* (provided neither `HOMEBREW_NO_ANALYTICS` nor
-  `HOMEBREW_NO_GITHUB_API` are set).
+  error data for *`formula`* (provided neither `$HOMEBREW_NO_ANALYTICS` nor
+  `$HOMEBREW_NO_GITHUB_API` are set).
 
 `--days`
 
@@ -521,7 +521,7 @@ Display brief statistics for your Homebrew installation. If a *`formula`* or
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to print
-  their JSON. Implied if `HOMEBREW_EVAL_ALL` is set.
+  their JSON. Implied if `$HOMEBREW_EVAL_ALL` is set.
 
 `--variations`
 
@@ -544,14 +544,14 @@ Display brief statistics for your Homebrew installation. If a *`formula`* or
 Install a *`formula`* or *`cask`*. Additional options specific to a *`formula`*
 may be appended to the command.
 
-Unless `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set, `brew upgrade` or `brew
+Unless `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set, `brew upgrade` or `brew
 reinstall` will be run for outdated dependents and dependents with broken
 linkage, respectively.
 
-Unless `HOMEBREW_NO_INSTALL_CLEANUP` is set, `brew cleanup` will then be run for
-the installed formulae or, every 30 days, for all formulae.
+Unless `$HOMEBREW_NO_INSTALL_CLEANUP` is set, `brew cleanup` will then be run
+for the installed formulae or, every 30 days, for all formulae.
 
-Unless `HOMEBREW_NO_INSTALL_UPGRADE` is set, `brew install` *`formula`* will
+Unless `$HOMEBREW_NO_INSTALL_UPGRADE` is set, `brew install` *`formula`* will
 upgrade *`formula`* if it is already installed but outdated.
 
 `-d`, `--debug`
@@ -643,6 +643,10 @@ upgrade *`formula`* if it is already installed but outdated.
 `--skip-post-install`
 
 : Install but skip any post-install steps.
+
+`--skip-link`
+
+: Install but skip linking the keg into the prefix.
 
 `--bottle-arch`
 
@@ -993,7 +997,7 @@ all items or checking if any current formulae/casks have Ruby issues.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not. Implied
-  if `HOMEBREW_EVAL_ALL` is set.
+  if `$HOMEBREW_EVAL_ALL` is set.
 
 `--no-simulate`
 
@@ -1005,12 +1009,12 @@ Uninstall and then reinstall a *`formula`* or *`cask`* using the same options it
 was originally installed with, plus any appended options specific to a
 *`formula`*.
 
-Unless `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set, `brew upgrade` or `brew
+Unless `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set, `brew upgrade` or `brew
 reinstall` will be run for outdated dependents and dependents with broken
 linkage, respectively.
 
-Unless `HOMEBREW_NO_INSTALL_CLEANUP` is set, `brew cleanup` will then be run for
-the reinstalled formulae or, every 30 days, for all formulae.
+Unless `$HOMEBREW_NO_INSTALL_CLEANUP` is set, `brew cleanup` will then be run
+for the reinstalled formulae or, every 30 days, for all formulae.
 
 `-d`, `--debug`
 
@@ -1112,7 +1116,7 @@ Perform a substring search of cask tokens and formula names for *`text`*. If
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to search
-  their descriptions. Implied if `HOMEBREW_EVAL_ALL` is set.
+  their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set.
 
 `--pull-request`
 
@@ -1170,13 +1174,13 @@ Valid shells: bash\|csh\|fish\|pwsh\|sh\|tcsh\|zsh
 Print export statements. When run in a shell, this installation of Homebrew will
 be added to your `PATH`, `MANPATH`, and `INFOPATH`.
 
-The variables `HOMEBREW_PREFIX`, `HOMEBREW_CELLAR` and `HOMEBREW_REPOSITORY` are
-also exported to avoid querying them multiple times. To help guarantee
+The variables `$HOMEBREW_PREFIX`, `$HOMEBREW_CELLAR` and `$HOMEBREW_REPOSITORY`
+are also exported to avoid querying them multiple times. To help guarantee
 idempotence, this command produces no output when Homebrew's `bin` and `sbin`
 directories are first and second respectively in your `PATH`. Consider adding
 evaluation of this command's output to your dotfiles (e.g. `~/.bash_profile` or
-`~/.zprofile` on macOS and `~/.bashrc` or `~/.zshrc` on Linux) with: `eval
-"$(brew shellenv)"`
+~/.zprofile` on macOS and ~/.bashrc` or ~/.zshrc` on Linux) with:
+  `eval "$(brew shellenv)"\`
 
 The shell can be specified explicitly with a supported shell name parameter.
 Unknown shells will output POSIX exports.
@@ -1231,7 +1235,7 @@ HTTPS, e.g. SSH, git, HTTP, FTP(S), rsync.
 `--eval-all`
 
 : Evaluate all the formulae, casks and aliases in the new tap to check validity.
-  Implied if `HOMEBREW_EVAL_ALL` is set.
+  Implied if `$HOMEBREW_EVAL_ALL` is set.
 
 `-f`, `--force`
 
@@ -1342,12 +1346,12 @@ they were originally installed with, plus any appended brew formula options. If
 *`cask`* or *`formula`* are specified, upgrade only the given *`cask`* or
 *`formula`* kegs (unless they are pinned; see `pin`, `unpin`).
 
-Unless `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set, `brew upgrade` or `brew
+Unless `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set, `brew upgrade` or `brew
 reinstall` will be run for outdated dependents and dependents with broken
 linkage, respectively.
 
-Unless `HOMEBREW_NO_INSTALL_CLEANUP` is set, `brew cleanup` will then be run for
-the upgraded formulae or, every 30 days, for all formulae.
+Unless `$HOMEBREW_NO_INSTALL_CLEANUP` is set, `brew cleanup` will then be run
+for the upgraded formulae or, every 30 days, for all formulae.
 
 `-d`, `--debug`
 
@@ -1501,7 +1505,7 @@ dependency for their stable builds.
 
 ### `--cache` \[*`options`*\] \[*`formula`*\|*`cask`* ...\]
 
-Display Homebrew's download cache. See also `HOMEBREW_CACHE`.
+Display Homebrew's download cache. See also `$HOMEBREW_CACHE`.
 
 If a *`formula`* or *`cask`* is provided, display the file or directory used to
 cache it.
@@ -3074,13 +3078,17 @@ Whalebrew and Visual Studio Code.
 : Install and upgrade (by default) all dependencies from the `Brewfile`.
 
 You can specify the `Brewfile` location using `--file` or by setting the
-`HOMEBREW_BUNDLE_FILE` environment variable.
+`$HOMEBREW_BUNDLE_FILE` environment variable.
 
 You can skip the installation of dependencies by adding space-separated values
 to one or more of the following environment variables:
-`HOMEBREW_BUNDLE_BREW_SKIP`, `HOMEBREW_BUNDLE_CASK_SKIP`,
-`HOMEBREW_BUNDLE_MAS_SKIP`, `HOMEBREW_BUNDLE_WHALEBREW_SKIP`,
-`HOMEBREW_BUNDLE_TAP_SKIP`.
+`$HOMEBREW_BUNDLE_BREW_SKIP`, `$HOMEBREW_BUNDLE_CASK_SKIP`,
+`$HOMEBREW_BUNDLE_MAS_SKIP`, `$HOMEBREW_BUNDLE_WHALEBREW_SKIP`,
+`$HOMEBREW_BUNDLE_TAP_SKIP`.
+
+`brew bundle upgrade`
+
+: Shorthand for `brew bundle install --upgrade`.
 
 `brew bundle dump`
 
@@ -3110,6 +3118,10 @@ useful for scripting.
 
 By default, only Homebrew formula dependencies are listed.
 
+`brew bundle edit`
+
+: Edit the `Brewfile` in your editor.
+
 `brew bundle exec` *`command`*
 
 : Run an external command in an isolated build environment based on the
@@ -3121,6 +3133,15 @@ commands like `bundle install`, `npm install`, etc. It will also add compiler
 flags which will help with finding keg-only dependencies like `openssl`,
 `icu4c`, etc.
 
+`brew bundle sh`
+
+: Run your shell in a `brew bundle exec` environment.
+
+`brew bundle env`
+
+: Print the environment variables that would be set in a `brew bundle exec`
+  environment.
+
 `--file`
 
 : Read the `Brewfile` from this location. Use `--file=-` to pipe to
@@ -3128,8 +3149,9 @@ flags which will help with finding keg-only dependencies like `openssl`,
 
 `--global`
 
-: Read the `Brewfile` from `~/.Brewfile` or the `HOMEBREW_BUNDLE_FILE_GLOBAL`
-  environment variable, if set.
+: Read the `Brewfile` from `$HOMEBREW_BUNDLE_FILE_GLOBAL` (if set),
+  `${XDG_CONFIG_HOME}/homebrew/Brewfile` (if `$XDG_CONFIG_HOME` is set),
+  `~/.homebrew/Brewfile` or `~/.Brewfile` otherwise.
 
 `-v`, `--verbose`
 
@@ -3140,7 +3162,13 @@ flags which will help with finding keg-only dependencies like `openssl`,
 
 : `install` does not run `brew upgrade` on outdated dependencies. `check` does
   not check for outdated dependencies. Note they may still be upgraded by `brew
-  install` if needed.
+  install` if needed. This is enabled by default if
+  `$HOMEBREW_BUNDLE_NO_UPGRADE` is set.
+
+`--upgrade`
+
+: `install` runs `brew upgrade` on outdated dependencies, even if
+  `$HOMEBREW_BUNDLE_NO_UPGRADE` is set.
 
 `-f`, `--force`
 
@@ -3150,7 +3178,7 @@ flags which will help with finding keg-only dependencies like `openssl`,
 `--cleanup`
 
 : `install` performs cleanup operation, same as running `cleanup --force`. This
-  is enabled by default if `HOMEBREW_BUNDLE_INSTALL_CLEANUP` is set and
+  is enabled by default if `$HOMEBREW_BUNDLE_INSTALL_CLEANUP` is set and
   `--global` is passed.
 
 `--all`
@@ -3184,13 +3212,13 @@ flags which will help with finding keg-only dependencies like `openssl`,
 `--no-vscode`
 
 : `dump` without VSCode extensions. This is enabled by default if
-  `HOMEBREW_BUNDLE_DUMP_NO_VSCODE` is set.
+  `$HOMEBREW_BUNDLE_DUMP_NO_VSCODE` is set.
 
 `--describe`
 
 : `dump` adds a description comment above each line, unless the dependency does
   not have a description. This is enabled by default if
-  `HOMEBREW_BUNDLE_DUMP_DESCRIBE` is set.
+  `$HOMEBREW_BUNDLE_DUMP_DESCRIBE` is set.
 
 `--no-restart`
 
@@ -3551,10 +3579,10 @@ files:
 
 * `/etc/homebrew/brew.env` (system-wide)
 
-* `$HOMEBREW_PREFIX/etc/homebrew/brew.env` (prefix-specific)
+* `${HOMEBREW_PREFIX}/etc/homebrew/brew.env` (prefix-specific)
 
 * `$XDG_CONFIG_HOME/homebrew/brew.env` if `$XDG_CONFIG_HOME` is set or
-  `$HOME/.homebrew/brew.env` otherwise (user-specific)
+  `~/.homebrew/brew.env` otherwise (user-specific)
 
 User-specific environment files take precedence over prefix-specific files and
 prefix-specific files take precedence over system-wide files (unless
@@ -3572,8 +3600,8 @@ command execution e.g. `$(cat file)`.
 `HOMEBREW_API_AUTO_UPDATE_SECS`
 
 : Check Homebrew's API for new formulae or cask data every
-  `HOMEBREW_API_AUTO_UPDATE_SECS` seconds. Alternatively, disable API
-  auto-update checks entirely with `HOMEBREW_NO_AUTO_UPDATE`.
+  `$HOMEBREW_API_AUTO_UPDATE_SECS` seconds. Alternatively, disable API
+  auto-update checks entirely with `$HOMEBREW_NO_AUTO_UPDATE`.
   
   *Default:* `450`.
 
@@ -3595,8 +3623,8 @@ command execution e.g. `$(cat file)`.
 `HOMEBREW_ARTIFACT_DOMAIN`
 
 : Prefix all download URLs, including those for bottles, with this value. For
-  example, `HOMEBREW_ARTIFACT_DOMAIN=http://localhost:8080` will cause a formula
-  with the URL `https://example.com/foo.tar.gz` to instead download from
+  example, `export HOMEBREW_ARTIFACT_DOMAIN=http://localhost:8080` will cause a
+  formula with the URL `https://example.com/foo.tar.gz` to instead download from
   `http://localhost:8080/https://example.com/foo.tar.gz`. Bottle URLs however,
   have their domain replaced with this prefix. This results in e.g.
   `https://ghcr.io/v2/homebrew/core/gettext/manifests/0.21` to instead be
@@ -3605,18 +3633,18 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK`
 
-: If `HOMEBREW_ARTIFACT_DOMAIN` and `HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK` are
-  both set, if the request to `HOMEBREW_ARTIFACT_DOMAIN` fails then it Homebrew
+: If `$HOMEBREW_ARTIFACT_DOMAIN` and `$HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK` are
+  both set, if the request to `$HOMEBREW_ARTIFACT_DOMAIN` fails then it Homebrew
   will error rather than trying any other/default URLs.
 
 `HOMEBREW_AUTO_UPDATE_SECS`
 
-: Run `brew update` once every `HOMEBREW_AUTO_UPDATE_SECS` seconds before some
+: Run `brew update` once every `$HOMEBREW_AUTO_UPDATE_SECS` seconds before some
   commands, e.g. `brew install`, `brew upgrade` and `brew tap`. Alternatively,
-  disable auto-update entirely with `HOMEBREW_NO_AUTO_UPDATE`.
+  disable auto-update entirely with `$HOMEBREW_NO_AUTO_UPDATE`.
   
   *Default:* `86400` (24 hours), `3600` (1 hour) if a developer command has been
-  run or `300` (5 minutes) if `HOMEBREW_NO_INSTALL_FROM_API` is set.
+  run or `300` (5 minutes) if `$HOMEBREW_NO_INSTALL_FROM_API` is set.
 
 `HOMEBREW_BAT`
 
@@ -3643,10 +3671,10 @@ command execution e.g. `$(cat file)`.
 
 : Use this URL as the download mirror for bottles. If bottles at that URL are
   temporarily unavailable, the default bottle domain will be used as a fallback
-  mirror. For example, `HOMEBREW_BOTTLE_DOMAIN=http://localhost:8080` will cause
-  all bottles to download from the prefix `http://localhost:8080/`. If bottles
-  are not available at `HOMEBREW_BOTTLE_DOMAIN` they will be downloaded from the
-  default bottle domain.
+  mirror. For example, `export HOMEBREW_BOTTLE_DOMAIN=http://localhost:8080`
+  will cause all bottles to download from the prefix `http://localhost:8080/`.
+  If bottles are not available at `$HOMEBREW_BOTTLE_DOMAIN` they will be
+  downloaded from the default bottle domain.
   
   *Default:* `https://ghcr.io/v2/homebrew/core`.
 
@@ -3674,8 +3702,8 @@ command execution e.g. `$(cat file)`.
 
 : Use this directory as the download cache.
   
-  *Default:* macOS: `$HOME/Library/Caches/Homebrew`, Linux:
-  `$XDG_CACHE_HOME/Homebrew` or `$HOME/.cache/Homebrew`.
+  *Default:* macOS: `~/Library/Caches/Homebrew`, Linux:
+  `$XDG_CACHE_HOME/Homebrew` or `~/.cache/Homebrew`.
 
 `HOMEBREW_CASK_OPTS`
 
@@ -3684,7 +3712,8 @@ command execution e.g. `$(cat file)`.
   supported. For example, you might add something like the following to your
   `~/.profile`, `~/.bash_profile`, or `~/.zshenv`:
   
-  `export HOMEBREW_CASK_OPTS="--appdir=~/Applications --fontdir=/Library/Fonts"`
+  `export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications
+  --fontdir=/Library/Fonts"`
 
 `HOMEBREW_CLEANUP_MAX_AGE_DAYS`
 
@@ -3765,13 +3794,13 @@ command execution e.g. `$(cat file)`.
 `HOMEBREW_DOCKER_REGISTRY_BASIC_AUTH_TOKEN`
 
 : Use this base64 encoded username and password for authenticating with a Docker
-  registry proxying GitHub Packages. If `HOMEBREW_DOCKER_REGISTRY_TOKEN` is set,
-  it will be used instead.
+  registry proxying GitHub Packages. If `$HOMEBREW_DOCKER_REGISTRY_TOKEN` is
+  set, it will be used instead.
 
 `HOMEBREW_DOCKER_REGISTRY_TOKEN`
 
 : Use this bearer token for authenticating with a Docker registry proxying
-  GitHub Packages. Preferred over `HOMEBREW_DOCKER_REGISTRY_BASIC_AUTH_TOKEN`.
+  GitHub Packages. Preferred over `$HOMEBREW_DOCKER_REGISTRY_BASIC_AUTH_TOKEN`.
 
 `HOMEBREW_EDITOR`
 
@@ -3813,13 +3842,13 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_FORBIDDEN_OWNER`
 
-: The person who has set any `HOMEBREW_FORBIDDEN_*` variables.
+: The person who has set any `$HOMEBREW_FORBIDDEN_*` variables.
   
   *Default:* `you`.
 
 `HOMEBREW_FORBIDDEN_OWNER_CONTACT`
 
-: How to contact the `HOMEBREW_FORBIDDEN_OWNER`, if set and necessary.
+: How to contact the `$HOMEBREW_FORBIDDEN_OWNER`, if set and necessary.
 
 `HOMEBREW_FORBIDDEN_TAPS`
 
@@ -3834,7 +3863,7 @@ command execution e.g. `$(cat file)`.
 `HOMEBREW_FORCE_API_AUTO_UPDATE`
 
 : If set, update the Homebrew API formula or cask data even if
-  `HOMEBREW_NO_AUTO_UPDATE` is set.
+  `$HOMEBREW_NO_AUTO_UPDATE` is set.
 
 `HOMEBREW_FORCE_BREWED_CA_CERTIFICATES`
 
@@ -3853,8 +3882,8 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_FORCE_BREW_WRAPPER`
 
-: If set, require `HOMEBREW_BREW_WRAPPER` to be set to the same value as
-  `HOMEBREW_FORCE_BREW_WRAPPER` for non-trivial `brew` commands.
+: If set, require `$HOMEBREW_BREW_WRAPPER` to be set to the same value as
+  `$HOMEBREW_FORCE_BREW_WRAPPER` for non-trivial `brew` commands.
 
 `HOMEBREW_FORCE_VENDOR_RUBY`
 
@@ -3912,12 +3941,12 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_GIT_EMAIL`
 
-: Set the Git author name and, if `HOMEBREW_GIT_COMMITTER_EMAIL` is unset,
+: Set the Git author name and, if `$HOMEBREW_GIT_COMMITTER_EMAIL` is unset,
   committer email to this value.
 
 `HOMEBREW_GIT_NAME`
 
-: Set the Git author name and, if `HOMEBREW_GIT_COMMITTER_NAME` is unset,
+: Set the Git author name and, if `$HOMEBREW_GIT_COMMITTER_NAME` is unset,
   committer name to this value.
 
 `HOMEBREW_GIT_PATH`
@@ -3943,9 +3972,8 @@ command execution e.g. `$(cat file)`.
 : Consult this file for the list of formulae to check by default when no formula
   argument is passed to `brew livecheck`.
   
-  *Default:* `$XDG_CONFIG_HOME/homebrew/livecheck_watchlist.txt` if
-  `$XDG_CONFIG_HOME` is set or `$HOME/.homebrew/livecheck_watchlist.txt`
-  otherwise.
+  *Default:* `${XDG_CONFIG_HOME}/homebrew/livecheck_watchlist.txt` if
+  `$XDG_CONFIG_HOME` is set or `~/.homebrew/livecheck_watchlist.txt` otherwise.
 
 `HOMEBREW_LOCK_CONTEXT`
 
@@ -3956,8 +3984,8 @@ command execution e.g. `$(cat file)`.
 
 : Use this directory to store log files.
   
-  *Default:* macOS: `$HOME/Library/Logs/Homebrew`, Linux:
-  `$XDG_CACHE_HOME/Homebrew/Logs` or `$HOME/.cache/Homebrew/Logs`.
+  *Default:* macOS: `~/Library/Logs/Homebrew`, Linux:
+  `${XDG_CACHE_HOME}/Homebrew/Logs` or `~/.cache/Homebrew/Logs`.
 
 `HOMEBREW_MAKE_JOBS`
 
@@ -3980,7 +4008,7 @@ command execution e.g. `$(cat file)`.
 
 : If set, do not automatically update before running some commands, e.g. `brew
   install`, `brew upgrade` and `brew tap`. Preferably, run this less often by
-  setting `HOMEBREW_AUTO_UPDATE_SECS` to a value higher than the default. Note
+  setting `$HOMEBREW_AUTO_UPDATE_SECS` to a value higher than the default. Note
   that setting this and e.g. tapping new taps may result in a broken
   configuration. Please ensure you always run `brew update` before reporting any
   issues.
@@ -4002,7 +4030,7 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_NO_EMOJI`
 
-: If set, do not print `HOMEBREW_INSTALL_BADGE` on a successful build.
+: If set, do not print `$HOMEBREW_INSTALL_BADGE` on a successful build.
 
 `HOMEBREW_NO_ENV_HINTS`
 
@@ -4011,7 +4039,7 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_NO_FORCE_BREW_WRAPPER`
 
-: If set, disables `HOMEBREW_FORCE_BREW_WRAPPER` behaviour, even if set.
+: If set, disables `$HOMEBREW_FORCE_BREW_WRAPPER` behaviour, even if set.
 
 `HOMEBREW_NO_GITHUB_API`
 
@@ -4038,8 +4066,8 @@ command execution e.g. `$(cat file)`.
 
 : If set, `brew install`, `brew upgrade` and `brew reinstall` will never
   automatically cleanup installed/upgraded/reinstalled formulae or all formulae
-  every `HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS` days. Alternatively,
-  `HOMEBREW_NO_CLEANUP_FORMULAE` allows specifying specific formulae to not
+  every `$HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS` days. Alternatively,
+  `$HOMEBREW_NO_CLEANUP_FORMULAE` allows specifying specific formulae to not
   clean up.
 
 `HOMEBREW_NO_INSTALL_FROM_API`
@@ -4080,20 +4108,20 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_SKIP_OR_LATER_BOTTLES`
 
-: If set along with `HOMEBREW_DEVELOPER`, do not use bottles from older versions
-  of macOS. This is useful in development on new macOS versions.
+: If set along with `$HOMEBREW_DEVELOPER`, do not use bottles from older
+  versions of macOS. This is useful in development on new macOS versions.
 
 `HOMEBREW_SORBET_RUNTIME`
 
 : If set, enable runtime typechecking using Sorbet. Set by default for
-  `HOMEBREW_DEVELOPER` or when running some developer commands.
+  `$HOMEBREW_DEVELOPER` or when running some developer commands.
 
 `HOMEBREW_SSH_CONFIG_PATH`
 
 : If set, Homebrew will use the given config file instead of `~/.ssh/config`
   when fetching Git repositories over SSH.
   
-  *Default:* `$HOME/.ssh/config`
+  *Default:* `~/.ssh/config`
 
 `HOMEBREW_SUDO_THROUGH_SUDO_USER`
 
