@@ -23,17 +23,18 @@ Linux distribution without requiring `sudo`.
 
 **prefix**
 
-: path in which Homebrew is installed, e.g. `/usr/local`
+: path in which Homebrew is installed, e.g. `/opt/homebrew` or
+  `/home/linuxbrew/.linuxbrew`
 
 **keg**
 
 : installation destination directory of a given **formula** version, e.g.
-  `/usr/local/Cellar/foo/0.1`
+  `/opt/homebrew/Cellar/foo/0.1`
 
 **rack**
 
 : directory containing one or more versioned **kegs**, e.g.
-  `/usr/local/Cellar/foo`
+  `/opt/homebrew/Cellar/foo`
 
 **keg-only**
 
@@ -41,15 +42,16 @@ Linux distribution without requiring `sudo`.
 
 **opt prefix**
 
-: a symlink to the active version of a **keg**, e.g. `/usr/local/opt/foo`
+: a symlink to the active version of a **keg**, e.g. `/opt/homebrew/opt/foo`
 
 **Cellar**
 
-: directory containing one or more named **racks**, e.g. `/usr/local/Cellar`
+: directory containing one or more named **racks**, e.g. `/opt/homebrew/Cellar`
 
 **Caskroom**
 
-: directory containing one or more named **casks**, e.g. `/usr/local/Caskroom`
+: directory containing one or more named **casks**, e.g.
+  `/opt/homebrew/Caskroom`
 
 **external command**
 
@@ -1230,7 +1232,8 @@ HTTPS, e.g. SSH, git, HTTP, FTP(S), rsync.
 
 `--repair`
 
-: Migrate tapped formulae from symlink-based to directory-based structure.
+: Add missing symlinks to tap manpages and shell completions. Correct git remote
+  refs for any taps where upstream HEAD branch has been renamed.
 
 `--eval-all`
 
@@ -4231,11 +4234,11 @@ Homebrew API: <https://rubydoc.brew.sh>
 
 Homebrew's Project Leader is Mike McQuaid.
 
-Homebrew's Project Leadership Committee is Colin Dean, Issy Long, Mike McQuaid,
-Patrick Linnane and Vanessa Gennarelli.
+Homebrew's Project Leadership Committee is Colin Dean, Michka Popoff, Mike
+McQuaid, Patrick Linnane and Vanessa Gennarelli.
 
-Homebrew's Technical Steering Committee is Bo Anderson, FX Coudert, Michka
-Popoff, Mike McQuaid and Rylan Polster.
+Homebrew's Technical Steering Committee is Bo Anderson, FX Coudert, Mike McQuaid
+and Rylan Polster.
 
 Homebrew's maintainers are Alexander Bayandin, Bevan Kay, Bo Anderson, Branch
 Vincent, Caleb Xu, Carlo Cabrera, Daeho Ro, Douglas Eichelberger, Dustin
