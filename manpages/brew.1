@@ -62,6 +62,11 @@ List all installed formulae\.
 .SS "\fBsearch\fP \fR[\fItext\fP|\fB/\fP\fItext\fP\fB/\fP]"
 Perform a substring search of cask tokens and formula names for \fItext\fP\&\. If \fItext\fP is flanked by slashes, it is interpreted as a regular expression\. The search for \fItext\fP is extended online to \fBhomebrew/core\fP and \fBhomebrew/cask\fP\&\. If no search term is provided, all locally available formulae are listed\.
 .SH "COMMANDS"
+.SS "\fBalias\fP \fR[\fIalias\fP \.\.\. | \fIalias\fP=\fIcommand\fP]"
+Show existing aliases\. If no aliases are given, print the whole list\.
+.TP
+\fB\-\-edit\fP
+Edit aliases in a text editor\. Either one or all aliases may be opened at once\. If the given alias doesn\[u2019]t exist it\[u2019]ll be pre\-populated with a template\.
 .SS "\fBanalytics\fP \fR[\fIsubcommand\fP]"
 Control Homebrew\[u2019]s anonymous aggregate user behaviour analytics\. Read more at 
 .UR https://docs\.brew\.sh/Analytics
@@ -135,7 +140,7 @@ Show the union of dependencies for multiple \fIformula\fP, instead of the inters
 List dependencies by their full name\.
 .TP
 \fB\-\-include\-implicit\fP
-Include implicit dependencies used to download and unpack source files
+Include implicit dependencies used to download and unpack source files\.
 .TP
 \fB\-\-include\-build\fP
 Include \fB:build\fP dependencies for \fIformula\fP\&\.
@@ -788,6 +793,8 @@ Show information on each installed tap\.
 Print a JSON representation of \fItap\fP\&\. Currently the default and only accepted value for \fIversion\fP is \fBv1\fP\&\. See the docs for examples of using the JSON output: 
 .UR https://docs\.brew\.sh/Querying\-Brew
 .UE
+.SS "\fBunalias\fP \fIalias\fP \fR[\.\.\.]"
+Remove aliases\.
 .SS "\fBuninstall\fP, \fBremove\fP, \fBrm\fP \fR[\fIoptions\fP] \fIinstalled_formula\fP|\fIinstalled_cask\fP \fR[\.\.\.]"
 Uninstall a \fIformula\fP or \fIcask\fP\&\.
 .TP
@@ -925,7 +932,7 @@ Only list formulae and casks that are not currently installed\.
 Evaluate all available formulae and casks, whether installed or not, to show their dependents\.
 .TP
 \fB\-\-include\-implicit\fP
-Include formulae that have \fIformula\fP as an implicit dependency to download and unpack source files
+Include formulae that have \fIformula\fP as an implicit dependency for downloading and unpacking source files\.
 .TP
 \fB\-\-include\-build\fP
 Include formulae that specify \fIformula\fP as a \fB:build\fP dependency\.
@@ -1014,7 +1021,7 @@ If \fIuser\fP\fB/\fP\fIrepo\fP are provided, display where tap \fIuser\fP\fB/\fP
 Print the version numbers of Homebrew, Homebrew/homebrew\-core and Homebrew/homebrew\-cask (if tapped) to standard output\.
 .SH "DEVELOPER COMMANDS"
 .SS "\fBaudit\fP \fR[\fIoptions\fP] \fR[\fIformula\fP|\fIcask\fP \.\.\.]"
-Check \fIformula\fP for Homebrew coding style violations\. This should be run before submitting a new formula or cask\. If no \fIformula\fP|\fIcask\fP are provided, check all locally available formulae and casks and skip style checks\. Will exit with a non\-zero status if any errors are found\.
+Check \fIformula\fP or \fIcask\fP for Homebrew coding style violations\. This should be run before submitting a new formula or cask\. If no \fIformula\fP or \fIcask\fP are provided, check all locally available formulae and casks and skip style checks\. Will exit with a non\-zero status if any errors are found\.
 .TP
 \fB\-\-os\fP
 Audit the given operating system\. (Pass \fBall\fP to audit all operating systems\.)
@@ -1041,13 +1048,13 @@ Evaluate all available formulae and casks, whether installed or not, to audit th
 Run various additional style checks to determine if a new formula or cask is eligible for Homebrew\. This should be used when creating new formulae or casks and implies \fB\-\-strict\fP and \fB\-\-online\fP\&\.
 .TP
 \fB\-\-[no\-]signing\fP
-Audit for signed apps, which are required on ARM
+Audit for app signatures, which are required by macOS on ARM\.
 .TP
 \fB\-\-token\-conflicts\fP
 Audit for token conflicts\.
 .TP
 \fB\-\-tap\fP
-Check the formulae within the given tap, specified as \fIuser\fP\fB/\fP\fIrepo\fP\&\.
+Check formulae and casks within the given tap, specified as \fIuser\fP\fB/\fP\fIrepo\fP\&\.
 .TP
 \fB\-\-fix\fP
 Fix style violations automatically using RuboCop\[u2019]s auto\-correct feature\.
@@ -1310,7 +1317,7 @@ Treat all named arguments as casks\.
 Summarise contributions to Homebrew repositories\.
 .TP
 \fB\-\-repositories\fP
-Specify a comma\-separated list of repositories to search\. Supported repositories: \fBbrew\fP, \fBcore\fP, \fBcask\fP, \fBaliases\fP, \fBbundle\fP, \fBcommand\-not\-found\fP, \fBtest\-bot\fP and \fBservices\fP\&\. Omitting this flag, or specifying \fB\-\-repositories=primary\fP, searches only the main repositories: brew,core,cask\. Specifying \fB\-\-repositories=all\fP, searches all repositories\.
+Specify a comma\-separated list of repositories to search\. Supported repositories: \fBbrew\fP, \fBcore\fP, \fBcask\fP, \fBbundle\fP, \fBcommand\-not\-found\fP, \fBtest\-bot\fP and \fBservices\fP\&\. Omitting this flag, or specifying \fB\-\-repositories=primary\fP, searches only the main repositories: brew,core,cask\. Specifying \fB\-\-repositories=all\fP, searches all repositories\.
 .TP
 \fB\-\-from\fP
 Date (ISO\-8601 format) to start searching contributions\. Omitting this flag searches the last year\.
@@ -1441,6 +1448,60 @@ Extract the specified \fIversion\fP of \fIformula\fP instead of the most recent\
 Overwrite the destination formula if it already exists\.
 .SS "\fBformula\fP \fIformula\fP \fR[\.\.\.]"
 Display the path where \fIformula\fP is located\.
+.SS "\fBformula\-analytics\fP"
+Query Homebrew\[u2019]s analytics\.
+.TP
+\fB\-\-days\-ago\fP
+Query from the specified days ago until the present\. The default is 30 days\.
+.TP
+\fB\-\-install\fP
+Output the number of specifically requested installations or installation as dependencies of the formula\. This is the default\.
+.TP
+\fB\-\-cask\-install\fP
+Output the number of installations of casks\.
+.TP
+\fB\-\-install\-on\-request\fP
+Output the number of specifically requested installations of the formula\.
+.TP
+\fB\-\-build\-error\fP
+Output the number of build errors for the formulae\.
+.TP
+\fB\-\-os\-version\fP
+Output OS versions\.
+.TP
+\fB\-\-homebrew\-devcmdrun\-developer\fP
+Output devcmdrun/HOMEBREW_DEVELOPER\.
+.TP
+\fB\-\-homebrew\-os\-arch\-ci\fP
+Output OS/Architecture/CI\.
+.TP
+\fB\-\-homebrew\-prefixes\fP
+Output Homebrew prefixes\.
+.TP
+\fB\-\-homebrew\-versions\fP
+Output Homebrew versions\.
+.TP
+\fB\-\-brew\-command\-run\fP
+Output \fBbrew\fP commands run\.
+.TP
+\fB\-\-brew\-command\-run\-options\fP
+Output \fBbrew\fP commands run with options\.
+.TP
+\fB\-\-brew\-test\-bot\-test\fP
+Output \fBbrew test\-bot\fP steps run\.
+.TP
+\fB\-\-json\fP
+Output JSON\. This is required: plain text support has been removed\.
+.TP
+\fB\-\-all\-core\-formulae\-json\fP
+Output a different JSON format containing the JSON data for all Homebrew/homebrew\-core formulae\.
+.TP
+\fB\-\-setup\fP
+Install the necessary gems, require them and exit without running a query\.
+.SS "\fBgenerate\-analytics\-api\fP"
+Generates analytics API data files for formulae\.brew\.sh\.
+.P
+The generated files are written to the current directory\.
 .SS "\fBgenerate\-cask\-api\fP \fR[\fB\-\-dry\-run\fP]"
 Generate \fBhomebrew/cask\fP API data files for 
 .UR https://formulae\.brew\.sh
@@ -1634,7 +1695,7 @@ Comma\-separated list of workflows which can be ignored if they have not been ru
 Apply the bottle commit and publish bottles to a host\.
 .TP
 \fB\-\-keep\-old\fP
-If the formula specifies a rebuild version, attempt to preserve its value in the generated DSL\.
+If the formula specifies a rebuild version, attempt to preserve its value in the generated DSL\. When using GitHub Packages, this also appends the manifest to the existing list\.
 .TP
 \fB\-n\fP, \fB\-\-dry\-run\fP
 Print what would be done rather than doing it\.
@@ -1858,6 +1919,9 @@ Print the updated resource blocks instead of changing \fIformula\fP\&\.
 \fB\-s\fP, \fB\-\-silent\fP
 Suppress any output\.
 .TP
+\fB\-\-ignore\-errors\fP
+Record all discovered resources, even those that can\[u2019]t be resolved successfully\. This option is ignored for homebrew/core formulae\.
+.TP
 \fB\-\-ignore\-non\-pypi\-packages\fP
 Don\[u2019]t fail if \fIformula\fP is not a PyPI package\.
 .TP
@@ -1899,6 +1963,28 @@ Update the specified list of vendored gems to the latest version\.
 .TP
 \fB\-\-no\-commit\fP
 Do not generate a new commit upon completion\.
+.SS "\fBverify\fP \fR[\fIoptions\fP] \fIformula\fP \fR[\.\.\.]"
+Verify the build provenance of bottles using GitHub\[u2019]s attestation tools\. This is done by first fetching the given bottles and then verifying their provenance\.
+.P
+Note that this command depends on the GitHub CLI\. Run \fBbrew install gh\fP\&\.
+.TP
+\fB\-\-os\fP
+Download for the given operating system\.(Pass \fBall\fP to download for all operating systems\.)
+.TP
+\fB\-\-arch\fP
+Download for the given CPU architecture\.(Pass \fBall\fP to download for all architectures\.)
+.TP
+\fB\-\-bottle\-tag\fP
+Download a bottle for given tag\.
+.TP
+\fB\-\-deps\fP
+Also download dependencies for any listed \fIformula\fP\&\.
+.TP
+\fB\-f\fP, \fB\-\-force\fP
+Remove a previously cached version and re\-fetch\.
+.TP
+\fB\-j\fP, \fB\-\-json\fP
+Return JSON for the attestation data for each bottle\.
 .SH "GLOBAL CASK OPTIONS"
 These options are applicable to the \fBinstall\fP, \fBreinstall\fP and \fBupgrade\fP subcommands with the \fB\-\-cask\fP switch\.
 .TP
@@ -1964,11 +2050,6 @@ Make some output more verbose\.
 \fB\-h\fP, \fB\-\-help\fP
 Show this message\.
 .SH "OFFICIAL EXTERNAL COMMANDS"
-.SS "\fBalias\fP \fR[\fIalias\fP \.\.\. | \fIalias\fP=\fIcommand\fP]"
-Show existing aliases\. If no aliases are given, print the whole list\.
-.TP
-\fB\-\-edit\fP
-Edit aliases in a text editor\. Either one or all aliases may be opened at once\. If the given alias doesn\[u2019]t exist it\[u2019]ll be pre\-populated with a template\.
 .SS "\fBbundle\fP \fR[\fIsubcommand\fP]"
 Bundler for non\-Ruby dependencies from Homebrew, Homebrew Cask, Mac App Store, Whalebrew and Visual Studio Code\.
 .TP
@@ -2244,8 +2325,6 @@ Use these skipped or failed formulae from formulae steps for a formulae dependen
 .TP
 \fB\-\-tested\-formulae\fP
 Use these tested formulae from formulae steps for a formulae dependents step\.
-.SS "\fBunalias\fP \fIalias\fP \fR[\.\.\.]"
-Remove aliases\.
 .SS "\fBwhich\-formula\fP \fR[\fB\-\-explain\fP] \fIcommand\fP \fR[\.\.\.]"
 Show which formula(e) provides the given command\.
 .TP
@@ -2330,7 +2409,7 @@ Linux only: Pass this value to a type name representing the compiler\[u2019]s \f
 Prefix all download URLs, including those for bottles, with this value\. For example, \fBexport HOMEBREW_ARTIFACT_DOMAIN=http://localhost:8080\fP will cause a formula with the URL \fBhttps://example\.com/foo\.tar\.gz\fP to instead download from \fBhttp://localhost:8080/https://example\.com/foo\.tar\.gz\fP\&\. Bottle URLs however, have their domain replaced with this prefix\. This results in e\.g\. \fBhttps://ghcr\.io/v2/homebrew/core/gettext/manifests/0\.21\fP to instead be downloaded from \fBhttp://localhost:8080/v2/homebrew/core/gettext/manifests/0\.21\fP
 .TP
 \fBHOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK\fP
-If \fB$HOMEBREW_ARTIFACT_DOMAIN\fP and \fB$HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK\fP are both set, if the request to \fB$HOMEBREW_ARTIFACT_DOMAIN\fP fails then it Homebrew will error rather than trying any other/default URLs\.
+When \fB$HOMEBREW_ARTIFACT_DOMAIN\fP and \fB$HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK\fP are both set, if the request to \fB$HOMEBREW_ARTIFACT_DOMAIN\fP fails then Homebrew will error rather than trying any other/default URLs\.
 .TP
 \fBHOMEBREW_AUTO_UPDATE_SECS\fP
 Run \fBbrew update\fP once every \fB$HOMEBREW_AUTO_UPDATE_SECS\fP seconds before some commands, e\.g\. \fBbrew install\fP, \fBbrew upgrade\fP and \fBbrew tap\fP\&\. Alternatively, disable auto\-update entirely with \fB$HOMEBREW_NO_AUTO_UPDATE\fP\&\.
@@ -2672,7 +2751,7 @@ If set, \fBbrew install\fP \fIformula|cask\fP will not upgrade \fIformula|cask\f
 If set, \fBbrew update\fP will not show the list of newly added formulae/casks\.
 .TP
 \fBHOMEBREW_NO_VERIFY_ATTESTATIONS\fP
-If set, Homebrew not verify cryptographic attestations of build provenance for bottles from homebrew\-core\.
+If set, Homebrew will not verify cryptographic attestations of build provenance for bottles from homebrew\-core\.
 .TP
 \fBHOMEBREW_PIP_INDEX_URL\fP
 If set, \fBbrew install\fP \fIformula\fP will use this URL to download PyPI package resources\.
