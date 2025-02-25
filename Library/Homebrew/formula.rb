@@ -1608,6 +1608,20 @@ class Formula
     patchlist.each(&:apply)
   end
 
+  sig { params(is_data: T::Boolean).void }
+  def selective_patch(is_data: false)
+    patches = patchlist.select { |p| p.is_a?(DATAPatch) == is_data }
+    return if patches.empty?
+
+    patchtype = if is_data
+      "DATA"
+    else
+      "non-DATA"
+    end
+    ohai "Applying #{patchtype} patches"
+    patches.each(&:apply)
+  end
+
   # Yields |self,staging| with current working directory set to the uncompressed tarball
   # where staging is a {Mktemp} staging context.
   sig(:final) {
@@ -1930,6 +1944,26 @@ class Formula
     args << "--prefix=#{prefix}" if prefix
     args << "--no-build-isolation" unless build_isolation
     args
+  end
+
+  # Standard parameters for zig builds.
+  #
+  # @api public
+  sig {
+    params(prefix:       T.any(String, Pathname),
+           release_mode: Symbol).returns(T::Array[String])
+  }
+  def std_zig_args(prefix: self.prefix, release_mode: :fast)
+    raise ArgumentError, "Invalid Zig release mode: #{release_mode}" if [:safe, :fast, :small].exclude?(release_mode)
+
+    release_mode_downcased = release_mode.to_s.downcase
+    release_mode_capitalized = release_mode.to_s.capitalize
+    [
+      "--prefix", prefix.to_s,
+      "--release=#{release_mode_downcased}",
+      "-Doptimize=Release#{release_mode_capitalized}",
+      "--summary", "all"
+    ]
   end
 
   # Shared library names according to platform conventions.
@@ -2389,6 +2423,7 @@ class Formula
 
   # Returns the {PkgVersion} for this formula if it is installed.
   # If not, return `nil`.
+  sig { returns(T.nilable(PkgVersion)) }
   def any_installed_version
     any_installed_keg&.version
   end
@@ -3014,6 +3049,8 @@ class Formula
         pretty_args -= std_go_args
       when "meson"
         pretty_args -= std_meson_args
+      when "zig"
+        pretty_args -= std_zig_args
       when %r{(^|/)(pip|python)(?:[23](?:\.\d{1,2})?)?$}
         pretty_args -= std_pip_args
       end
@@ -3337,9 +3374,11 @@ class Formula
     # desc "Example formula"
     # ```
     #
-    # @!attribute [w] desc
     # @api public
-    attr_rw :desc
+    sig { params(val: String).returns(T.nilable(String)) }
+    def desc(val = T.unsafe(nil))
+      val.nil? ? @desc : @desc = T.let(val, T.nilable(String))
+    end
 
     # The SPDX ID of the open-source license that the formula uses.
     # Shows when running `brew info`.
@@ -3487,9 +3526,11 @@ class Formula
     # homepage "https://www.example.com"
     # ```
     #
-    # @!attribute [w] homepage
     # @api public
-    attr_rw :homepage
+    sig { params(val: String).returns(T.nilable(String)) }
+    def homepage(val = T.unsafe(nil))
+      val.nil? ? @homepage : @homepage = T.let(val, T.nilable(String))
+    end
 
     # Checks whether a `livecheck` specification is defined or not.
     #
@@ -3529,7 +3570,6 @@ class Formula
     # why they cannot use the bottle.
     attr_accessor :pour_bottle_check_unsatisfied_reason
 
-    # @!attribute [w] revision
     # Used for creating new Homebrew versions of software without new upstream
     # versions. For example, if we bump the major version of a library that this
     # {Formula} {.depends_on} then we may need to update the `revision` of this
@@ -3543,9 +3583,11 @@ class Formula
     # ```
     #
     # @api public
-    attr_rw :revision
+    sig { params(val: Integer).returns(T.nilable(Integer)) }
+    def revision(val = T.unsafe(nil))
+      val.nil? ? @revision : @revision = T.let(val, T.nilable(Integer))
+    end
 
-    # @!attribute [w] version_scheme
     # Used for creating new Homebrew version schemes. For example, if we want
     # to change version scheme from one to another, then we may need to update
     # `version_scheme` of this {Formula} to be able to use new version scheme,
@@ -3561,7 +3603,10 @@ class Formula
     # ```
     #
     # @api public
-    attr_rw :version_scheme
+    sig { params(val: Integer).returns(T.nilable(Integer)) }
+    def version_scheme(val = T.unsafe(nil))
+      val.nil? ? @version_scheme : @version_scheme = T.let(val, T.nilable(Integer))
+    end
 
     def spec_syms
       [:stable, :head].freeze
