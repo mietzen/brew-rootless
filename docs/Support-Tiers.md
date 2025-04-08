@@ -38,6 +38,7 @@ For Tier 1 support, Homebrew on Linux must be all of:
 
 - running on Ubuntu or a Homebrew-provided Docker image
 - have a system `glibc` >= 2.35
+- have a Linux kernel >= 3.2
 - if running Ubuntu, running an Ubuntu version in "standard support": <https://ubuntu.com/about/release-cycle>
 - installed in the default prefix (i.e. `/home/linuxbrew/.linuxbrew`)
 - running on a supported architecture (i.e. Intel x86_64)
@@ -92,7 +93,7 @@ An unsupported configuration is one in which:
 - Homebrew will refuse to run at all without third-party patching
 - You must migrate to another tool (e.g. Tigerbrew, MacPorts, Linux system package managers etc.)
 
-Tier 3 configurations include:
+Unsupported configurations include:
 
 - FreeBSD
 - macOS 10.6

@@ -13,7 +13,6 @@ env:
   HOMEBREW_DEVELOPER: 1
   HOMEBREW_NO_AUTO_UPDATE: 1
   HOMEBREW_NO_ENV_HINTS: 1
-  HOMEBREW_BOOTSNAP: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 defaults:
@@ -43,7 +42,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f # v1.227.0
+        uses: ruby/setup-ruby@354a1ad156761f5ee2b7b13fa8e09943a5e8d252 # v1.229.0
         with:
           bundler-cache: true
           working-directory: rubydoc
