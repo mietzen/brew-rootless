@@ -6,8 +6,6 @@ require_relative "system/systemctl"
 module Homebrew
   module Services
     module System
-      extend FileUtils
-
       # Path to launchctl binary.
       sig { returns(T.nilable(Pathname)) }
       def self.launchctl

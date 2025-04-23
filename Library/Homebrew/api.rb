@@ -4,7 +4,7 @@
 require "api/analytics"
 require "api/cask"
 require "api/formula"
-require "base64" # TODO: vendor this for Ruby 3.4.
+require "base64"
 
 module Homebrew
   # Helper functions for using Homebrew's formulae.brew.sh API.

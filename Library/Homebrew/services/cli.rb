@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "services/formula_wrapper"
+require "fileutils"
 
 module Homebrew
   module Services

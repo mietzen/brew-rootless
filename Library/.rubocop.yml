@@ -241,6 +241,8 @@ RSpec:
 # Intentionally disabled as it doesn't fit with our code style.
 RSpec/AnyInstance:
   Enabled: false
+RSpec/IncludeExamples:
+  Enabled: false
 RSpec/SpecFilePathFormat:
   Enabled: false
 RSpec/StubbedMock:
