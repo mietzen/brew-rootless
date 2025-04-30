@@ -157,7 +157,7 @@ Read from or write to the \fBBrewfile\fP from \fB$HOMEBREW_BUNDLE_FILE_GLOBAL\fP
 Run \fBinstall\fP before continuing to other operations e\.g\. \fBexec\fP\&\.
 .TP
 \fB\-\-services\fP
-Temporarily start services while running the \fBexec\fP or \fBsh\fP command\.
+Temporarily start services while running the \fBexec\fP or \fBsh\fP command\. This is enabled by default if \fB$HOMEBREW_BUNDLE_SERVICES\fP is set\.
 .TP
 \fB\-f\fP, \fB\-\-force\fP
 \fBinstall\fP runs with \fB\-\-force\fP/\fB\-\-overwrite\fP\&\. \fBdump\fP overwrites an existing \fBBrewfile\fP\&\. \fBcleanup\fP actually performs its cleanup operations\.
@@ -1342,6 +1342,9 @@ Open a pull request for the new version if none have been opened yet\.
 .TP
 \fB\-\-start\-with\fP
 Letter or word that the list of package results should alphabetically follow\.
+.TP
+\fB\-\-bump\-synced\fP
+Bump additional formulae marked as synced with the given formulae\.
 .SS "\fBbump\-cask\-pr\fP \fR[\fIoptions\fP] \fIcask\fP"
 Create a pull request to update \fIcask\fP with a new version\.
 .P
@@ -2840,7 +2843,7 @@ If set in Homebrew\[u2019]s system\-wide environment file (\fB/etc/homebrew/brew
 Use this path as the temporary directory for building packages\. Changing this may be needed if your system temporary directory and Homebrew prefix are on different volumes, as macOS has trouble moving symlinks across volumes when the target does not yet exist\. This issue typically occurs when using FileVault or custom SSD configurations\.
 .RS
 .P
-\fIDefault:\fP macOS: \fB/private/tmp\fP, Linux: \fB/tmp\fP\&\.
+\fIDefault:\fP macOS: \fB/private/tmp\fP, Linux: \fB/var/tmp\fP\&\.
 .RE
 .TP
 \fBHOMEBREW_UPDATE_TO_TAG\fP

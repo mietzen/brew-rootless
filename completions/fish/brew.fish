@@ -399,6 +399,7 @@ __fish_brew_complete_arg 'bottle' -a '(__fish_brew_suggest_formulae_installed)'
 
 
 __fish_brew_complete_cmd 'bump' 'Displays out-of-date packages and the latest version available'
+__fish_brew_complete_arg 'bump' -l bump-synced -d 'Bump additional formulae marked as synced with the given formulae'
 __fish_brew_complete_arg 'bump' -l cask -d 'Check only casks'
 __fish_brew_complete_arg 'bump' -l debug -d 'Display any debugging information'
 __fish_brew_complete_arg 'bump' -l eval-all -d 'Evaluate all formulae and casks'
@@ -520,7 +521,7 @@ __fish_brew_complete_arg 'bundle' -l no-restart -d '`dump` does not add `restart
 __fish_brew_complete_arg 'bundle' -l no-upgrade -d '`install` does not run `brew upgrade` on outdated dependencies. `check` does not check for outdated dependencies. Note they may still be upgraded by `brew install` if needed. This is enabled by default if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set'
 __fish_brew_complete_arg 'bundle' -l no-vscode -d '`dump` without VSCode (and forks/variants) extensions. This is enabled by default if `$HOMEBREW_BUNDLE_DUMP_NO_VSCODE` is set'
 __fish_brew_complete_arg 'bundle' -l quiet -d 'Make some output more quiet'
-__fish_brew_complete_arg 'bundle' -l services -d 'Temporarily start services while running the `exec` or `sh` command'
+__fish_brew_complete_arg 'bundle' -l services -d 'Temporarily start services while running the `exec` or `sh` command. This is enabled by default if `$HOMEBREW_BUNDLE_SERVICES` is set'
 __fish_brew_complete_arg 'bundle' -l tap -d '`list` or `dump` Homebrew tap dependencies'
 __fish_brew_complete_arg 'bundle' -l upgrade -d '`install` runs `brew upgrade` on outdated dependencies, even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set'
 __fish_brew_complete_arg 'bundle' -l upgrade-formulae -d '`install` runs `brew upgrade` on any of these comma-separated formulae, even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set'

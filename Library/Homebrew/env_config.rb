@@ -478,7 +478,7 @@ module Homebrew
                       "different volumes, as macOS has trouble moving symlinks across volumes when the target " \
                       "does not yet exist. This issue typically occurs when using FileVault or custom SSD " \
                       "configurations.",
-        default_text: "macOS: `/private/tmp`, Linux: `/tmp`.",
+        default_text: "macOS: `/private/tmp`, Linux: `/var/tmp`.",
         default:      HOMEBREW_DEFAULT_TEMP,
       },
       HOMEBREW_UPDATE_TO_TAG:                    {
@@ -556,7 +556,7 @@ module Homebrew
 
           falsy_values = %w[false no off nil 0]
           if falsy_values.include?(env_value&.downcase)
-            odeprecated "#{env}=#{env_value}", <<~EOS.chomp
+            odisabled "#{env}=#{env_value}", <<~EOS.chomp
               #{env}=1 to enable and #{env}= (an empty value) to disable
             EOS
           end

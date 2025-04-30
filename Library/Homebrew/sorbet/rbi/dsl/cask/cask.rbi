@@ -67,10 +67,10 @@ class Cask::Cask
   def deprecation_reason(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
-  def deprecation_replacement_formula(*args, &block); end
+  def deprecation_replacement_cask(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
-  def deprecation_replacement_cask(*args, &block); end
+  def deprecation_replacement_formula(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def desc(*args, &block); end
@@ -88,10 +88,10 @@ class Cask::Cask
   def disable_reason(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
-  def disable_replacement_formula(*args, &block); end
+  def disable_replacement_cask(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
-  def disable_replacement_cask(*args, &block); end
+  def disable_replacement_formula(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }
   def disabled?(*args, &block); end

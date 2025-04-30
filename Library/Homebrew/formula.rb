@@ -1173,44 +1173,6 @@ class Formula
     @active_log_type = old_log_type
   end
 
-  # This method can be overridden to provide a plist.
-  #
-  # ### Example
-  #
-  # ```ruby
-  # def plist; <<~EOS
-  #   <?xml version="1.0" encoding="UTF-8"?>
-  #   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  #   <plist version="1.0">
-  #   <dict>
-  #     <key>Label</key>
-  #       <string>#{plist_name}</string>
-  #     <key>ProgramArguments</key>
-  #     <array>
-  #       <string>#{opt_bin}/example</string>
-  #       <string>--do-this</string>
-  #     </array>
-  #     <key>RunAtLoad</key>
-  #     <true/>
-  #     <key>KeepAlive</key>
-  #     <true/>
-  #     <key>StandardErrorPath</key>
-  #     <string>/dev/null</string>
-  #     <key>StandardOutPath</key>
-  #     <string>/dev/null</string>
-  #   </dict>
-  #   </plist>
-  #   EOS
-  # end
-  # ```
-  #
-  # @see https://www.unix.com/man-page/all/5/plist/ <code>plist(5)</code> man page
-  sig { returns(NilClass) }
-  def plist
-    odisabled "`Formula#plist`", "`Homebrew::Service`"
-    nil
-  end
-
   # The generated launchd {.plist} service name.
   sig { returns(String) }
   def plist_name = service.plist_name
@@ -2819,13 +2781,13 @@ class Formula
     ).returns(Pathname)
   }
   def fetch(verify_download_integrity: true, timeout: nil, quiet: false)
-    odeprecated "Formula#fetch", "Resource#fetch on Formula#resource"
+    odisabled "Formula#fetch", "Resource#fetch on Formula#resource"
     active_spec.fetch(verify_download_integrity:, timeout:, quiet:)
   end
 
   sig { params(filename: T.any(Pathname, String)).void }
   def verify_download_integrity(filename)
-    odeprecated "Formula#verify_download_integrity", "Resource#verify_download_integrity on Formula#resource"
+    odisabled "Formula#verify_download_integrity", "Resource#verify_download_integrity on Formula#resource"
     active_spec.verify_download_integrity(filename)
   end
 
@@ -2936,8 +2898,8 @@ class Formula
   def inreplace(paths, before = nil, after = nil, old_audit_result = nil, audit_result: true, global: true, &block)
     # NOTE: must check for `#nil?` and not `#blank?`, or else `old_audit_result = false` will not call `odeprecated`.
     unless old_audit_result.nil?
-      odeprecated "inreplace(paths, before, after, #{old_audit_result})",
-                  "inreplace(paths, before, after, audit_result: #{old_audit_result})"
+      odisabled "inreplace(paths, before, after, #{old_audit_result})",
+                "inreplace(paths, before, after, audit_result: #{old_audit_result})"
       audit_result = old_audit_result
     end
     Utils::Inreplace.inreplace(paths, before, after, audit_result:, global:, &block)
@@ -3564,7 +3526,7 @@ class Formula
     # and `false` otherwise.
     sig { returns(T::Boolean) }
     def livecheckable?
-      # odeprecated "`livecheckable?`", "`livecheck_defined?`"
+      odeprecated "`livecheckable?`", "`livecheck_defined?`"
       @livecheck_defined == true
     end
 
@@ -3836,15 +3798,6 @@ class Formula
       specs.each do |spec|
         spec.resource(name, klass, &block) unless spec.resource_defined?(name)
       end
-    end
-
-    # Specify a Go resource.
-    #
-    # @api public
-    sig { params(name: String, block: T.nilable(T.proc.void)).void }
-    def go_resource(name, &block)
-      odisabled "`Formula.go_resource`", "Go modules"
-      specs.each { |spec| spec.go_resource(name, &block) }
     end
 
     # The dependencies for this formula. Use strings for the names of other
@@ -4358,14 +4311,12 @@ class Formula
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
-      # TODO: deprecate in >= 4.5.0
-      # if replacement
-      #   odeprecated(
-      #     "deprecate!(:replacement)",
-      #     "deprecate!(:replacement_formula) or deprecate!(:replacement_cask)",
-      #     disable_on: Time.new(2025, 10, 15),
-      #   )
-      # end
+      if replacement
+        odeprecated(
+          "deprecate!(:replacement)",
+          "deprecate!(:replacement_formula) or deprecate!(:replacement_cask)",
+        )
+      end
 
       @deprecation_date = T.let(Date.parse(date), T.nilable(Date))
       return if T.must(@deprecation_date) > Date.today
@@ -4451,14 +4402,12 @@ class Formula
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
-      # TODO: deprecate in >= 4.5.0
-      # if replacement
-      #   odeprecated(
-      #     "disable!(:replacement)",
-      #     "disable!(:replacement_formula) or deprecate!(:replacement_cask)",
-      #     disable_on: Time.new(2025, 10, 15),
-      #   )
-      # end
+      if replacement
+        odeprecated(
+          "disable!(:replacement)",
+          "disable!(:replacement_formula) or deprecate!(:replacement_cask)",
+        )
+      end
 
       @disable_date = T.let(Date.parse(date), T.nilable(Date))
 

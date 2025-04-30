@@ -90,14 +90,14 @@ module Cask
       :deprecated?,
       :deprecation_date,
       :deprecation_reason,
-      :deprecation_replacement_formula,
       :deprecation_replacement_cask,
+      :deprecation_replacement_formula,
       :disable!,
       :disabled?,
       :disable_date,
       :disable_reason,
-      :disable_replacement_formula,
       :disable_replacement_cask,
+      :disable_replacement_formula,
       :discontinued?, # TODO: remove once discontinued? is removed (4.5.0)
       :livecheck,
       :livecheck_defined?,
@@ -112,18 +112,49 @@ module Cask
 
     include OnSystem::MacOSAndLinux
 
-    attr_reader :cask, :token, :deprecation_date, :deprecation_reason, :deprecation_replacement_formula,
-                :deprecation_replacement_cask, :disable_date, :disable_reason, :disable_replacement_formula,
-                :disable_replacement_cask, :on_system_block_min_os
+    attr_reader :cask, :token, :artifacts, :deprecation_date, :deprecation_reason,
+                :deprecation_replacement_cask, :deprecation_replacement_formula,
+                :disable_date, :disable_reason, :disable_replacement_cask,
+                :disable_replacement_formula, :on_system_block_min_os
 
+    sig { params(cask: Cask).void }
     def initialize(cask)
-      @cask = cask
+      # NOTE: Variables set by `set_unique_stanza` must be initialized to `nil`.
+      @auto_updates = T.let(nil, T.nilable(T::Boolean))
+      @arch = T.let(nil, T.nilable(String))
+      @artifacts = T.let(ArtifactSet.new, ArtifactSet)
+      @called_in_on_system_block = T.let(false, T::Boolean)
+      @cask = T.let(cask, Cask)
+      @caveats = T.let(DSL::Caveats.new(cask), DSL::Caveats)
+      @conflicts_with = T.let(nil, T.nilable(DSL::ConflictsWith))
+      @container = T.let(nil, T.nilable(DSL::Container))
+      @depends_on = T.let(DSL::DependsOn.new, DSL::DependsOn)
       @depends_on_set_in_block = T.let(false, T::Boolean)
       @deprecated = T.let(false, T::Boolean)
+      @deprecation_date = T.let(nil, T.nilable(Date))
+      @deprecation_reason = T.let(nil, T.nilable(T.any(String, Symbol)))
+      @deprecation_replacement_cask = T.let(nil, T.nilable(String))
+      @deprecation_replacement_formula = T.let(nil, T.nilable(String))
+      @desc = T.let(nil, T.nilable(String))
+      @disable_date = T.let(nil, T.nilable(Date))
+      @disable_reason = T.let(nil, T.nilable(T.any(String, Symbol)))
+      @disable_replacement_cask = T.let(nil, T.nilable(String))
+      @disable_replacement_formula = T.let(nil, T.nilable(String))
       @disabled = T.let(false, T::Boolean)
+      @homepage = T.let(nil, T.nilable(String))
+      @language_blocks = T.let({}, T::Hash[T::Array[String], Proc])
+      @language_eval = T.let(nil, T.nilable(String))
+      @livecheck = T.let(Livecheck.new(cask), Livecheck)
       @livecheck_defined = T.let(false, T::Boolean)
+      @name = T.let([], T::Array[String])
       @on_system_blocks_exist = T.let(false, T::Boolean)
-      @token = cask.token
+      @os = T.let(nil, T.nilable(String))
+      @on_system_block_min_os = T.let(nil, T.nilable(MacOSVersion))
+      @sha256 = T.let(nil, T.nilable(T.any(Checksum, Symbol)))
+      @staged_path = T.let(nil, T.nilable(Pathname))
+      @token = T.let(cask.token, String)
+      @url = T.let(nil, T.nilable(URL))
+      @version = T.let(nil, T.nilable(DSL::Version))
     end
 
     sig { returns(T::Boolean) }
@@ -153,7 +184,6 @@ module Cask
     #
     # @api public
     def name(*args)
-      @name ||= []
       return @name if args.empty?
 
       @name.concat(args.flatten)
@@ -176,7 +206,7 @@ module Cask
       return instance_variable_get(:"@#{stanza}") if should_return
 
       unless @cask.allow_reassignment
-        if instance_variable_defined?(:"@#{stanza}") && !@called_in_on_system_block
+        if !instance_variable_get(:"@#{stanza}").nil? && !@called_in_on_system_block
           raise CaskInvalidError.new(cask, "'#{stanza}' stanza may only appear once.")
         end
 
@@ -210,7 +240,6 @@ module Cask
       if args.empty?
         language_eval
       elsif block
-        @language_blocks ||= {}
         @language_blocks[args] = block
 
         return unless default
@@ -226,11 +255,13 @@ module Cask
     end
 
     def language_eval
-      return @language_eval if defined?(@language_eval)
+      return @language_eval unless @language_eval.nil?
 
-      return @language_eval = nil if @language_blocks.blank?
+      return @language_eval = nil if @language_blocks.empty?
 
-      raise CaskInvalidError.new(cask, "No default language specified.") if @language_blocks.default.nil?
+      if (language_blocks_default = @language_blocks.default).nil?
+        raise CaskInvalidError.new(cask, "No default language specified.")
+      end
 
       locales = cask.config.languages
                     .filter_map do |language|
@@ -241,18 +272,15 @@ module Cask
 
       locales.each do |locale|
         key = locale.detect(@language_blocks.keys)
+        next if key.nil? || (language_block = @language_blocks[key]).nil?
 
-        next if key.nil?
-
-        return @language_eval = @language_blocks[key].call
+        return @language_eval = language_block.call
       end
 
-      @language_eval = @language_blocks.default.call
+      @language_eval = language_blocks_default.call
     end
 
     def languages
-      return [] if @language_blocks.nil?
-
       @language_blocks.keys.flatten
     end
 
@@ -425,7 +453,6 @@ module Cask
     #
     # @api public
     def depends_on(**kwargs)
-      @depends_on ||= DSL::DependsOn.new
       @depends_on_set_in_block = true if @called_in_on_system_block
       return @depends_on if kwargs.empty?
 
@@ -439,7 +466,7 @@ module Cask
 
     # @api private
     def add_implicit_macos_dependency
-      return if @depends_on.present? && @depends_on.macos.present?
+      return if (cask_depends_on = @depends_on).present? && cask_depends_on.macos.present?
 
       depends_on macos: ">= :#{MacOSVersion::SYMBOLS.key MacOSVersion::SYMBOLS.values.min}"
     end
@@ -450,10 +477,6 @@ module Cask
     def conflicts_with(**kwargs)
       # TODO: Remove this constraint and instead merge multiple `conflicts_with` stanzas
       set_unique_stanza(:conflicts_with, kwargs.empty?) { DSL::ConflictsWith.new(**kwargs) }
-    end
-
-    def artifacts
-      @artifacts ||= ArtifactSet.new
     end
 
     sig { returns(Pathname) }
@@ -476,7 +499,6 @@ module Cask
     #
     # @api public
     def caveats(*strings, &block)
-      @caveats ||= DSL::Caveats.new(cask)
       if block
         @caveats.eval_caveats(&block)
       elsif strings.any?
@@ -487,11 +509,6 @@ module Cask
         return @caveats.to_s
       end
       @caveats
-    end
-
-    def discontinued?
-      odisabled "`discontinued?`", "`deprecated?` or `disabled?`"
-      @caveats&.discontinued? == true
     end
 
     # Asserts that the cask artifacts auto-update.
@@ -505,7 +522,6 @@ module Cask
     #
     # @api public
     def livecheck(&block)
-      @livecheck ||= Livecheck.new(cask)
       return @livecheck unless block
 
       if !@cask.allow_reassignment && @livecheck_defined
@@ -520,7 +536,7 @@ module Cask
     # for `#livecheck_defined?`.
     sig { returns(T::Boolean) }
     def livecheckable?
-      # odeprecated "`livecheckable?`", "`livecheck_defined?`"
+      odeprecated "`livecheckable?`", "`livecheck_defined?`"
       @livecheck_defined == true
     end
 
@@ -534,14 +550,12 @@ module Cask
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
-      # TODO: deprecate in >= 4.5.0
-      # if replacement
-      #   odeprecated(
-      #     "deprecate!(:replacement)",
-      #     "deprecate!(:replacement_formula) or deprecate!(:replacement_cask)",
-      #     disable_on: Time.new(2025, 10, 15),
-      #   )
-      # end
+      if replacement
+        odeprecated(
+          "deprecate!(:replacement)",
+          "deprecate!(:replacement_formula) or deprecate!(:replacement_cask)",
+        )
+      end
 
       @deprecation_date = Date.parse(date)
       return if @deprecation_date > Date.today
@@ -562,14 +576,12 @@ module Cask
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
-      # TODO: deprecate in >= 4.5.0
-      # if replacement
-      #   odeprecated(
-      #     "disable!(:replacement)",
-      #     "disable!(:replacement_formula) or disable!(:replacement_cask)",
-      #     disable_on: Time.new(2025, 10, 15),
-      #   )
-      # end
+      if replacement
+        odeprecated(
+          "disable!(:replacement)",
+          "disable!(:replacement_formula) or disable!(:replacement_cask)",
+        )
+      end
 
       @disable_date = Date.parse(date)
 

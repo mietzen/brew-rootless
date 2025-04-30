@@ -258,7 +258,8 @@ flags which will help with finding keg-only dependencies like `openssl`,
 
 `--services`
 
-: Temporarily start services while running the `exec` or `sh` command.
+: Temporarily start services while running the `exec` or `sh` command. This is
+  enabled by default if `$HOMEBREW_BUNDLE_SERVICES` is set.
 
 `-f`, `--force`
 
@@ -2135,6 +2136,10 @@ displays whether a pull request has been opened with the URL.
 `--start-with`
 
 : Letter or word that the list of package results should alphabetically follow.
+
+`--bump-synced`
+
+: Bump additional formulae marked as synced with the given formulae.
 
 ### `bump-cask-pr` \[*`options`*\] *`cask`*
 
@@ -4339,7 +4344,7 @@ command execution e.g. `$(cat file)`.
   the target does not yet exist. This issue typically occurs when using
   FileVault or custom SSD configurations.
   
-  *Default:* macOS: `/private/tmp`, Linux: `/tmp`.
+  *Default:* macOS: `/private/tmp`, Linux: `/var/tmp`.
 
 `HOMEBREW_UPDATE_TO_TAG`
 

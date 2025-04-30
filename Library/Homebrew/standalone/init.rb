@@ -20,7 +20,7 @@ else
   end
 
   # This list should match .gitignore
-  vendored_versions = ["3.3"].freeze
+  vendored_versions = ["3.4"].freeze
   vendored_versions.include?("#{ruby_major}.#{ruby_minor}")
 end.freeze
 
