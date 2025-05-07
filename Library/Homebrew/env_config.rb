@@ -226,6 +226,10 @@ module Homebrew
         description: "A space-separated list of taps. Homebrew will refuse to install a " \
                      "formula if it or any of its dependencies is in a tap on this list.",
       },
+      HOMEBREW_FORBID_CASKS:                     {
+        description: "If set, Homebrew will refuse to install any casks.",
+        boolean:     true,
+      },
       HOMEBREW_FORBID_PACKAGES_FROM_PATHS:       {
         description: "If set, Homebrew will refuse to read formulae or casks provided from file paths, " \
                      "e.g. `brew install ./package.rb`.",

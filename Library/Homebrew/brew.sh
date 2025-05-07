@@ -465,7 +465,7 @@ fi
 #####
 
 # Docker image deprecation
-if [[ -f "${HOMEBREW_REPOSITORY}/.docker-deprecate" ]]
+if [[ -f "${HOMEBREW_REPOSITORY}/.docker-deprecate" && -z "${HOMEBREW_TESTS}" ]]
 then
   read -r DOCKER_DEPRECATION_MESSAGE <"${HOMEBREW_REPOSITORY}/.docker-deprecate"
   if [[ -n "${GITHUB_ACTIONS}" ]]

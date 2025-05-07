@@ -58,7 +58,7 @@ module Homebrew
 
         conflicts "--cask", "--formula"
         conflicts "--tap=", "--installed"
-        conflicts "--tap=", "--no-auto"
+        conflicts "--tap=", "--no-autobump"
         conflicts "--eval-all", "--installed"
         conflicts "--installed", "--auto"
         conflicts "--no-pull-requests", "--open-pr"

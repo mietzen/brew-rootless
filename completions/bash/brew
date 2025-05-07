@@ -652,6 +652,7 @@ _brew_bundle() {
       __brewcomp "
       --all
       --cask
+      --check
       --cleanup
       --debug
       --describe

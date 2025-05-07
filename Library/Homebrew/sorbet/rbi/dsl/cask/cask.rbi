@@ -30,6 +30,9 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def auto_updates(*args, &block); end
 
+  sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }
+  def autobump?(*args, &block); end
+
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def bash_completion(*args, &block); end
 
@@ -140,6 +143,12 @@ class Cask::Cask
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def name(*args, &block); end
+
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  def no_autobump!(*args, &block); end
+
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  def no_autobump_message(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.nilable(MacOSVersion)) }
   def on_system_block_min_os(*args, &block); end

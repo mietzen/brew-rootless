@@ -985,11 +985,27 @@ class Tap
   # Array with autobump names
   sig { returns(T::Array[String]) }
   def autobump
-    @autobump ||= if (autobump_file = path/HOMEBREW_TAP_AUTOBUMP_FILE).file?
-      autobump_file.readlines(chomp: true)
+    autobump_packages = if core_cask_tap?
+      Homebrew::API::Cask.all_casks
+    elsif core_tap?
+      Homebrew::API::Formula.all_formulae
     else
-      []
+      {}
     end
+
+    @autobump ||= autobump_packages.select do |_, p|
+      p["autobump"] == true && !p["skip_livecheck"] && !(p["deprecated"] || p["disabled"])
+    end.keys
+
+    if @autobump.empty?
+      @autobump = if (autobump_file = path/HOMEBREW_TAP_AUTOBUMP_FILE).file?
+        autobump_file.readlines(chomp: true)
+      else
+        []
+      end
+    end
+
+    @autobump
   end
 
   # Whether this {Tap} allows running bump commands on the given {Formula} or {Cask}.

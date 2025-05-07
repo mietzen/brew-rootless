@@ -144,6 +144,9 @@ module Homebrew
         # Keep this inside `run` to keep --help fast.
         require "bundle"
 
+        # Don't want to ask for input in Bundle
+        ENV["HOMEBREW_ASK"] = nil
+
         subcommand = args.named.first.presence
         if %w[exec add remove].exclude?(subcommand) && args.named.size > 1
           raise UsageError, "This command does not take more than 1 subcommand argument."

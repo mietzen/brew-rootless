@@ -81,8 +81,8 @@ module Homebrew
           Whoops, the #{cask.token} cask has its version update
           pull requests automatically opened by BrewTestBot every ~3 hours!
           We'd still love your contributions, though, so try another one
-          that's not in the autobump list:
-            #{Formatter.url("#{cask.tap.remote}/blob/master/.github/autobump.txt")}
+          that is excluded from autobump list (i.e. it has 'no_autobump!'
+          method or 'livecheck' block with 'skip'.)
         EOS
 
         odie "You have too many PRs open: close or merge some first!" if GitHub.too_many_open_prs?(cask.tap)

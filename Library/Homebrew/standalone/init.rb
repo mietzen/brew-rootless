@@ -24,8 +24,7 @@ else
   vendored_versions.include?("#{ruby_major}.#{ruby_minor}")
 end.freeze
 
-# TODO(odeprecated): remove `respond_to?` check when required Ruby >= 3.4
-if ENV["HOMEBREW_DEVELOPER"] && Warning.respond_to?(:categories)
+if ENV["HOMEBREW_DEVELOPER"]
   Warning.categories.each do |category|
     Warning[category] = true
   end
