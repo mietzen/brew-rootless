@@ -256,7 +256,14 @@ check-run-command-as-root() {
   [[ -f /proc/1/cgroup ]] && grep -E "azpl_job|actions_job|docker|garden|kubepods" -q /proc/1/cgroup && return
 
   # `brew services` may need `sudo` for system-wide daemons.
-  [[ "${HOMEBREW_COMMAND}" == "services" ]] && return
+  if [[ "${HOMEBREW_COMMAND}" == "services" ]]
+  then
+    # Need to disable Bootsnap when running as root to avoid permission errors:
+    # https://github.com/Homebrew/brew/issues/19904
+    export HOMEBREW_NO_BOOTSNAP="1"
+
+    return
+  fi
 
   # It's fine to run this as root as it's not changing anything.
   [[ "${HOMEBREW_COMMAND}" == "--prefix" ]] && return

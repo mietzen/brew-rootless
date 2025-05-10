@@ -807,7 +807,7 @@ module GitHub
         commits.each do |commit|
           commit[:sourcefile_path].atomic_write(commit[:old_contents])
         end
-        odie "Unable to open pull request: #{e.message}!"
+        odie "Unable to open pull request for #{tap_remote_repo}: #{e.message}!"
       end
     end
   end
