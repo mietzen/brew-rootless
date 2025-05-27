@@ -351,6 +351,8 @@ module Cask
           raise CaskInvalidError.new(cask, "invalid 'version' value: #{arg.inspect}")
         end
 
+        no_autobump! because: :latest_version if arg == :latest
+
         DSL::Version.new(arg)
       end
     end
@@ -536,6 +538,8 @@ module Cask
 
       @livecheck_defined = true
       @livecheck.instance_eval(&block)
+      no_autobump! because: :extract_plist if @livecheck.strategy == :extract_plist
+      @livecheck
     end
 
     # Whether the cask contains a `livecheck` block. This is a legacy alias

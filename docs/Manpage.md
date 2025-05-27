@@ -278,15 +278,15 @@ flags which will help with finding keg-only dependencies like `openssl`,
 
 `--formula`
 
-: `list` or `dump` Homebrew formula dependencies.
+: `list`, `dump` or `cleanup` Homebrew formula dependencies.
 
 `--cask`
 
-: `list` or `dump` Homebrew cask dependencies.
+: `list`, `dump` or `cleanup` Homebrew cask dependencies.
 
 `--tap`
 
-: `list` or `dump` Homebrew tap dependencies.
+: `list`, `dump` or `cleanup` Homebrew tap dependencies.
 
 `--mas`
 
@@ -298,7 +298,7 @@ flags which will help with finding keg-only dependencies like `openssl`,
 
 `--vscode`
 
-: `list` or `dump` VSCode (and forks/variants) extensions.
+: `list`, `dump` or `cleanup` VSCode (and forks/variants) extensions.
 
 `--no-vscode`
 
@@ -779,6 +779,11 @@ upgrade *`formula`* if it is already installed but outdated.
 
 : Show what would be installed, but do not actually install anything.
 
+`--ask`
+
+: Ask for confirmation before downloading and installing formulae. Print bottles
+  and dependencies download size and install size.
+
 `--formula`
 
 : Treat all named arguments as formulae.
@@ -872,11 +877,6 @@ upgrade *`formula`* if it is already installed but outdated.
 `--overwrite`
 
 : Delete files that already exist in the prefix while linking.
-
-`--ask`
-
-: Ask for confirmation before downloading and installing formulae. Print bottles
-  and dependencies download size and install size.
 
 `--cask`
 
@@ -1245,6 +1245,11 @@ for the reinstalled formulae or, every 30 days, for all formulae.
 
 : Print the verification and post-install steps.
 
+`--ask`
+
+: Ask for confirmation before downloading and upgrading formulae. Print bottles
+  and dependencies download size, install and net install size.
+
 `--formula`
 
 : Treat all named arguments as formulae.
@@ -1275,11 +1280,6 @@ for the reinstalled formulae or, every 30 days, for all formulae.
 `-g`, `--git`
 
 : Create a Git repository, useful for creating patches to the software.
-
-`--ask`
-
-: Ask for confirmation before downloading and upgrading formulae. Print bottles
-  and dependencies download size, install and net install size.
 
 `--cask`
 
@@ -1435,8 +1435,8 @@ If `sudo` is passed, operate on `/Library/LaunchDaemons` or
 
 `--max-wait`
 
-: Wait at most this many seconds for `stop` to finish stopping a service. Omit
-  this flag or set this to zero (0) seconds to wait indefinitely.
+: Wait at most this many seconds for `stop` to finish stopping a service.
+  Defaults to 60. Set this to zero (0) seconds to wait indefinitely.
 
 `--all`
 
@@ -1679,6 +1679,11 @@ for the upgraded formulae or, every 30 days, for all formulae.
 
 : Show what would be upgraded, but do not actually upgrade anything.
 
+`--ask`
+
+: Ask for confirmation before downloading and upgrading formulae. Print bottles
+  and dependencies download size, install and net install size.
+
 `--formula`
 
 : Treat all named arguments as formulae. If no named arguments are specified,
@@ -1716,11 +1721,6 @@ for the upgraded formulae or, every 30 days, for all formulae.
 `--overwrite`
 
 : Delete files that already exist in the prefix while linking.
-
-`--ask`
-
-: Ask for confirmation before downloading and upgrading formulae. Print bottles
-  and dependencies download size, install and net install size.
 
 `--cask`
 
@@ -4443,8 +4443,8 @@ Homebrew's Project Leader is Mike McQuaid.
 Homebrew's Project Leadership Committee is Colin Dean, Michka Popoff, Mike
 McQuaid, Patrick Linnane and Vanessa Gennarelli.
 
-Homebrew's Technical Steering Committee is Bo Anderson, FX Coudert, Mike McQuaid
-and Rylan Polster.
+Homebrew's Technical Steering Committee is Bo Anderson, Issy Long, Michael Cho,
+Mike McQuaid and Ruoyu Zhong.
 
 Homebrew's maintainers are Alexander Bayandin, Bevan Kay, Bo Anderson, Branch
 Vincent, Caleb Xu, Carlo Cabrera, Daeho Ro, Douglas Eichelberger, Dustin

@@ -169,7 +169,7 @@ module Homebrew
                               T::Boolean)
           odisabled(
             "`brew #{@command_name}'. This command needs to be refactored, as it is written in a style that",
-            "inherits from `Homebrew::AbstractCommand' ( see https://docs.brew.sh/External-Commands )",
+            "subclassing of `Homebrew::AbstractCommand' ( see https://docs.brew.sh/External-Commands )",
             disable_for_developers: false,
           )
         end
