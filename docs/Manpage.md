@@ -2414,6 +2414,10 @@ see: <https://rubydoc.brew.sh/Formula>
 
 : Create a basic template for an Autotools-style build.
 
+`--cabal`
+
+: Create a basic template for a Cabal build.
+
 `--cask`
 
 : Create a basic template for a cask.

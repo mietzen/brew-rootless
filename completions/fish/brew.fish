@@ -611,6 +611,7 @@ __fish_brew_complete_arg 'contributions' -l verbose -d 'Make some output more ve
 __fish_brew_complete_cmd 'create' 'Generate a formula or, with `--cask`, a cask for the downloadable file at URL and open it in the editor'
 __fish_brew_complete_arg 'create' -l HEAD -d 'Indicate that URL points to the package\'s repository rather than a file'
 __fish_brew_complete_arg 'create' -l autotools -d 'Create a basic template for an Autotools-style build'
+__fish_brew_complete_arg 'create' -l cabal -d 'Create a basic template for a Cabal build'
 __fish_brew_complete_arg 'create' -l cask -d 'Create a basic template for a cask'
 __fish_brew_complete_arg 'create' -l cmake -d 'Create a basic template for a CMake-style build'
 __fish_brew_complete_arg 'create' -l crystal -d 'Create a basic template for a Crystal build'
