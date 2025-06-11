@@ -26,7 +26,7 @@ require "cask/dsl/version"
 require "cask/url"
 require "cask/utils"
 
-require "extend/on_system"
+require "on_system"
 
 module Cask
   # Class representing the domain-specific language used for casks.

@@ -131,6 +131,9 @@ module Homebrew
       end
 
       sig { void }
+      def prepend_pkgconf_path_if_needed!; end
+
+      sig { void }
       def reset!
         @mas_installed = T.let(nil, T.nilable(T::Boolean))
         @vscode_installed = T.let(nil, T.nilable(T::Boolean))

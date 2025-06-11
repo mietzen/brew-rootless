@@ -1,17 +1,17 @@
 # typed: strict
 # frozen_string_literal: true
 
-class IO
-  sig { params(sep: String).returns(String) }
-  def readline_nonblock(sep = $INPUT_RECORD_SEPARATOR)
+class ReadlineNonblock
+  sig { params(io: IO).returns(String) }
+  def self.read(io)
     line = +""
     buffer = +""
 
     begin
       loop do
-        break if buffer == sep
+        break if buffer == $INPUT_RECORD_SEPARATOR
 
-        read_nonblock(1, buffer)
+        io.read_nonblock(1, buffer)
         line.concat(buffer)
       end
 

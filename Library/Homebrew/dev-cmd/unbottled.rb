@@ -23,7 +23,7 @@ module Homebrew
                description: "Print the `homebrew/core` commits where bottles were lost in the last week."
         switch "--eval-all",
                description: "Evaluate all available formulae and casks, whether installed or not, to check them. " \
-                            "Implied if `HOMEBREW_EVAL_ALL` is set."
+                            "Implied if `$HOMEBREW_EVAL_ALL` is set."
 
         conflicts "--dependents", "--total", "--lost"
 
@@ -68,7 +68,7 @@ module Homebrew
           all = args.eval_all?
           if args.total?
             if !all && !Homebrew::EnvConfig.eval_all?
-              raise UsageError, "`brew unbottled --total` needs `--eval-all` passed or `HOMEBREW_EVAL_ALL` set!"
+              raise UsageError, "`brew unbottled --total` needs `--eval-all` passed or `$HOMEBREW_EVAL_ALL` set!"
             end
 
             all = true
@@ -119,7 +119,7 @@ module Homebrew
         elsif args.dependents?
           if !args.eval_all? && !Homebrew::EnvConfig.eval_all?
             raise UsageError,
-                  "`brew unbottled --dependents` needs `--eval-all` passed or `HOMEBREW_EVAL_ALL` set!"
+                  "`brew unbottled --dependents` needs `--eval-all` passed or `$HOMEBREW_EVAL_ALL` set!"
           end
 
           formulae = all_formulae = Formula.all(eval_all: args.eval_all?)
@@ -136,7 +136,7 @@ module Homebrew
           if analytics.blank?
             raise UsageError,
                   "default sort by analytics data requires " \
-                  "`HOMEBREW_NO_GITHUB_API` and `HOMEBREW_NO_ANALYTICS` to be unset"
+                  "`$HOMEBREW_NO_GITHUB_API` and `$HOMEBREW_NO_ANALYTICS` to be unset."
           end
 
           formulae = analytics["items"].filter_map do |i|

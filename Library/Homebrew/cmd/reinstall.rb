@@ -32,8 +32,8 @@ module Homebrew
                description: "If brewing fails, open an interactive debugging session with access to IRB " \
                             "or a shell inside the temporary build directory."
         switch "--display-times",
-               env:         :display_install_times,
-               description: "Print install times for each package at the end of the run."
+               description: "Print install times for each package at the end of the run.",
+               env:         :display_install_times
         switch "-f", "--force",
                description: "Install without checking for previously installed keg-only or " \
                             "non-migrated versions."
@@ -41,7 +41,7 @@ module Homebrew
                description: "Print the verification and post-install steps."
         switch "--ask",
                description: "Ask for confirmation before downloading and upgrading formulae. " \
-                            "Print bottles and dependencies download size, install and net install size.",
+                            "Print download, install and net install sizes of bottles and dependencies.",
                env:         :ask
         [
           [:switch, "--formula", "--formulae", { description: "Treat all named arguments as formulae." }],

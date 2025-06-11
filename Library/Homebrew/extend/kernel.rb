@@ -5,6 +5,14 @@
 # TODO: move these out of `Kernel`.
 
 module Kernel
+  sig { params(env: T.nilable(String)).returns(T::Boolean) }
+  def superenv?(env)
+    return false if env == "std"
+
+    !Superenv.bin.nil?
+  end
+  private :superenv?
+
   def require?(path)
     return false if path.nil?
 
@@ -80,6 +88,17 @@ module Kernel
     Tty.with($stderr) do |stderr|
       stderr.puts Formatter.warning(message, label: "Warning")
     end
+  end
+
+  # Print a warning message only if not running in GitHub Actions.
+  #
+  # @api public
+  sig { params(message: T.any(String, Exception)).void }
+  def opoo_outside_github_actions(message)
+    require "utils/github/actions"
+    return if GitHub::Actions.env_set?
+
+    opoo(message)
   end
 
   # Print an error message.

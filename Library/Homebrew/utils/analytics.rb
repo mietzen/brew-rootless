@@ -4,7 +4,7 @@
 require "context"
 require "erb"
 require "settings"
-require "extend/cachable"
+require "cachable"
 
 module Utils
   # Helper module for fetching and reporting analytics data.

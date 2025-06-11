@@ -1,7 +1,7 @@
 # typed: strict
 # frozen_string_literal: true
 
-require "extend/cachable"
+require "cachable"
 require "api/download"
 
 module Homebrew
@@ -11,6 +11,13 @@ module Homebrew
       extend Cachable
 
       DEFAULT_API_FILENAME = "formula.jws.json"
+
+      sig { returns(String) }
+      def self.api_filename
+        return DEFAULT_API_FILENAME unless ENV.fetch("HOMEBREW_USE_INTERNAL_API", false)
+
+        "internal/formula.#{SimulateSystem.current_tag}.jws.json"
+      end
 
       private_class_method :cache
 
@@ -42,12 +49,12 @@ module Homebrew
 
       sig { returns(Pathname) }
       def self.cached_json_file_path
-        HOMEBREW_CACHE_API/DEFAULT_API_FILENAME
+        HOMEBREW_CACHE_API/api_filename
       end
 
       sig { returns(T::Boolean) }
       def self.download_and_cache_data!
-        json_formulae, updated = Homebrew::API.fetch_json_api_file DEFAULT_API_FILENAME
+        json_formulae, updated = Homebrew::API.fetch_json_api_file api_filename
 
         cache["aliases"] = {}
         cache["renames"] = {}

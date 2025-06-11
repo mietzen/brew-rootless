@@ -9,6 +9,13 @@ module OnSystem
   ALL_OS_OPTIONS = [*MacOSVersion::SYMBOLS.keys, :linux].freeze
   ALL_OS_ARCH_COMBINATIONS = ALL_OS_OPTIONS.product(ARCH_OPTIONS).freeze
 
+  VALID_OS_ARCH_TAGS = ALL_OS_ARCH_COMBINATIONS.filter_map do |os, arch|
+    tag = Utils::Bottles::Tag.new(system: os, arch:)
+    next unless tag.valid_combination?
+
+    tag
+  end.freeze
+
   sig { params(arch: Symbol).returns(T::Boolean) }
   def self.arch_condition_met?(arch)
     raise ArgumentError, "Invalid arch condition: #{arch.inspect}" if ARCH_OPTIONS.exclude?(arch)

@@ -1797,6 +1797,22 @@ _brew_ls() {
   __brew_complete_installed_casks
 }
 
+_brew_mcp_server() {
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  case "${cur}" in
+    -*)
+      __brewcomp "
+      --debug
+      --help
+      --quiet
+      --verbose
+      "
+      return
+      ;;
+    *) ;;
+  esac
+}
+
 _brew_migrate() {
   local cur="${COMP_WORDS[COMP_CWORD]}"
   case "${cur}" in
@@ -3191,6 +3207,7 @@ _brew() {
     ln) _brew_ln ;;
     log) _brew_log ;;
     ls) _brew_ls ;;
+    mcp-server) _brew_mcp_server ;;
     migrate) _brew_migrate ;;
     missing) _brew_missing ;;
     nodenv-sync) _brew_nodenv_sync ;;

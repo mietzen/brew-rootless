@@ -600,6 +600,11 @@ case "$1" in
     homebrew-version
     exit 0
     ;;
+  mcp-server)
+    source "${HOMEBREW_LIBRARY}/Homebrew/cmd/mcp-server.sh"
+    homebrew-mcp-server "$@"
+    exit 0
+    ;;
 esac
 
 # TODO: bump version when new macOS is released or announced and update references in:
@@ -1077,6 +1082,22 @@ then
 else
   export HOMEBREW_GITHUB_PACKAGES_AUTH="Bearer QQ=="
 fi
+
+# Avoid picking up any random `sudo` in `PATH`.
+if [[ -x /usr/bin/sudo ]]
+then
+  SUDO=/usr/bin/sudo
+else
+  # Do this after ensuring we're using default Bash builtins.
+  SUDO="$(command -v sudo 2>/dev/null)"
+fi
+
+# Reset sudo timestamp to avoid running unauthorized sudo commands
+if [[ -n "${SUDO}" ]]
+then
+  "${SUDO}" --reset-timestamp 2>/dev/null || true
+fi
+unset SUDO
 
 if [[ -n "${HOMEBREW_BASH_COMMAND}" ]]
 then

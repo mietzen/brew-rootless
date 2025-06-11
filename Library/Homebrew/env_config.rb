@@ -463,7 +463,7 @@ module Homebrew
         default_text: "`~/.ssh/config`",
       },
       HOMEBREW_SUDO_THROUGH_SUDO_USER:           {
-        description: "If set, Homebrew will use the `SUDO_USER` environment variable to define the user to " \
+        description: "If set, Homebrew will use the `$SUDO_USER` environment variable to define the user to " \
                      "`sudo`(8) through when running `sudo`(8).",
         boolean:     true,
       },

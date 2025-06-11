@@ -8,7 +8,7 @@ module OS
 
       requires_ancestor { Kernel }
 
-      sig { params(tap: Tap, os_name: T.nilable(Symbol), arch: T.nilable(Symbol)).returns(T::Boolean) }
+      sig { params(tap: ::Tap, os_name: T.nilable(Symbol), arch: T.nilable(Symbol)).returns(T::Boolean) }
       def valid_casks?(tap, os_name: nil, arch: ::Hardware::CPU.type)
         return true if os_name == :linux
 

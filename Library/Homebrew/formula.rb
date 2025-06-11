@@ -38,9 +38,9 @@ require "tab"
 require "mktemp"
 require "find"
 require "utils/spdx"
-require "extend/on_system"
+require "on_system"
 require "api"
-require "extend/api_hashable"
+require "api_hashable"
 
 # A formula provides instructions and metadata for Homebrew to install a piece
 # of software. Every Homebrew formula is a {Formula}.
@@ -2593,11 +2593,8 @@ class Formula
 
     if path.exist? && on_system_blocks_exist?
       formula_contents = path.read
-      OnSystem::ALL_OS_ARCH_COMBINATIONS.each do |os, arch|
-        bottle_tag = Utils::Bottles::Tag.new(system: os, arch:)
-        next unless bottle_tag.valid_combination?
-
-        Homebrew::SimulateSystem.with(os:, arch:) do
+      OnSystem::VALID_OS_ARCH_TAGS.each do |bottle_tag|
+        Homebrew::SimulateSystem.with_tag(bottle_tag) do
           variations_namespace = Formulary.class_s("Variations#{bottle_tag.to_sym.capitalize}")
           variations_formula_class = Formulary.load_formula(name, path, formula_contents, variations_namespace,
                                                             flags: self.class.build_flags, ignore_errors: true)

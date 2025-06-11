@@ -138,7 +138,7 @@ require "extend/kernel"
 require "os"
 
 require "extend/array"
-require "extend/cachable"
+require "cachable"
 require "extend/enumerable"
 require "extend/string"
 require "extend/pathname"

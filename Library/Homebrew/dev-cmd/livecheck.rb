@@ -13,7 +13,7 @@ module Homebrew
         description <<~EOS
           Check for newer versions of formulae and/or casks from upstream.
           If no formula or cask argument is passed, the list of formulae and
-          casks to check is taken from `HOMEBREW_LIVECHECK_WATCHLIST` or
+          casks to check is taken from `$HOMEBREW_LIVECHECK_WATCHLIST` or
           `~/.homebrew/livecheck_watchlist.txt`.
         EOS
         switch "--full-name",

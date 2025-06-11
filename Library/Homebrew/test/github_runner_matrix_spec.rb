@@ -13,6 +13,7 @@ RSpec.describe GitHubRunnerMatrix do
     allow(ENV).to receive(:fetch).with("HOMEBREW_EVAL_ALL", nil).and_call_original
     allow(ENV).to receive(:fetch).with("HOMEBREW_SIMULATE_MACOS_ON_LINUX", nil).and_call_original
     allow(ENV).to receive(:fetch).with("HOMEBREW_FORBID_PACKAGES_FROM_PATHS", nil).and_call_original
+    allow(ENV).to receive(:fetch).with("HOMEBREW_DEVELOPER", nil).and_call_original
   end
 
   let(:newest_supported_macos) do

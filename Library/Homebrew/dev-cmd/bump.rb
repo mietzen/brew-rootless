@@ -118,7 +118,7 @@ module Homebrew
           else
             raise UsageError,
                   "`brew bump` without named arguments needs `--installed` or `--eval-all` passed or " \
-                  "`HOMEBREW_EVAL_ALL` set!"
+                  "`$HOMEBREW_EVAL_ALL` set!"
           end
 
           if args.start_with

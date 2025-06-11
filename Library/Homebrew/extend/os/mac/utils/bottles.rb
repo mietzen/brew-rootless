@@ -47,7 +47,7 @@ module Utils
         return if tag_version.blank?
 
         tags.find do |candidate|
-          next if candidate.arch != tag.arch
+          next if candidate.standardized_arch != tag.standardized_arch
 
           candidate.to_macos_version <= tag_version
         rescue MacOSVersion::Error

@@ -64,14 +64,8 @@ module Homebrew
             ENV.prepend_path "PATH", Pathname.new(dep_root)/"shims"
           end
 
-          # Setup pkg-config, if present, to help locate packages
-          # Only need this on Linux as Homebrew provides a shim on macOS
-          # TODO: use extend/OS here
-          # rubocop:todo Homebrew/MoveToExtendOS
-          if OS.linux? && (pkgconf = Formulary.factory("pkgconf")) && pkgconf.any_version_installed?
-            ENV.prepend_path "PATH", pkgconf.opt_bin.to_s
-          end
-          # rubocop:enable Homebrew/MoveToExtendOS
+          # Setup pkgconf, if needed, to help locate packages
+          Bundle.prepend_pkgconf_path_if_needed!
 
           # For commands which aren't either absolute or relative
           # Add the command directory to PATH, since it may get blown away by superenv
@@ -170,6 +164,18 @@ module Homebrew
               end
             end
             return
+          elsif subcommand == "sh"
+            preferred_path = Utils::Shell.preferred_path(default: "/bin/bash")
+            notice = unless Homebrew::EnvConfig.no_env_hints?
+              <<~EOS
+                Your shell has been configured to use a build environment from your `Brewfile`.
+                This should help you build stuff.
+                Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+                When done, type `exit`.
+              EOS
+            end
+            ENV["HOMEBREW_FORCE_API_AUTO_UPDATE"] = nil
+            args = [Utils::Shell.shell_with_prompt("brew bundle", preferred_path:, notice:)]
           end
 
           if services

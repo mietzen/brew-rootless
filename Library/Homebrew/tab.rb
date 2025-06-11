@@ -5,7 +5,7 @@ require "cxxstdlib"
 require "options"
 require "json"
 require "development_tools"
-require "extend/cachable"
+require "cachable"
 
 # Rather than calling `new` directly, use one of the class methods like {Tab.create}.
 class AbstractTab

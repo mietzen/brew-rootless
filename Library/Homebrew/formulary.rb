@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require "digest/sha2"
-require "extend/cachable"
+require "cachable"
 require "tab"
 require "utils"
 require "utils/bottles"
