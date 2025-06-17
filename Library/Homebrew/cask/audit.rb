@@ -653,11 +653,12 @@ module Cask
 
           supports_arm = result.merged_output.include?("arm64")
           mentions_rosetta = cask.caveats.include?("requires Rosetta 2")
+          requires_intel = cask.depends_on.arch&.any? { |arch| arch[:type] == :intel }
 
           if supports_arm && mentions_rosetta
             add_error "Artifacts do not require Rosetta 2 but the caveats say otherwise!",
                       location: url.location
-          elsif !supports_arm && !mentions_rosetta
+          elsif !supports_arm && !mentions_rosetta && !requires_intel
             add_error "Artifacts require Rosetta 2 but this is not indicated by the caveats!",
                       location: url.location
           end

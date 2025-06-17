@@ -33,8 +33,6 @@ module Homebrew
                             "integration.",
                replacement: false,
                disable:     true
-        switch "--[no-]force-auto-update",
-               hidden: true
         switch "--custom-remote",
                description: "Install or change a tap with a custom remote. Useful for mirrors."
         switch "--repair",

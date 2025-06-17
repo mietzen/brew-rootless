@@ -503,7 +503,7 @@ RSpec.describe Cask::Audit, :cask do
       end
     end
 
-    describe "livecheck should be skipped" do
+    describe "livecheck should be skipped", :no_api do
       let(:only) { ["livecheck_version"] }
       let(:online) { true }
       let(:message) { /Version '[^']*' differs from '[^']*' retrieved by livecheck\./ }

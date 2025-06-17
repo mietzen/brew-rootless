@@ -1261,7 +1261,7 @@ RSpec.describe Homebrew::FormulaAuditor do
       allow(File).to receive(:open).and_return("")
     end
 
-    specify "it warns when conflicting with non-existing formula" do
+    specify "it warns when conflicting with non-existing formula", :no_api do
       foo = formula("foo") do
         url "https://brew.sh/bar-1.0.tgz"
 
@@ -1275,7 +1275,7 @@ RSpec.describe Homebrew::FormulaAuditor do
         .to match("Can't find conflicting formula \"bar\"")
     end
 
-    specify "it warns when conflicting with itself" do
+    specify "it warns when conflicting with itself", :no_api do
       foo = formula("foo") do
         url "https://brew.sh/bar-1.0.tgz"
 
@@ -1290,7 +1290,7 @@ RSpec.describe Homebrew::FormulaAuditor do
         .to match("Formula should not conflict with itself")
     end
 
-    specify "it warns when another formula does not have a symmetric conflict" do
+    specify "it warns when another formula does not have a symmetric conflict", :no_api do
       stub_formula_loader formula("gcc") { url "gcc-1.0" }
       stub_formula_loader formula("glibc") { url "glibc-1.0" }
 

@@ -28,6 +28,8 @@ module Homebrew
                description: "Only runs tests on files that were changed from the master branch."
         switch "--fail-fast",
                description: "Exit early on the first failing test."
+        switch "--no-parallel",
+               description: "Run tests serially."
         flag   "--only=",
                description: "Run only `<test_script>_spec.rb`. Appending `:<line_number>` will start at a " \
                             "specific line."
@@ -49,7 +51,12 @@ module Homebrew
         HOMEBREW_LIBRARY_PATH.cd do
           setup_environment!
 
-          parallel = true
+          # Needs required here, after `setup_environment!`, so that
+          # `HOMEBREW_TEST_GENERIC_OS` is set and `OS.linux?` and `OS.mac?` both
+          # `return false`.
+          require "extend/os/dev-cmd/tests"
+
+          parallel = !args.no_parallel?
 
           only = args.only
           files = if only
@@ -240,9 +247,6 @@ module Homebrew
         ENV["HOMEBREW_SORBET_RUNTIME"] = "1"
         ENV["HOMEBREW_NO_FORCE_BREW_WRAPPER"] = "1"
 
-        # TODO: remove this and fix tests when possible.
-        ENV["HOMEBREW_NO_INSTALL_FROM_API"] = "1"
-
         ENV["USER"] ||= system_command!("id", args: ["-nu"]).stdout.chomp
 
         # Avoid local configuration messing with tests, e.g. git being configured
@@ -268,5 +272,3 @@ module Homebrew
     end
   end
 end
-
-require "extend/os/dev-cmd/tests"

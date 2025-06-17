@@ -16,7 +16,7 @@ RSpec.describe Homebrew::Bundle::Commands::Install do
     end
   end
 
-  context "when a Brewfile is found" do
+  context "when a Brewfile is found", :no_api do
     let(:brewfile_contents) do
       <<~EOS
         tap 'phinze/cask'

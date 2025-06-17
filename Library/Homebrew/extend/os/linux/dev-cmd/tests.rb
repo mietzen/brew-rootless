@@ -15,6 +15,11 @@ module OS
         def os_bundle_args(bundle_args)
           non_macos_bundle_args(bundle_args)
         end
+
+        sig { params(files: T::Array[String]).returns(T::Array[String]) }
+        def os_files(files)
+          non_macos_files(files)
+        end
       end
     end
   end

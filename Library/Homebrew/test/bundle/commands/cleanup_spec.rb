@@ -4,7 +4,7 @@ require "bundle"
 require "bundle/commands/cleanup"
 
 RSpec.describe Homebrew::Bundle::Commands::Cleanup do
-  describe "read Brewfile and current installation" do
+  describe "read Brewfile and current installation", :no_api do
     before do
       described_class.reset!
 

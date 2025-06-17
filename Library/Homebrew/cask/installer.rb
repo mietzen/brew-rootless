@@ -4,6 +4,7 @@
 require "formula_installer"
 require "unpack_strategy"
 require "utils/topological_hash"
+require "utils/analytics"
 
 require "cask/config"
 require "cask/download"

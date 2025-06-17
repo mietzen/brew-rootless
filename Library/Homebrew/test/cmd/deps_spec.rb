@@ -8,7 +8,7 @@ RSpec.describe Homebrew::Cmd::Deps do
 
   it_behaves_like "parseable arguments"
 
-  it "outputs all of a Formula's dependencies and their dependencies on separate lines", :integration_test do
+  it "outputs all of a Formula's dependencies and their dependencies on separate lines", :integration_test, :no_api do
     # Included in output
     setup_test_formula "bar"
     setup_test_formula "foo"
@@ -37,6 +37,6 @@ RSpec.describe Homebrew::Cmd::Deps do
     expect { brew "deps", "baz", "--include-test", "--missing", "--skip-recommended" }
       .to be_a_success
       .and output("bar\nfoo\ntest\n").to_stdout
-      .and not_to_output.to_stderr
+      .and output(/not the actual runtime dependencies/).to_stderr
   end
 end

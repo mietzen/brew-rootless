@@ -19,7 +19,6 @@ module Homebrew
         puts "Installing #{name} tap. It is not currently installed." if verbose
         args = []
         args << "--force" if force
-        args.append("--force-auto-update") if options[:force_auto_update]
 
         success = if options[:clone_target]
           Bundle.brew("tap", name, options[:clone_target], *args, verbose:)

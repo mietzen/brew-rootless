@@ -399,7 +399,7 @@ module Homebrew
               nil
             end
 
-            if github_release_data.present?
+            if github_release_data.present? && github_release_data["body"].present?
               pre = "pre" if github_release_data["prerelease"].present?
               # maximum length of PR body is 65,536 characters so let's truncate release notes to half of that.
               body = Formatter.truncate(github_release_data["body"], max: 32_768)

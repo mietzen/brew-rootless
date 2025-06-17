@@ -2588,6 +2588,7 @@ _brew_tests() {
       --fail-fast
       --generic
       --help
+      --no-parallel
       --online
       --only
       --profile

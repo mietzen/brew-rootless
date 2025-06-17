@@ -10,9 +10,11 @@ module APIHashable
     @old_homebrew_prefix = HOMEBREW_PREFIX
     @old_homebrew_cellar = HOMEBREW_CELLAR
     @old_home = Dir.home
+    @old_git_config_global = ENV.fetch("GIT_CONFIG_GLOBAL", nil)
     Object.send(:remove_const, :HOMEBREW_PREFIX)
     Object.const_set(:HOMEBREW_PREFIX, Pathname.new(HOMEBREW_PREFIX_PLACEHOLDER))
     ENV["HOME"] = HOMEBREW_HOME_PLACEHOLDER
+    ENV["GIT_CONFIG_GLOBAL"] = File.join(@old_home, ".gitconfig")
 
     @generating_hash = true
   end
@@ -24,6 +26,7 @@ module APIHashable
     Object.send(:remove_const, :HOMEBREW_PREFIX)
     Object.const_set(:HOMEBREW_PREFIX, @old_homebrew_prefix)
     ENV["HOME"] = @old_home
+    ENV["GIT_CONFIG_GLOBAL"] = @old_git_config_global
 
     @generating_hash = false
   end

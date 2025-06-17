@@ -12,7 +12,7 @@ require "bundle/mac_app_store_installer"
 require "bundle/dsl"
 require "bundle/skipper"
 
-RSpec.describe Homebrew::Bundle::Commands::Check do
+RSpec.describe Homebrew::Bundle::Commands::Check, :no_api do
   let(:do_check) do
     described_class.run(no_upgrade:, verbose:)
   end

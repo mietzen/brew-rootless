@@ -397,8 +397,7 @@ required and recommended dependencies.
 
 If any version of each formula argument is installed and no other options are
 passed, this command displays their actual runtime dependencies (similar to
-`brew linkage`), which may differ from the current versions' stated dependencies
-if the installed versions are outdated.
+`brew linkage`), which may differ from a formula's declared dependencies.
 
 *Note:* `--missing` and `--skip-recommended` have precedence over `--include-*`.
 
@@ -3210,6 +3209,10 @@ Run Homebrew's unit and integration tests.
 `--fail-fast`
 
 : Exit early on the first failing test.
+
+`--no-parallel`
+
+: Run tests serially.
 
 `--only`
 

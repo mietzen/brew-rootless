@@ -1693,6 +1693,7 @@ __fish_brew_complete_arg 'tests' -l debug -d 'Enable debugging using `ruby/debug
 __fish_brew_complete_arg 'tests' -l fail-fast -d 'Exit early on the first failing test'
 __fish_brew_complete_arg 'tests' -l generic -d 'Run only OS-agnostic tests'
 __fish_brew_complete_arg 'tests' -l help -d 'Show this message'
+__fish_brew_complete_arg 'tests' -l no-parallel -d 'Run tests serially'
 __fish_brew_complete_arg 'tests' -l online -d 'Include tests that use the GitHub API and tests that use any of the taps for official external commands'
 __fish_brew_complete_arg 'tests' -l only -d 'Run only `test_script_spec.rb`. Appending `:line_number` will start at a specific line'
 __fish_brew_complete_arg 'tests' -l profile -d 'Run the test suite serially to find the n slowest tests'
