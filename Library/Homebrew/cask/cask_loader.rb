@@ -295,7 +295,7 @@ module Cask
       sig { returns(Pathname) }
       attr_reader :path
 
-      sig { returns(T.nilable(T::Hash[T.any(String, Symbol), T.anything])) }
+      sig { returns(T.nilable(T::Hash[String, T.untyped])) }
       attr_reader :from_json
 
       sig {
@@ -320,7 +320,7 @@ module Cask
       sig {
         params(
           token:     String,
-          from_json: T.nilable(T::Hash[T.any(String, Symbol), T.anything]),
+          from_json: T.nilable(T::Hash[String, T.untyped]),
           path:      T.nilable(Pathname),
         ).void
       }

@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "api/analytics"
@@ -11,10 +11,10 @@ module Homebrew
   module API
     extend Cachable
 
-    HOMEBREW_CACHE_API = (HOMEBREW_CACHE/"api").freeze
-    HOMEBREW_CACHE_API_SOURCE = (HOMEBREW_CACHE/"api-source").freeze
+    HOMEBREW_CACHE_API = T.let((HOMEBREW_CACHE/"api").freeze, Pathname)
+    HOMEBREW_CACHE_API_SOURCE = T.let((HOMEBREW_CACHE/"api-source").freeze, Pathname)
 
-    sig { params(endpoint: String).returns(Hash) }
+    sig { params(endpoint: String).returns(T::Hash[String, T.untyped]) }
     def self.fetch(endpoint)
       return cache[endpoint] if cache.present? && cache.key?(endpoint)
 
@@ -33,7 +33,8 @@ module Homebrew
     end
 
     sig {
-      params(endpoint: String, target: Pathname, stale_seconds: Integer).returns([T.any(Array, Hash), T::Boolean])
+      params(endpoint: String, target: Pathname,
+             stale_seconds: Integer).returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
     }
     def self.fetch_json_api_file(endpoint, target: HOMEBREW_CACHE_API/endpoint,
                                  stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
@@ -96,7 +97,8 @@ module Homebrew
 
         mtime = insecure_download ? Time.new(1970, 1, 1) : Time.now
         FileUtils.touch(target, mtime:) unless skip_download
-        JSON.parse(target.read(encoding: Encoding::UTF_8), freeze: true)
+        # Can use `target.read` again when/if https://github.com/sorbet/sorbet/pull/8999 is merged/released.
+        JSON.parse(File.read(target, encoding: Encoding::UTF_8), freeze: true)
       rescue JSON::ParserError
         target.unlink
         retry_count += 1
@@ -122,8 +124,11 @@ module Homebrew
       end
     end
 
-    sig { params(json: Hash, bottle_tag: T.nilable(::Utils::Bottles::Tag)).returns(Hash) }
-    def self.merge_variations(json, bottle_tag: nil)
+    sig {
+      params(json:       T::Hash[String, T.untyped],
+             bottle_tag: ::Utils::Bottles::Tag).returns(T::Hash[String, T.untyped])
+    }
+    def self.merge_variations(json, bottle_tag: T.unsafe(nil))
       return json unless json.key?("variations")
 
       bottle_tag ||= Homebrew::SimulateSystem.current_tag
@@ -147,7 +152,10 @@ module Homebrew
       false
     end
 
-    sig { params(json_data: Hash).returns([T::Boolean, T.any(String, Array, Hash)]) }
+    sig {
+      params(json_data: T::Hash[String, T.untyped])
+        .returns([T::Boolean, T.any(String, T::Array[T.untyped], T::Hash[String, T.untyped])])
+    }
     private_class_method def self.verify_and_parse_jws(json_data)
       signatures = json_data["signatures"]
       homebrew_signature = signatures&.find { |sig| sig.dig("header", "kid") == "homebrew-1" }

@@ -49,8 +49,6 @@ module Homebrew
 
         (tap.path/"Formula").mkpath
 
-        # FIXME: https://github.com/errata-ai/vale/issues/818
-        # <!-- vale off -->
         readme = <<~MARKDOWN
           # #{titleized_user} #{titleized_repository}
 
@@ -71,7 +69,6 @@ module Homebrew
 
           `brew help`, `man brew` or check [Homebrew's documentation](https://docs.brew.sh).
         MARKDOWN
-        # <!-- vale on -->
         write_path(tap, "README.md", readme)
 
         tests_yml = <<~ERB

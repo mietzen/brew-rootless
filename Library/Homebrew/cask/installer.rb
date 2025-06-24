@@ -304,6 +304,20 @@ on_request: true)
 
         next if artifact.is_a?(Artifact::Binary) && !binaries?
 
+        artifact = T.cast(
+          artifact,
+          T.any(
+            Artifact::AbstractFlightBlock,
+            Artifact::Installer,
+            Artifact::KeyboardLayout,
+            Artifact::Mdimporter,
+            Artifact::Moved,
+            Artifact::Pkg,
+            Artifact::Qlplugin,
+            Artifact::Symlinked,
+          ),
+        )
+
         artifact.install_phase(
           command: @command, verbose: verbose?, adopt: adopt?, auto_updates: @cask.auto_updates,
           force: force?, predecessor:
@@ -549,6 +563,18 @@ on_request: true)
 
       artifacts.each do |artifact|
         if artifact.respond_to?(:uninstall_phase)
+          artifact = T.cast(
+            artifact,
+            T.any(
+              Artifact::AbstractFlightBlock,
+              Artifact::KeyboardLayout,
+              Artifact::Moved,
+              Artifact::Qlplugin,
+              Artifact::Symlinked,
+              Artifact::Uninstall,
+            ),
+          )
+
           odebug "Uninstalling artifact of class #{artifact.class}"
           artifact.uninstall_phase(
             command:   @command,
@@ -563,6 +589,8 @@ on_request: true)
 
         next unless artifact.respond_to?(:post_uninstall_phase)
 
+        artifact = T.cast(artifact, Artifact::Uninstall)
+
         odebug "Post-uninstalling artifact of class #{artifact.class}"
         artifact.post_uninstall_phase(
           command:   @command,
@@ -576,7 +604,6 @@ on_request: true)
 
     def zap
       load_installed_caskfile!
-      ohai "Implied `brew uninstall --cask #{@cask}`"
       uninstall_artifacts
       if (zap_stanzas = @cask.artifacts.select { |a| a.is_a?(Artifact::Zap) }).empty?
         opoo "No zap stanza present for Cask '#{@cask}'"

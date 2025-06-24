@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "abstract_command"
@@ -6,6 +6,7 @@ require "formula"
 require "fetch"
 require "cask/download"
 require "retryable_download"
+require "download_queue"
 
 module Homebrew
   module Cmd
@@ -69,15 +70,16 @@ module Homebrew
         named_args [:formula, :cask], min: 1
       end
 
+      sig { returns(Integer) }
       def concurrency
-        @concurrency ||= args.concurrency&.to_i || 1
+        @concurrency ||= T.let(args.concurrency&.to_i || 1, T.nilable(Integer))
       end
 
+      sig { returns(DownloadQueue) }
       def download_queue
-        @download_queue ||= begin
-          require "download_queue"
+        @download_queue ||= T.let(begin
           DownloadQueue.new(concurrency)
-        end
+        end, T.nilable(DownloadQueue))
       end
 
       class Spinner
@@ -96,8 +98,8 @@ module Homebrew
 
         sig { void }
         def initialize
-          @start = Time.now
-          @i = 0
+          @start = T.let(Time.now, Time)
+          @i = T.let(0, Integer)
         end
 
         sig { returns(String) }
@@ -136,7 +138,7 @@ module Homebrew
         bucket.each do |formula_or_cask|
           case formula_or_cask
           when Formula
-            formula = T.cast(formula_or_cask, Formula)
+            formula = formula_or_cask
             ref = formula.loaded_from_api? ? formula.full_name : formula.path
 
             os_arch_combinations.each do |os, arch|
@@ -189,7 +191,9 @@ module Homebrew
 
                 next if fetched_bottle
 
-                fetch_downloadable(formula.resource)
+                if (resource = formula.resource)
+                  fetch_downloadable(resource)
+                end
 
                 formula.resources.each do |r|
                   fetch_downloadable(r)
@@ -231,7 +235,7 @@ module Homebrew
           end
         else
           spinner = Spinner.new
-          remaining_downloads = downloads.dup
+          remaining_downloads = downloads.dup.to_a
           previous_pending_line_count = 0
 
           begin
@@ -332,10 +336,13 @@ module Homebrew
 
       private
 
+      sig { returns(T::Hash[T.any(Resource, Bottle, Cask::Download), Concurrent::Promises::Future]) }
       def downloads
-        @downloads ||= {}
+        @downloads ||= T.let({}, T.nilable(T::Hash[T.any(Resource, Bottle, Cask::Download),
+                                                   Concurrent::Promises::Future]))
       end
 
+      sig { params(downloadable: T.any(Resource, Bottle, Cask::Download)).void }
       def fetch_downloadable(downloadable)
         downloads[downloadable] ||= begin
           tries = args.retry? ? {} : { tries: 1 }

@@ -252,7 +252,7 @@ RSpec.configure do |config|
 
     # Link original API cache files to test cache directory.
     Pathname("#{ENV.fetch("HOMEBREW_CACHE")}/api").glob("*.json").each do |path|
-      FileUtils.ln path, HOMEBREW_CACHE/"api/#{path.basename}"
+      FileUtils.ln_s path, HOMEBREW_CACHE/"api/#{path.basename}"
     end
 
     begin

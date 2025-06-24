@@ -702,45 +702,53 @@ module Cask
       return unless online?
       return unless strict?
 
-      odebug "Auditing minimum OS version"
+      odebug "Auditing minimum macOS version"
 
-      plist_min_os = cask_plist_min_os
-      sparkle_min_os = livecheck_min_os
+      bundle_min_os = cask_bundle_min_os
+      sparkle_min_os = cask_sparkle_min_os
 
+      app_min_os = [bundle_min_os, sparkle_min_os].compact.max
       debug_messages = []
-      debug_messages << "Plist #{plist_min_os}" if plist_min_os
-      debug_messages << "Sparkle #{sparkle_min_os}" if sparkle_min_os
-      odebug "Detected minimum OS version: #{debug_messages.join(" | ")}" unless debug_messages.empty?
-      min_os = [plist_min_os, sparkle_min_os].compact.max
-
-      return if min_os.nil? || min_os <= HOMEBREW_MACOS_OLDEST_ALLOWED
+      debug_messages << "from artifact: #{bundle_min_os.to_sym}" if bundle_min_os
+      debug_messages << "from upstream: #{sparkle_min_os.to_sym}" if sparkle_min_os
+      odebug "Detected minimum macOS: #{app_min_os.to_sym} (#{debug_messages.join(" | ")})" if app_min_os
+      return if app_min_os.nil? || app_min_os <= HOMEBREW_MACOS_OLDEST_ALLOWED
 
       on_system_block_min_os = cask.on_system_block_min_os
-      cask_min_os = [on_system_block_min_os, cask.depends_on.macos&.minimum_version].compact.max
-      odebug "Declared minimum OS version: #{cask_min_os&.to_sym}"
-      return if cask_min_os&.to_sym == min_os.to_sym
-      return if cask.on_system_blocks_exist? &&
-                OnSystem.arch_condition_met?(:arm) &&
+      depends_on_min_os = cask.depends_on.macos&.minimum_version
+
+      cask_min_os = [on_system_block_min_os, depends_on_min_os].compact.max
+      debug_messages = []
+      debug_messages << "from on_system block: #{on_system_block_min_os.to_sym}" if on_system_block_min_os
+      if depends_on_min_os > HOMEBREW_MACOS_OLDEST_ALLOWED
+        debug_messages << "from depends_on stanza: #{depends_on_min_os.to_sym}"
+      end
+      odebug "Declared minimum macOS: #{cask_min_os.to_sym} (#{debug_messages.join(" | ").presence || "default"})"
+      return if cask_min_os.to_sym == app_min_os.to_sym
+      # ignore declared minimum OS < 11.x when auditing as ARM a cask with arch-specific artifacts
+      return if OnSystem.arch_condition_met?(:arm) &&
+                cask.on_system_blocks_exist? &&
                 cask_min_os.present? &&
                 cask_min_os < MacOSVersion.new("11")
 
-      min_os_definition = if cask_min_os.present?
-        if on_system_block_min_os.present? &&
-           on_system_block_min_os > cask.depends_on.macos&.minimum_version
-          "a block with a minimum OS version of #{cask_min_os.to_sym.inspect}"
+      min_os_definition = if cask_min_os > HOMEBREW_MACOS_OLDEST_ALLOWED
+        definition = if T.must(on_system_block_min_os.to_s <=> depends_on_min_os.to_s).positive?
+          "an on_system block"
         else
-          cask_min_os.to_sym.inspect
+          "a depends_on stanza"
         end
+        "#{definition} with a minimum macOS version of #{cask_min_os.to_sym.inspect}"
       else
-        "no minimum OS version"
+        "no minimum macOS version"
       end
-      add_error "Upstream defined #{min_os.to_sym.inspect} as the minimum OS version " \
+      source = T.must(bundle_min_os.to_s <=> sparkle_min_os.to_s).positive? ? "Artifact" : "Upstream"
+      add_error "#{source} defined #{app_min_os.to_sym.inspect} as the minimum macOS version " \
                 "but the cask declared #{min_os_definition}",
                 strict_only: true
     end
 
     sig { returns(T.nilable(MacOSVersion)) }
-    def livecheck_min_os
+    def cask_sparkle_min_os
       return unless online?
       return unless cask.livecheck_defined?
       return if cask.livecheck.strategy != :sparkle
@@ -773,10 +781,10 @@ module Cask
     end
 
     sig { returns(T.nilable(MacOSVersion)) }
-    def cask_plist_min_os
+    def cask_bundle_min_os
       return unless online?
 
-      plist_min_os = T.let(nil, T.untyped)
+      min_os = T.let(nil, T.untyped)
       @staged_path ||= cask.staged_path
 
       extract_artifacts do |artifacts, tmpdir|
@@ -787,13 +795,33 @@ module Cask
           next unless File.exist?(plist_path)
 
           plist = system_command!("plutil", args: ["-convert", "xml1", "-o", "-", plist_path]).plist
-          plist_min_os = plist["LSMinimumSystemVersion"].presence
-          break if plist_min_os
+          min_os = plist["LSMinimumSystemVersion"].presence
+          break if min_os
+
+          next unless (main_binary = get_plist_main_binary(path))
+          next if !File.exist?(main_binary) || File.open(main_binary, "rb") { |f| f.read(2) == "#!" }
+
+          macho = MachO.open(main_binary)
+          min_os = case macho
+          when MachO::MachOFile
+            [
+              macho[:LC_VERSION_MIN_MACOSX].first&.version_string,
+              macho[:LC_BUILD_VERSION].first&.minos_string,
+            ]
+          when MachO::FatFile
+            macho.machos.map do |slice|
+              [
+                slice[:LC_VERSION_MIN_MACOSX].first&.version_string,
+                slice[:LC_BUILD_VERSION].first&.minos_string,
+              ]
+            end.flatten
+          end.compact.min
+          break if min_os
         end
       end
 
       begin
-        MacOSVersion.new(plist_min_os).strip_patch
+        MacOSVersion.new(min_os).strip_patch
       rescue MacOSVersion::Error
         nil
       end
