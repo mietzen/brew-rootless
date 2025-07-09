@@ -155,6 +155,8 @@ module Homebrew
         input = if ping_switch?
           { jsonrpc: JSON_RPC_VERSION, id: 1, method: "ping" }.to_json
         else
+          break if @stdin.eof?
+
           @stdin.gets
         end
         next if input.nil? || input.strip.empty?

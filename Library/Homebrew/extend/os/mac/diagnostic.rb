@@ -415,7 +415,7 @@ module OS
           <<~EOS
             Your Cellar and TEMP directories are on different volumes.
             macOS won't move relative symlinks across volumes unless the target file already
-            exists. Brews known to be affected by this are Git and Narwhal.
+            exists. Formulae known to be affected by this are Git and Narwhal.
 
             You should set the "HOMEBREW_TEMP" environment variable to a suitable
             directory on the same volume as your Cellar.

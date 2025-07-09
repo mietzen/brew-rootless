@@ -420,7 +420,8 @@ class FormulaInstaller
     invalid_arch_dependencies = []
     pinned_unsatisfied_deps = []
     recursive_deps.each do |dep|
-      if (tab = Tab.for_formula(dep.to_formula)) && tab.arch.present? && tab.arch.to_s != Hardware::CPU.arch.to_s
+      tab = Tab.for_formula(dep.to_formula)
+      if tab.arch.present? && tab.arch.to_s != Hardware::CPU.arch.to_s
         invalid_arch_dependencies << "#{dep} was built for #{tab.arch}"
       end
 
@@ -1355,12 +1356,12 @@ on_request: installed_on_request?, options:)
     end
   end
 
-  sig { void }
-  def fetch_bottle_tab
+  sig { params(quiet: T::Boolean).void }
+  def fetch_bottle_tab(quiet: false)
     return if @fetch_bottle_tab
 
     begin
-      formula.fetch_bottle_tab
+      formula.fetch_bottle_tab(quiet: quiet)
       @bottle_tab_runtime_dependencies = formula.bottle_tab_attributes
                                                 .fetch("runtime_dependencies", []).then { |deps| deps || [] }
                                                 .each_with_object({}) { |dep, h| h[dep["full_name"]] = dep }

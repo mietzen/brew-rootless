@@ -91,7 +91,7 @@ module Homebrew
         raise UsageError, "`brew deps --arch=all` is not supported" if args.arch == "all"
 
         os, arch = T.must(args.os_arch_combinations.first)
-        all = args.eval_all?
+        eval_all = args.eval_all?
 
         Formulary.enable_factory_cache!
 
@@ -164,9 +164,9 @@ module Homebrew
 
             puts_deps_tree(dependents, recursive:)
             return
-          elsif all
+          elsif eval_all
             puts_deps(sorted_dependents(
-                        Formula.all(eval_all: args.eval_all?) + Cask::Cask.all(eval_all: args.eval_all?),
+                        Formula.all(eval_all:) + Cask::Cask.all(eval_all:),
                       ), recursive:)
             return
           elsif !args.no_named? && args.for_each?

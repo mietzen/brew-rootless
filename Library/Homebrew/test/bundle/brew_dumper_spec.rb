@@ -2,7 +2,7 @@
 
 require "ostruct"
 require "bundle"
-require "bundle/brew_dumper"
+require "bundle/formula_dumper"
 require "tsort"
 require "formula"
 require "tab"
@@ -10,7 +10,7 @@ require "utils/bottles"
 
 # TODO: remove OpenStruct usage
 # rubocop:todo Style/OpenStructUse
-RSpec.describe Homebrew::Bundle::BrewDumper do
+RSpec.describe Homebrew::Bundle::FormulaDumper do
   subject(:dumper) { described_class }
 
   let(:foo) do
@@ -184,7 +184,7 @@ RSpec.describe Homebrew::Bundle::BrewDumper do
 
     it "exits on cyclic exceptions" do
       expect(Formula).to receive(:installed).and_return([foo, bar, baz])
-      expect_any_instance_of(Homebrew::Bundle::BrewDumper::Topo).to receive(:tsort).and_raise(
+      expect_any_instance_of(Homebrew::Bundle::FormulaDumper::Topo).to receive(:tsort).and_raise(
         TSort::Cyclic,
         'topological sort failed: ["foo", "bar"]',
       )

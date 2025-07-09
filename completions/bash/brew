@@ -444,7 +444,6 @@ _brew_audit() {
       --skip-style
       --strict
       --tap
-      --token-conflicts
       --verbose
       "
       return

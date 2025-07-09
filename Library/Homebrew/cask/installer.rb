@@ -792,10 +792,10 @@ on_request: true)
 
       if installed_caskfile&.exist?
         begin
-          @cask = CaskLoader.load(installed_caskfile)
+          @cask = CaskLoader.load_from_installed_caskfile(installed_caskfile)
           return
-        rescue CaskInvalidError
-          # could be caused by trying to load outdated caskfile
+        rescue CaskInvalidError, CaskUnavailableError
+          # could be caused by trying to load outdated or deleted caskfile
         end
       end
 

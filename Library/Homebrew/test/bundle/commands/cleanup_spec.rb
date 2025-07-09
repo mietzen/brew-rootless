@@ -70,7 +70,7 @@ RSpec.describe Homebrew::Bundle::Commands::Cleanup do
         { name: "builddependency2", full_name: "builddependency2" },
         { name: "caskdependency", full_name: "homebrew/tap/caskdependency" },
       ].map { |formula| dependencies_arrays_hash.merge(formula) }
-      allow(Homebrew::Bundle::BrewDumper).to receive(:formulae).and_return(formulae_hash)
+      allow(Homebrew::Bundle::FormulaDumper).to receive(:formulae).and_return(formulae_hash)
 
       formulae_hash.each do |hash_formula|
         name = hash_formula[:name]
@@ -106,7 +106,7 @@ RSpec.describe Homebrew::Bundle::Commands::Cleanup do
 
     it "ignores formulae with .keepme references when computing which formulae to uninstall" do
       name = full_name ="c"
-      allow(Homebrew::Bundle::BrewDumper).to receive(:formulae).and_return([{ name:, full_name: }])
+      allow(Homebrew::Bundle::FormulaDumper).to receive(:formulae).and_return([{ name:, full_name: }])
       f = formula(name) { url "#{name}-1.0" }
       stub_formula_loader f, name
 
@@ -159,7 +159,7 @@ RSpec.describe Homebrew::Bundle::Commands::Cleanup do
       expect { described_class.run(force: true) }.to output(/Uninstalled 2 casks/).to_stdout
     end
 
-    it "does not uninstall casks if --brews is disabled" do
+    it "does not uninstall casks if --formulae is disabled" do
       expect(Kernel).not_to receive(:system)
       expect(described_class).to receive(:system_output_no_stderr).and_return("")
       expect { described_class.run(force: true, casks: false) }.not_to output.to_stdout
@@ -206,7 +206,7 @@ RSpec.describe Homebrew::Bundle::Commands::Cleanup do
     it "does not uninstall formulae if --casks is disabled" do
       expect(Kernel).not_to receive(:system)
       expect(described_class).to receive(:system_output_no_stderr).and_return("")
-      expect { described_class.run(force: true, brews: false) }.not_to output.to_stdout
+      expect { described_class.run(force: true, formulae: false) }.not_to output.to_stdout
     end
   end
 

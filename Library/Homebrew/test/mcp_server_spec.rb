@@ -228,6 +228,8 @@ RSpec.describe Homebrew::McpServer do
     end
 
     it "exits on Interrupt" do
+      stdin.puts
+      stdin.rewind
       allow(stdin).to receive(:gets).and_raise(Interrupt)
       expect do
         server.run
@@ -237,6 +239,8 @@ RSpec.describe Homebrew::McpServer do
     end
 
     it "exits on error" do
+      stdin.puts
+      stdin.rewind
       allow(stdin).to receive(:gets).and_raise(StandardError, "fail")
       expect do
         server.run

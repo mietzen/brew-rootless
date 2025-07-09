@@ -223,9 +223,9 @@ module RuboCop
           problem "Please use https:// for #{url}"
         end
 
-        # Check for master branch GitHub archives.
+        # Check for default branch GitHub archives.
         if type == :formula
-          tarball_gh_pattern = %r{^https://github\.com/.*archive/master\.(tar\.gz|zip)$}
+          tarball_gh_pattern = %r{^https://github\.com/.*archive/(main|master)\.(tar\.gz|zip)$}
           audit_urls(urls, tarball_gh_pattern) do
             problem "Use versioned rather than branch tarballs for stable checksums."
           end

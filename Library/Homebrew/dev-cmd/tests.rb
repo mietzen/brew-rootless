@@ -25,7 +25,7 @@ module Homebrew
         switch "--debug",
                description: "Enable debugging using `ruby/debug`, or surface the standard `odebug` output."
         switch "--changed",
-               description: "Only runs tests on files that were changed from the master branch."
+               description: "Only runs tests on files that were changed from the `main` branch."
         switch "--fail-fast",
                description: "Exit early on the first failing test."
         switch "--no-parallel",
@@ -198,9 +198,9 @@ module Homebrew
 
       sig { returns(T::Array[String]) }
       def changed_test_files
-        changed_files = Utils.popen_read("git", "diff", "--name-only", "master")
+        changed_files = Utils.popen_read("git", "diff", "--name-only", "main")
 
-        raise UsageError, "No files have been changed from the master branch!" if changed_files.blank?
+        raise UsageError, "No files have been changed from the `main` branch!" if changed_files.blank?
 
         filestub_regex = %r{Library/Homebrew/([\w/-]+).rb}
         changed_files.scan(filestub_regex).map(&:last).filter_map do |filestub|

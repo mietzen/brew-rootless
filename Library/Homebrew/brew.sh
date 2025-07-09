@@ -531,9 +531,9 @@ GIT_REVISION=$("${HOMEBREW_GIT}" -C "${HOMEBREW_REPOSITORY}" rev-parse HEAD 2>/d
 if [[ -z "${GIT_REVISION}" ]]
 then
   read -r GIT_HEAD 2>/dev/null <"${HOMEBREW_REPOSITORY}/.git/HEAD"
-  if [[ "${GIT_HEAD}" == "ref: refs/heads/master" ]]
+  if [[ "${GIT_HEAD}" == "ref: refs/heads/main" ]]
   then
-    read -r GIT_REVISION 2>/dev/null <"${HOMEBREW_REPOSITORY}/.git/refs/heads/master"
+    read -r GIT_REVISION 2>/dev/null <"${HOMEBREW_REPOSITORY}/.git/refs/heads/main"
   elif [[ "${GIT_HEAD}" == "ref: refs/heads/stable" ]]
   then
     read -r GIT_REVISION 2>/dev/null <"${HOMEBREW_REPOSITORY}/.git/refs/heads/stable"

@@ -93,6 +93,8 @@ module Superenv
     # Prevent Go from automatically downloading a newer toolchain than the one that we have.
     # https://tip.golang.org/doc/toolchain
     self["GOTOOLCHAIN"] = "local"
+    # Prevent maturin from automatically downloading its own rust
+    self["MATURIN_NO_INSTALL_RUST"] = "1"
     # Prevent Python packages from using bundled libraries by default.
     # Currently for hidapi, pyzmq and pynacl
     self["HIDAPI_SYSTEM_HIDAPI"] = "1"

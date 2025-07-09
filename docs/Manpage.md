@@ -523,7 +523,7 @@ first search, making that search slower than subsequent ones.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to search
-  their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set.
+  their descriptions. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `--formula`
 
@@ -536,7 +536,7 @@ first search, making that search slower than subsequent ones.
 ### `developer` \[*`subcommand`*\]
 
 Control Homebrew's developer mode. When developer mode is enabled, `brew update`
-will update Homebrew to the latest commit on the `master` branch instead of the
+will update Homebrew to the latest commit on the `main` branch instead of the
 latest stable version along with some other behaviour changes.
 
 `brew developer` \[`state`\]
@@ -723,7 +723,7 @@ Display brief statistics for your Homebrew installation. If a *`formula`* or
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to print
-  their JSON. Implied if `$HOMEBREW_EVAL_ALL` is set.
+  their JSON.
 
 `--variations`
 
@@ -1115,7 +1115,7 @@ Show install options specific to *`formula`*.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to show
-  their options.
+  their options. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `--command`
 
@@ -1221,8 +1221,8 @@ all items or checking if any current formulae/casks have Ruby issues.
 
 `--eval-all`
 
-: Evaluate all available formulae and casks, whether installed or not. Implied
-  if `$HOMEBREW_EVAL_ALL` is set.
+: Evaluate all available formulae and casks, whether installed or not. Enabled
+  by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `--no-simulate`
 
@@ -1351,7 +1351,7 @@ Perform a substring search of cask tokens and formula names for *`text`*. If
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to search
-  their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set.
+  their descriptions. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `--pull-request`
 
@@ -1546,8 +1546,8 @@ HTTPS, e.g. SSH, git, HTTP, FTP(S), rsync.
 
 `--eval-all`
 
-: Evaluate all the formulae, casks and aliases in the new tap to check validity.
-  Implied if `$HOMEBREW_EVAL_ALL` is set.
+: Evaluate all formulae, casks and aliases in the new tap to check their
+  validity. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `-f`, `--force`
 
@@ -1804,7 +1804,7 @@ dependency for their stable builds.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to show
-  their dependents.
+  their dependents. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `--include-implicit`
 
@@ -1975,7 +1975,7 @@ checks. Will exit with a non-zero status if any errors are found.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to audit
-  them. Implied if `$HOMEBREW_EVAL_ALL` is set.
+  them. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 `--new`
 
@@ -1986,10 +1986,6 @@ checks. Will exit with a non-zero status if any errors are found.
 `--[no-]signing`
 
 : Audit for app signatures, which are required by macOS on ARM.
-
-`--token-conflicts`
-
-: Audit for token conflicts.
 
 `--tap`
 
@@ -2139,7 +2135,8 @@ displays whether a pull request has been opened with the URL.
 
 `--eval-all`
 
-: Evaluate all formulae and casks.
+: Evaluate all formulae and casks. Enabled by default if `$HOMEBREW_EVAL_ALL` is
+  set.
 
 `--repology`
 
@@ -3204,7 +3201,7 @@ Run Homebrew's unit and integration tests.
 
 `--changed`
 
-: Only runs tests on files that were changed from the master branch.
+: Only runs tests on files that were changed from the `main` branch.
 
 `--fail-fast`
 
@@ -3291,7 +3288,7 @@ Show the unbottled dependents of formulae.
 `--eval-all`
 
 : Evaluate all available formulae and casks, whether installed or not, to check
-  them. Implied if `$HOMEBREW_EVAL_ALL` is set.
+  them. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
 ### `unpack` \[*`options`*\] *`formula`* \[...\]
 
@@ -3374,7 +3371,7 @@ Update the list of GitHub Sponsors in the `Homebrew/brew` README.
 ### `update-test` \[*`options`*\]
 
 Run a test of `brew update` with a new repository clone. If no options are
-passed, use `origin/master` as the start commit.
+passed, use `origin/main` as the start commit.
 
 `--to-tag`
 

@@ -10,7 +10,7 @@ module Homebrew
       module Cleanup
         def self.reset!
           require "bundle/cask_dumper"
-          require "bundle/brew_dumper"
+          require "bundle/formula_dumper"
           require "bundle/tap_dumper"
           require "bundle/vscode_extension_dumper"
           require "bundle/brew_services"
@@ -19,18 +19,18 @@ module Homebrew
           @kept_casks = nil
           @kept_formulae = nil
           Homebrew::Bundle::CaskDumper.reset!
-          Homebrew::Bundle::BrewDumper.reset!
+          Homebrew::Bundle::FormulaDumper.reset!
           Homebrew::Bundle::TapDumper.reset!
           Homebrew::Bundle::VscodeExtensionDumper.reset!
           Homebrew::Bundle::BrewServices.reset!
         end
 
         def self.run(global: false, file: nil, force: false, zap: false, dsl: nil,
-                     brews: true, casks: true, taps: true, vscode: true)
+                     formulae: true, casks: true, taps: true, vscode: true)
           @dsl ||= dsl
 
           casks = casks ? casks_to_uninstall(global:, file:) : []
-          formulae = brews ? formulae_to_uninstall(global:, file:) : []
+          formulae = formulae ? formulae_to_uninstall(global:, file:) : []
           taps = taps ? taps_to_untap(global:, file:) : []
           vscode_extensions = vscode ? vscode_extensions_to_uninstall(global:, file:) : []
           if force
@@ -101,11 +101,11 @@ module Homebrew
         def self.formulae_to_uninstall(global: false, file: nil)
           kept_formulae = self.kept_formulae(global:, file:)
 
-          require "bundle/brew_dumper"
-          require "bundle/brew_installer"
-          current_formulae = Homebrew::Bundle::BrewDumper.formulae
+          require "bundle/formula_dumper"
+          require "bundle/formula_installer"
+          current_formulae = Homebrew::Bundle::FormulaDumper.formulae
           current_formulae.reject! do |f|
-            Homebrew::Bundle::BrewInstaller.formula_in_array?(f[:full_name], kept_formulae)
+            Homebrew::Bundle::FormulaInstaller.formula_in_array?(f[:full_name], kept_formulae)
           end
 
           # Don't try to uninstall formulae with keepme references
@@ -119,7 +119,7 @@ module Homebrew
 
         private_class_method def self.kept_formulae(global: false, file: nil)
           require "bundle/brewfile"
-          require "bundle/brew_dumper"
+          require "bundle/formula_dumper"
           require "bundle/cask_dumper"
 
           @kept_formulae ||= begin
@@ -128,12 +128,12 @@ module Homebrew
             kept_formulae = @dsl.entries.select { |e| e.type == :brew }.map(&:name)
             kept_formulae += Homebrew::Bundle::CaskDumper.formula_dependencies(kept_casks)
             kept_formulae.map! do |f|
-              Homebrew::Bundle::BrewDumper.formula_aliases[f] ||
-                Homebrew::Bundle::BrewDumper.formula_oldnames[f] ||
+              Homebrew::Bundle::FormulaDumper.formula_aliases[f] ||
+                Homebrew::Bundle::FormulaDumper.formula_oldnames[f] ||
                 f
             end
 
-            kept_formulae + recursive_dependencies(Homebrew::Bundle::BrewDumper.formulae, kept_formulae)
+            kept_formulae + recursive_dependencies(Homebrew::Bundle::FormulaDumper.formulae, kept_formulae)
           end
         end
 

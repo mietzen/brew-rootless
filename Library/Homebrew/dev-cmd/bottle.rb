@@ -675,7 +675,7 @@ module Homebrew
                   "filename"        => filename.url_encode,
                   "local_filename"  => filename.to_s,
                   "sha256"          => sha256,
-                  "tab"             => tab.to_bottle_hash,
+                  "tab"             => T.must(tab).to_bottle_hash,
                   "path_exec_files" => path_exec_files,
                   "all_files"       => all_files,
                   "installed_size"  => installed_size,

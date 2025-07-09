@@ -97,7 +97,7 @@ module Homebrew
                env:         [:bundle_install_cleanup, "--global"]
         switch "--all",
                description: "`list` all dependencies."
-        switch "--formula", "--brews",
+        switch "--formula", "--formulae", "--brews",
                description: "`list`, `dump` or `cleanup` Homebrew formula dependencies."
         switch "--cask", "--casks",
                description: "`list`, `dump` or `cleanup` Homebrew cask dependencies."
@@ -162,7 +162,7 @@ module Homebrew
         zap = args.zap?
         Homebrew::Bundle.upgrade_formulae = args.upgrade_formulae
 
-        no_type_args = !args.brews? && !args.casks? && !args.taps? && !args.mas? && !args.whalebrew? && !args.vscode?
+        no_type_args = [args.formulae?, args.casks?, args.taps?, args.mas?, args.whalebrew?, args.vscode?].none?
 
         if args.install?
           if [nil, "install", "upgrade"].include?(subcommand)
@@ -209,7 +209,7 @@ module Homebrew
             describe:   args.describe?,
             no_restart: args.no_restart?,
             taps:       args.taps? || no_type_args,
-            brews:      args.brews? || no_type_args,
+            formulae:   args.formulae? || no_type_args,
             casks:      args.casks? || no_type_args,
             mas:        args.mas? || no_type_args,
             whalebrew:  args.whalebrew? || no_type_args,
@@ -222,7 +222,7 @@ module Homebrew
           require "bundle/commands/cleanup"
           Homebrew::Bundle::Commands::Cleanup.run(
             global:, file:, force:, zap:,
-            brews:  args.brews? || no_type_args,
+            formulae:  args.formulae? || no_type_args,
             casks:  args.casks? || no_type_args,
             taps:   args.taps? || no_type_args,
             vscode: args.vscode? || no_type_args
@@ -235,7 +235,7 @@ module Homebrew
           Homebrew::Bundle::Commands::List.run(
             global:,
             file:,
-            brews:     args.brews? || args.all? || no_type_args,
+            formulae:  args.formulae? || args.all? || no_type_args,
             casks:     args.casks? || args.all?,
             taps:      args.taps? || args.all?,
             mas:       args.mas? || args.all?,
@@ -243,9 +243,9 @@ module Homebrew
             vscode:    args.vscode? || args.all?,
           )
         when "add", "remove"
-          # We intentionally omit the `s` from `brews`, `casks`, and `taps` for ease of handling later.
+          # We intentionally omit the s from `brews`, `casks`, and `taps` for ease of handling later.
           type_hash = {
-            brew:      args.brews?,
+            brew:      args.formulae?,
             cask:      args.casks?,
             tap:       args.taps?,
             mas:       args.mas?,

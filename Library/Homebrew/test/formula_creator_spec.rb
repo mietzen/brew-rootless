@@ -41,6 +41,7 @@ RSpec.describe Homebrew::FormulaCreator do
         github_user_repository: ["buildpacks", "pack"],
         latest_release:         { "tag_name" => "v0.37.0" },
         expected_name:          "pack",
+        expected_url:           "https://github.com/buildpacks/pack/archive/refs/tags/v0.37.0.tar.gz",
         expected_version:       "v0.37.0",
       },
       "GitHub URL with name override":   {
@@ -68,6 +69,9 @@ RSpec.describe Homebrew::FormulaCreator do
           expect(formula_creator.version).to eq(expected_version)
         else
           expect(formula_creator.version).to be_null
+        end
+        if (expected_url = test[:expected_url])
+          expect(formula_creator.url).to eq(expected_url)
         end
         expect(formula_creator.head).to eq(test.fetch(:expected_head, false))
       end

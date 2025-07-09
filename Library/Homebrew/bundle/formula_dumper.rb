@@ -1,4 +1,4 @@
-# typed: false # rubocop:todo Sorbet/TrueSigil
+# typed: true
 # frozen_string_literal: true
 
 require "json"
@@ -7,10 +7,8 @@ require "tsort"
 module Homebrew
   module Bundle
     # TODO: refactor into multiple modules
-    module BrewDumper
-      module_function
-
-      def reset!
+    module FormulaDumper
+      def self.reset!
         require "bundle/brew_services"
 
         Homebrew::Bundle::BrewServices.reset!
@@ -21,14 +19,14 @@ module Homebrew
         @formula_oldnames = nil
       end
 
-      def formulae
+      def self.formulae
         return @formulae if @formulae
 
         formulae_by_full_name
         @formulae
       end
 
-      def formulae_by_full_name(name = nil)
+      def self.formulae_by_full_name(name = nil)
         return @formulae_by_full_name[name] if name.present? && @formulae_by_full_name&.key?(name)
 
         require "formula"
@@ -51,11 +49,11 @@ module Homebrew
         {}
       end
 
-      def formulae_by_name(name)
+      def self.formulae_by_name(name)
         formulae_by_full_name(name) || @formulae_by_name[name]
       end
 
-      def dump(describe: false, no_restart: false)
+      def self.dump(describe: false, no_restart: false)
         require "bundle/brew_services"
 
         requested_formula = formulae.select do |f|
@@ -77,7 +75,7 @@ module Homebrew
         end.join("\n")
       end
 
-      def formula_aliases
+      def self.formula_aliases
         return @formula_aliases if @formula_aliases
 
         @formula_aliases = {}
@@ -96,7 +94,7 @@ module Homebrew
         @formula_aliases
       end
 
-      def formula_oldnames
+      def self.formula_oldnames
         return @formula_oldnames if @formula_oldnames
 
         @formula_oldnames = {}
@@ -115,7 +113,7 @@ module Homebrew
         @formula_oldnames
       end
 
-      def add_formula(formula)
+      private_class_method def self.add_formula(formula)
         hash = formula_to_hash formula
 
         @formulae_by_name[hash[:name]] = hash
@@ -123,9 +121,8 @@ module Homebrew
 
         hash
       end
-      private_class_method :add_formula
 
-      def formula_to_hash(formula)
+      private_class_method def self.formula_to_hash(formula)
         keg = if formula.linked?
           link = true if formula.keg_only?
           formula.linked_keg
@@ -185,17 +182,21 @@ module Homebrew
           official_tap:             formula.tap&.official? || false,
         }
       end
-      private_class_method :formula_to_hash
 
       class Topo < Hash
         include TSort
+
+        def each_key(&block)
+          keys.each(&block)
+        end
         alias tsort_each_node each_key
+
         def tsort_each_child(node, &block)
           fetch(node.downcase).sort.each(&block)
         end
       end
 
-      def sort!(formulae)
+      private_class_method def self.sort!(formulae)
         # Step 1: Sort by formula full name while putting tap formulae behind core formulae.
         #         So we can have a nicer output.
         formulae = formulae.sort do |a, b|
@@ -230,15 +231,14 @@ module Homebrew
 
         odie <<~EOS
           Formulae dependency graph sorting failed (likely due to a circular dependency):
-          #{cycle_first}: #{topo[cycle_first]}
-          #{cycle_last}: #{topo[cycle_last]}
+          #{cycle_first}: #{topo[cycle_first] if topo}
+          #{cycle_last}: #{topo[cycle_last] if topo}
           Please run the following commands and try again:
             brew update
             brew uninstall --ignore-dependencies --force #{cycle_first} #{cycle_last}
             brew install #{cycle_first} #{cycle_last}
         EOS
       end
-      private_class_method :sort!
     end
   end
 end

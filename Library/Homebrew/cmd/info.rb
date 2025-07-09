@@ -57,7 +57,7 @@ module Homebrew
         switch "--eval-all",
                depends_on:  "--json",
                description: "Evaluate all available formulae and casks, whether installed or not, to print their " \
-                            "JSON. Implied if `$HOMEBREW_EVAL_ALL` is set."
+                            "JSON."
         switch "--variations",
                depends_on:  "--json",
                description: "Include the variations hash in each formula's JSON output."
@@ -97,9 +97,7 @@ module Homebrew
 
           print_analytics
         elsif (json = args.json)
-          all = args.eval_all?
-
-          print_json(json, all)
+          print_json(json, args.eval_all?)
         elsif args.github?
           raise FormulaOrCaskUnspecifiedError if args.no_named?
 
@@ -192,16 +190,16 @@ module Homebrew
         version_hash[version]
       end
 
-      sig { params(json: T.any(T::Boolean, String), all: T::Boolean).void }
-      def print_json(json, all)
-        raise FormulaOrCaskUnspecifiedError if !(all || args.installed?) && args.no_named?
+      sig { params(json: T.any(T::Boolean, String), eval_all: T::Boolean).void }
+      def print_json(json, eval_all)
+        raise FormulaOrCaskUnspecifiedError if !(eval_all || args.installed?) && args.no_named?
 
         json = case json_version(json)
         when :v1, :default
           raise UsageError, "Cannot specify `--cask` when using `--json=v1`!" if args.cask?
 
-          formulae = if all
-            Formula.all(eval_all: args.eval_all?).sort
+          formulae = if eval_all
+            Formula.all(eval_all:).sort
           elsif args.installed?
             Formula.installed.sort
           else
@@ -215,10 +213,10 @@ module Homebrew
           end
         when :v2
           formulae, casks = T.let(
-            if all
+            if eval_all
               [
-                Formula.all(eval_all: args.eval_all?).sort,
-                Cask::Cask.all(eval_all: args.eval_all?).sort_by(&:full_name),
+                Formula.all(eval_all:).sort,
+                Cask::Cask.all(eval_all:).sort_by(&:full_name),
               ]
             elsif args.installed?
               [Formula.installed.sort, Cask::Caskroom.casks.sort_by(&:full_name)]

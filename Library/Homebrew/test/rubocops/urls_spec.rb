@@ -125,7 +125,7 @@ RSpec.describe RuboCop::Cop::FormulaAudit::Urls do
       "msg" => "Please use https:// for http://github.com/foo/foo5.git",
       "col" => 2,
     }, {
-      "url" => "https://github.com/foo/foobar/archive/master.zip",
+      "url" => "https://github.com/foo/foobar/archive/main.zip",
       "msg" => "Use versioned rather than branch tarballs for stable checksums.",
       "col" => 2,
     }, {

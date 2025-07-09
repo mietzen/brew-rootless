@@ -392,7 +392,7 @@ _brew__s() {
     '(--repology --macports --fink --opensuse --fedora --archlinux --ubuntu)--debian[Search for text in the given database]' \
     '--debug[Display any debugging information]' \
     '(--pull-request)--desc[Search for formulae with a description matching text and casks with a name or description matching text]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to search their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to search their descriptions. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '(--repology --macports --fink --opensuse --archlinux --debian --ubuntu)--fedora[Search for text in the given database]' \
     '(--repology --macports --opensuse --fedora --archlinux --debian --ubuntu)--fink[Search for text in the given database]' \
     '--formula[Search for formulae]' \
@@ -423,7 +423,7 @@ _brew_abv() {
     '--category[Which type of analytics data to retrieve. The value for category must be `install`, `install-on-request` or `build-error`; `cask-install` or `os-version` may be specified if formula is not. The default is `install`]' \
     '--days[How many days of analytics data to retrieve. The value for days must be `30`, `90` or `365`. The default is `30`]' \
     '--debug[Display any debugging information]' \
-    '(--installed)--eval-all[Evaluate all available formulae and casks, whether installed or not, to print their JSON. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '(--installed)--eval-all[Evaluate all available formulae and casks, whether installed or not, to print their JSON]' \
     '(--cask --json)--fetch-manifest[Fetch GitHub Packages manifest for extra information when formula is not installed]' \
     '--github[Open the GitHub source page for formula and cask in a browser. To view the history locally: `brew log -p` formula or cask]' \
     '--help[Show this message]' \
@@ -468,7 +468,7 @@ _brew_audit() {
     '--audit-debug[Enable debugging and profiling of audit methods]' \
     '--debug[Display any debugging information]' \
     '--display-filename[Prefix every line of output with the file or formula name being audited, to make output easy to grep]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to audit them. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to audit them. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '(--only)--except[Specify a comma-separated method list to skip running the methods named `audit_`method]' \
     '(--only-cops --strict --only-cops --only)--except-cops[Specify a comma-separated cops list to skip checking for violations of the listed RuboCop cops]' \
     '--fix[Fix style violations automatically using RuboCop'\''s auto-correct feature]' \
@@ -486,7 +486,6 @@ _brew_audit() {
     '--skip-style[Skip running non-RuboCop style checks. Useful if you plan on running `brew style` separately. Enabled by default unless a formula is specified by name]' \
     '(--only-cops --except-cops)--strict[Run additional, stricter style checks]' \
     '--tap[Check formulae and casks within the given tap, specified as user`/`repo]' \
-    '--token-conflicts[Audit for token conflicts]' \
     '--verbose[Make some output more verbose]' \
     - formula \
     '(--cask)--formula[Treat all named arguments as formulae]' \
@@ -537,7 +536,7 @@ _brew_bump() {
   _arguments \
     '--bump-synced[Bump additional formulae marked as synced with the given formulae]' \
     '--debug[Display any debugging information]' \
-    '(--installed)--eval-all[Evaluate all formulae and casks]' \
+    '(--installed)--eval-all[Evaluate all formulae and casks. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--full-name[Print formulae/casks with fully-qualified names]' \
     '--help[Show this message]' \
     '(--tap --eval-all --auto)--installed[Check formulae and casks that are currently installed]' \
@@ -856,7 +855,7 @@ _brew_desc() {
   _arguments \
     '--debug[Display any debugging information]' \
     '(--search --name)--description[Search just descriptions for text. If text is flanked by slashes, it is interpreted as a regular expression]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to search their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to search their descriptions. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--help[Show this message]' \
     '(--search --description)--name[Search just names for text. If text is flanked by slashes, it is interpreted as a regular expression]' \
     '--quiet[Make some output more quiet]' \
@@ -1173,7 +1172,7 @@ _brew_info() {
     '--category[Which type of analytics data to retrieve. The value for category must be `install`, `install-on-request` or `build-error`; `cask-install` or `os-version` may be specified if formula is not. The default is `install`]' \
     '--days[How many days of analytics data to retrieve. The value for days must be `30`, `90` or `365`. The default is `30`]' \
     '--debug[Display any debugging information]' \
-    '(--installed)--eval-all[Evaluate all available formulae and casks, whether installed or not, to print their JSON. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '(--installed)--eval-all[Evaluate all available formulae and casks, whether installed or not, to print their JSON]' \
     '(--cask --json)--fetch-manifest[Fetch GitHub Packages manifest for extra information when formula is not installed]' \
     '--github[Open the GitHub source page for formula and cask in a browser. To view the history locally: `brew log -p` formula or cask]' \
     '--help[Show this message]' \
@@ -1565,7 +1564,7 @@ _brew_options() {
     '(--installed --all)--command[Show options for the specified command]' \
     '--compact[Show all options on a single line separated by spaces]' \
     '--debug[Display any debugging information]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to show their options]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to show their options. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--help[Show this message]' \
     '(--all --command)--installed[Show options for formulae that are currently installed]' \
     '--quiet[Make some output more quiet]' \
@@ -1741,7 +1740,7 @@ _brew_readall() {
     '--aliases[Verify any alias symlinks in each tap]' \
     '--arch[Read using the given CPU architecture. (Pass `all` to simulate all architectures.)]' \
     '--debug[Display any debugging information]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--help[Show this message]' \
     '--no-simulate[Don'\''t simulate other system configurations when checking formulae and casks]' \
     '--os[Read using the given operating system. (Pass `all` to simulate all operating systems.)]' \
@@ -1889,7 +1888,7 @@ _brew_search() {
     '(--repology --macports --fink --opensuse --fedora --archlinux --ubuntu)--debian[Search for text in the given database]' \
     '--debug[Display any debugging information]' \
     '(--pull-request)--desc[Search for formulae with a description matching text and casks with a name or description matching text]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to search their descriptions. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to search their descriptions. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '(--repology --macports --fink --opensuse --archlinux --debian --ubuntu)--fedora[Search for text in the given database]' \
     '(--repology --macports --opensuse --fedora --archlinux --debian --ubuntu)--fink[Search for text in the given database]' \
     '--formula[Search for formulae]' \
@@ -2000,7 +1999,7 @@ _brew_tap() {
   _arguments \
     '--custom-remote[Install or change a tap with a custom remote. Useful for mirrors]' \
     '--debug[Display any debugging information]' \
-    '--eval-all[Evaluate all the formulae, casks and aliases in the new tap to check validity. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all formulae, casks and aliases in the new tap to check their validity. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--force[Force install core taps even under API mode]' \
     '--help[Show this message]' \
     '--quiet[Make some output more quiet]' \
@@ -2075,7 +2074,7 @@ _brew_test() {
 # brew tests
 _brew_tests() {
   _arguments \
-    '(--only)--changed[Only runs tests on files that were changed from the master branch]' \
+    '(--only)--changed[Only runs tests on files that were changed from the `main` branch]' \
     '--coverage[Generate code coverage reports]' \
     '--debug[Enable debugging using `ruby/debug`, or surface the standard `odebug` output]' \
     '--fail-fast[Exit early on the first failing test]' \
@@ -2123,7 +2122,7 @@ _brew_unbottled() {
   _arguments \
     '--debug[Display any debugging information]' \
     '(--total --lost)--dependents[Skip getting analytics data and sort by number of dependents instead]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to check them. Implied if `$HOMEBREW_EVAL_ALL` is set]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to check them. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--help[Show this message]' \
     '(--dependents --total)--lost[Print the `homebrew/core` commits where bottles were lost in the last week]' \
     '--quiet[Make some output more quiet]' \
@@ -2389,7 +2388,7 @@ _brew_uses() {
   _arguments \
     '(--formula)--cask[Include only casks]' \
     '--debug[Display any debugging information]' \
-    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to show their dependents]' \
+    '--eval-all[Evaluate all available formulae and casks, whether installed or not, to show their dependents. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--help[Show this message]' \
     '--include-build[Include formulae that specify formula as a `:build` dependency]' \
     '--include-implicit[Include formulae that have formula as an implicit dependency for downloading and unpacking source files]' \

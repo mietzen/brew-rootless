@@ -252,6 +252,14 @@ EOS
   fi
 
   INITIAL_BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null)"
+  MAIN_MIGRATION_REQUIRED=
+  if [[ "${INITIAL_BRANCH}" == "master" &&
+        ("${DIR}" == "${HOMEBREW_REPOSITORY}" || "${DIR}" == "${HOMEBREW_CORE_REPOSITORY}" || "${DIR}" == "${HOMEBREW_CASK_REPOSITORY}") ]]
+  then
+    # Migrate master to main for Homebrew/brew, homebrew-core or homebrew-cask
+    MAIN_MIGRATION_REQUIRED="1"
+  fi
+
   if [[ -n "${UPSTREAM_TAG}" ]] ||
      [[ "${INITIAL_BRANCH}" != "${UPSTREAM_BRANCH}" && -n "${INITIAL_BRANCH}" ]]
   then
@@ -317,7 +325,7 @@ EOS
 
   if [[ -n "${HOMEBREW_NO_UPDATE_CLEANUP}" ]]
   then
-    if [[ "${INITIAL_BRANCH}" != "${UPSTREAM_BRANCH}" && -n "${INITIAL_BRANCH}" ]] &&
+    if [[ -z "${MAIN_MIGRATION_REQUIRED}" && "${INITIAL_BRANCH}" != "${UPSTREAM_BRANCH}" && -n "${INITIAL_BRANCH}" ]] &&
        [[ ! "${INITIAL_BRANCH}" =~ ^v[0-9]+\.[0-9]+\.[0-9]|stable$ ]]
     then
       git checkout "${INITIAL_BRANCH}" "${QUIET_ARGS[@]}"
@@ -326,6 +334,11 @@ EOS
     pop_stash
   else
     pop_stash_message
+  fi
+
+  if [[ -n "${MAIN_MIGRATION_REQUIRED}" && -n "$(git config branch.main.remote 2>/dev/null || true)" ]]
+  then
+    git branch -d "${QUIET_ARGS[@]}" master
   fi
 
   trap - SIGINT
@@ -669,6 +682,16 @@ EOS
         UPSTREAM_REPOSITORY_TOKEN="${BASH_REMATCH[1]#*:}"
       fi
 
+      MAIN_MIGRATION_REQUIRED=
+      if [[ "${UPSTREAM_BRANCH_DIR}" == "master" &&
+            ("${DIR}" == "${HOMEBREW_REPOSITORY}" || "${DIR}" == "${HOMEBREW_CORE_REPOSITORY}" || "${DIR}" == "${HOMEBREW_CASK_REPOSITORY}") ]]
+      then
+        # Migrate master to main for Homebrew/brew, homebrew-core or homebrew-cask
+        MAIN_MIGRATION_REQUIRED=1
+        UPSTREAM_BRANCH_DIR="main"
+        declare UPSTREAM_BRANCH"${TAP_VAR}"="main"
+      fi
+
       if [[ -n "${UPSTREAM_REPOSITORY}" ]]
       then
         # UPSTREAM_REPOSITORY_TOKEN is parsed (if exists) from UPSTREAM_REPOSITORY_URL
@@ -778,6 +801,11 @@ EOS
             echo "${DIR}" >>"${missing_remote_ref_dirs_file}"
           fi
         fi
+      fi
+
+      if [[ -n "${MAIN_MIGRATION_REQUIRED}" ]]
+      then
+        git remote set-head origin --auto >/dev/null
       fi
 
       rm -f "${tmp_failure_file}"

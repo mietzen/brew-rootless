@@ -3,7 +3,7 @@
 
 module Homebrew
   module Bundle
-    class BrewInstaller
+    class FormulaInstaller
       def self.reset!
         @installed_formulae = nil
         @outdated_formulae = nil
@@ -179,13 +179,13 @@ module Homebrew
         return true if array.include?(formula)
         return true if array.include?(formula.split("/").last)
 
-        require "bundle/brew_dumper"
-        old_names = Homebrew::Bundle::BrewDumper.formula_oldnames
+        require "bundle/formula_dumper"
+        old_names = Homebrew::Bundle::FormulaDumper.formula_oldnames
         old_name = old_names[formula]
         old_name ||= old_names[formula.split("/").last]
         return true if old_name && array.include?(old_name)
 
-        resolved_full_name = Homebrew::Bundle::BrewDumper.formula_aliases[formula]
+        resolved_full_name = Homebrew::Bundle::FormulaDumper.formula_aliases[formula]
         return false unless resolved_full_name
         return true if array.include?(resolved_full_name)
         return true if array.include?(resolved_full_name.split("/").last)
@@ -219,14 +219,14 @@ module Homebrew
       end
 
       def self.formulae
-        require "bundle/brew_dumper"
-        Homebrew::Bundle::BrewDumper.formulae
+        require "bundle/formula_dumper"
+        Homebrew::Bundle::FormulaDumper.formulae
       end
 
       private
 
       def installed?
-        BrewInstaller.formula_installed?(@name)
+        FormulaInstaller.formula_installed?(@name)
       end
 
       def linked?
@@ -242,7 +242,7 @@ module Homebrew
       end
 
       def upgradable?
-        BrewInstaller.formula_upgradable?(@name)
+        FormulaInstaller.formula_upgradable?(@name)
       end
 
       def conflicts_with
@@ -250,8 +250,8 @@ module Homebrew
           conflicts_with = Set.new
           conflicts_with += @conflicts_with_arg
 
-          require "bundle/brew_dumper"
-          if (formula = Homebrew::Bundle::BrewDumper.formulae_by_full_name(@full_name)) &&
+          require "bundle/formula_dumper"
+          if (formula = Homebrew::Bundle::FormulaDumper.formulae_by_full_name(@full_name)) &&
              (formula_conflicts_with = formula[:conflicts_with])
             conflicts_with += formula_conflicts_with
           end
@@ -262,7 +262,7 @@ module Homebrew
 
       def resolve_conflicts!(verbose:)
         conflicts_with.each do |conflict|
-          next unless BrewInstaller.formula_installed?(conflict)
+          next unless FormulaInstaller.formula_installed?(conflict)
 
           if verbose
             puts <<~EOS
@@ -293,7 +293,7 @@ module Homebrew
           return false
         end
 
-        BrewInstaller.installed_formulae << @name
+        FormulaInstaller.installed_formulae << @name
         @changed = true
         true
       end

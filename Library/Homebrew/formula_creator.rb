@@ -14,6 +14,9 @@ module Homebrew
     sig { returns(Version) }
     attr_reader :version
 
+    sig { returns(String) }
+    attr_reader :url
+
     sig { returns(T::Boolean) }
     attr_reader :head
 
@@ -79,6 +82,9 @@ module Homebrew
             latest_release = GitHub.get_latest_release(user, repository)
             version = Version.new(latest_release.fetch("tag_name"))
             odebug "github: version from latest_release: #{version}"
+
+            @url = "https://github.com/#{user}/#{repository}/archive/refs/tags/#{version}.tar.gz"
+            odebug "github: url changed to source archive #{@url}"
           rescue GitHub::API::HTTPNotFoundError
             odebug "github: latest_release lookup failed: #{url}"
           end

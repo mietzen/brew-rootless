@@ -869,19 +869,35 @@ class ReporterHub
   sig { void }
   def dump_new_formula_report
     formulae = select_formula_or_cask(:A).sort.reject { |name| installed?(name) }
+    return if formulae.blank?
 
-    output_dump_formula_or_cask_report "New Formulae", formulae
+    ohai "New Formulae"
+    formulae.each do |formula|
+      if (desc = description(formula))
+        puts "#{formula}: #{desc}"
+      else
+        puts formula
+      end
+    end
   end
 
   sig { void }
   def dump_new_cask_report
-    return if Homebrew::SimulateSystem.simulating_or_running_on_linux?
+    return unless Cask::Caskroom.any_casks_installed?
 
     casks = select_formula_or_cask(:AC).sort.filter_map do |name|
       name.split("/").last unless cask_installed?(name)
     end
+    return if casks.blank?
 
-    output_dump_formula_or_cask_report "New Casks", casks
+    ohai "New Casks"
+    casks.each do |cask|
+      if (desc = cask_description(cask))
+        puts "#{cask}: #{desc}"
+      else
+        puts cask
+      end
+    end
   end
 
   sig { void }
@@ -934,5 +950,43 @@ class ReporterHub
     Cask::CaskLoader.load(cask).outdated?
   rescue Cask::CaskError
     false
+  end
+
+  sig { returns(T::Array[T.untyped]) }
+  def all_formula_json
+    return @all_formula_json if @all_formula_json
+
+    @all_formula_json = T.let(nil, T.nilable(T::Array[T.untyped]))
+    all_formula_json, = Homebrew::API.fetch_json_api_file "formula.jws.json"
+    all_formula_json = T.cast(all_formula_json, T::Array[T.untyped])
+    @all_formula_json = all_formula_json
+  end
+
+  sig { returns(T::Array[T.untyped]) }
+  def all_cask_json
+    return @all_cask_json if @all_cask_json
+
+    @all_cask_json = T.let(nil, T.nilable(T::Array[T.untyped]))
+    all_cask_json, = Homebrew::API.fetch_json_api_file "cask.jws.json"
+    all_cask_json = T.cast(all_cask_json, T::Array[T.untyped])
+    @all_cask_json = all_cask_json
+  end
+
+  sig { params(formula: String).returns(T.nilable(String)) }
+  def description(formula)
+    return if Homebrew::EnvConfig.no_install_from_api?
+
+    all_formula_json.find { |f| f["name"] == formula }
+                    &.fetch("desc", nil)
+                    &.presence
+  end
+
+  sig { params(cask: String).returns(T.nilable(String)) }
+  def cask_description(cask)
+    return if Homebrew::EnvConfig.no_install_from_api?
+
+    all_cask_json.find { |f| f["token"] == cask }
+                 &.fetch("desc", nil)
+                 &.presence
   end
 end

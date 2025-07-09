@@ -2,11 +2,11 @@
 
 require "bundle"
 require "formula"
-require "bundle/brew_installer"
-require "bundle/brew_dumper"
+require "bundle/formula_installer"
+require "bundle/formula_dumper"
 require "bundle/brew_services"
 
-RSpec.describe Homebrew::Bundle::BrewInstaller do
+RSpec.describe Homebrew::Bundle::FormulaInstaller do
   let(:formula_name) { "mysql" }
   let(:options) { { args: ["with-option"] } }
   let(:installer) { described_class.new(formula_name, options) }
@@ -182,8 +182,8 @@ RSpec.describe Homebrew::Bundle::BrewInstaller do
 
     context "when the conflicts_with option is provided" do
       before do
-        allow(Homebrew::Bundle::BrewDumper).to receive(:formulae_by_full_name).and_call_original
-        allow(Homebrew::Bundle::BrewDumper).to receive(:formulae_by_full_name).with("mysql").and_return(
+        allow(Homebrew::Bundle::FormulaDumper).to receive(:formulae_by_full_name).and_call_original
+        allow(Homebrew::Bundle::FormulaDumper).to receive(:formulae_by_full_name).with("mysql").and_return(
           name:           "mysql",
           conflicts_with: ["mysql55"],
         )
@@ -311,7 +311,7 @@ RSpec.describe Homebrew::Bundle::BrewInstaller do
   describe ".outdated_formulae" do
     it "calls Homebrew" do
       described_class.reset!
-      expect(Homebrew::Bundle::BrewDumper).to receive(:formulae).and_return(
+      expect(Homebrew::Bundle::FormulaDumper).to receive(:formulae).and_return(
         [
           { name: "a", outdated?: true },
           { name: "b", outdated?: true },
@@ -325,7 +325,7 @@ RSpec.describe Homebrew::Bundle::BrewInstaller do
   describe ".pinned_formulae" do
     it "calls Homebrew" do
       described_class.reset!
-      expect(Homebrew::Bundle::BrewDumper).to receive(:formulae).and_return(
+      expect(Homebrew::Bundle::FormulaDumper).to receive(:formulae).and_return(
         [
           { name: "a", pinned?: true },
           { name: "b", pinned?: true },
@@ -338,11 +338,11 @@ RSpec.describe Homebrew::Bundle::BrewInstaller do
 
   describe ".formula_installed_and_up_to_date?" do
     before do
-      Homebrew::Bundle::BrewDumper.reset!
+      Homebrew::Bundle::FormulaDumper.reset!
       described_class.reset!
       allow(described_class).to receive(:outdated_formulae).and_return(%w[bar])
       allow_any_instance_of(Formula).to receive(:outdated?).and_return(true)
-      allow(Homebrew::Bundle::BrewDumper).to receive(:formulae).and_return [
+      allow(Homebrew::Bundle::FormulaDumper).to receive(:formulae).and_return [
         {
           name:         "foo",
           full_name:    "homebrew/tap/foo",

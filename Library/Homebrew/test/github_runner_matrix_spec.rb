@@ -20,7 +20,7 @@ RSpec.describe GitHubRunnerMatrix, :no_api do
     MacOSVersion::SYMBOLS.find { |k, _| k == described_class::NEWEST_HOMEBREW_CORE_MACOS_RUNNER }
   end
 
-  let(:testball) { TestRunnerFormula.new(Testball.new) }
+  let(:testball) { setup_test_runner_formula("testball") }
   let(:testball_depender) { setup_test_runner_formula("testball-depender", ["testball"]) }
   let(:testball_depender_linux) { setup_test_runner_formula("testball-depender-linux", ["testball", :linux]) }
   let(:testball_depender_macos) { setup_test_runner_formula("testball-depender-macos", ["testball", :macos]) }
@@ -315,6 +315,7 @@ RSpec.describe GitHubRunnerMatrix, :no_api do
       end
     end
 
+    stub_formula_loader f
     TestRunnerFormula.new(f)
   end
 end

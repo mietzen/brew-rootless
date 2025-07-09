@@ -40,7 +40,8 @@ module Homebrew
         switch "--cask", "--casks",
                description: "Check only casks."
         switch "--eval-all",
-               description: "Evaluate all formulae and casks."
+               description: "Evaluate all formulae and casks.",
+               env:         :eval_all
         switch "--repology",
                description: "Use Repology to check for outdated packages."
         flag   "--tap=",
@@ -71,14 +72,12 @@ module Homebrew
         Homebrew.install_bundler_gems!(groups: ["livecheck"])
 
         Homebrew.with_no_api_env do
-          eval_all = args.eval_all? || Homebrew::EnvConfig.eval_all?
+          eval_all = args.eval_all?
 
           excluded_autobump = []
-          if args.no_autobump?
-            excluded_autobump.concat(autobumped_formulae_or_casks(CoreTap.instance)) if eval_all || args.formula?
-            if eval_all || args.cask?
-              excluded_autobump.concat(autobumped_formulae_or_casks(CoreCaskTap.instance, casks: true))
-            end
+          if args.no_autobump? && eval_all
+            excluded_autobump.concat(autobumped_formulae_or_casks(CoreTap.instance)) if args.formula?
+            excluded_autobump.concat(autobumped_formulae_or_casks(CoreCaskTap.instance, casks: true)) if args.cask?
           end
 
           formulae_and_casks = if args.auto?

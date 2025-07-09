@@ -10,6 +10,11 @@ module Homebrew
     class << self
       attr_reader :arch, :os
 
+      sig { returns(T::Hash[Symbol, Symbol]) }
+      def arch_symbols
+        { arm64: :arm, x86_64: :intel }.freeze
+      end
+
       sig {
         type_parameters(:U).params(
           os:     Symbol,
