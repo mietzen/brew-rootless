@@ -38,7 +38,9 @@ RSpec.describe Homebrew::Bundle::Commands::Cleanup do
     end
 
     it "computes which casks to uninstall" do
-      allow(Homebrew::Bundle::CaskDumper).to receive(:casks).and_return(%w[123 456])
+      cask_123 = instance_double(Cask::Cask, to_s: "123", old_tokens: [])
+      cask_456 = instance_double(Cask::Cask, to_s: "456", old_tokens: [])
+      allow(Homebrew::Bundle::CaskDumper).to receive(:casks).and_return([cask_123, cask_456])
       expect(described_class.casks_to_uninstall).to eql(%w[456])
     end
 

@@ -231,6 +231,19 @@ RSpec.describe RuboCop::Cop::FormulaAudit::Text do
       RUBY
     end
 
+    it 'reports offenses if eg `lib+"thing"` is present' do
+      expect_offense(<<~RUBY)
+        class Foo < Formula
+          def install
+            (lib+"foo").install
+             ^^^^^^^^^ FormulaAudit/Text: Use `lib/"foo"` instead of `lib+"foo"`
+            (bin+"foobar").install
+             ^^^^^^^^^^^^ FormulaAudit/Text: Use `bin/"foobar"` instead of `bin+"foobar"`
+          end
+        end
+      RUBY
+    end
+
     it 'reports an offense if `prefix + "bin"` is present' do
       expect_offense(<<~RUBY)
         class Foo < Formula

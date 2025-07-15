@@ -87,12 +87,25 @@ module Homebrew
         !cask_upgradable?(cask)
       end
 
+      def self.cask_in_array?(cask, array)
+        return true if array.include?(cask)
+        return true if array.include?(cask.split("/").last)
+
+        require "bundle/cask_dumper"
+        old_names = Homebrew::Bundle::CaskDumper.cask_oldnames
+        old_name = old_names[cask]
+        old_name ||= old_names[cask.split("/").last]
+        return true if old_name && array.include?(old_name)
+
+        false
+      end
+
       def self.cask_installed?(cask)
-        installed_casks.include? cask
+        cask_in_array?(cask, installed_casks)
       end
 
       def self.cask_upgradable?(cask)
-        outdated_casks.include? cask
+        cask_in_array?(cask, outdated_casks)
       end
 
       def self.installed_casks

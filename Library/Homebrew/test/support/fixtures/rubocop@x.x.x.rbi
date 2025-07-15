@@ -11,11 +11,11 @@ class Parser::Source::Range
   include ::RuboCop::Ext::Range
 end
 
-RuboCop::CLI::STATUS_OFFENSES = T.let(T.unsafe(nil), Integer)
+RuboCop::CLI::STATUS_OFFENSES = T.let(T.unsafe(nil).freeze, Integer)
 
-RuboCop::CLI::STATUS_SUCCESS = T.let(T.unsafe(nil), Integer)
+RuboCop::CLI::STATUS_SUCCESS = T.let(T.unsafe(nil).freeze, Integer)
 
-RuboCop::CommentConfig::CONFIG_DISABLED_LINE_RANGE_MIN = T.let(T.unsafe(nil), Float)
+RuboCop::CommentConfig::CONFIG_DISABLED_LINE_RANGE_MIN = T.let(T.unsafe(nil).freeze, Float)
 
 class RuboCop::Config
   include ::RuboCop::PathUtil
@@ -73,6 +73,6 @@ module RuboCop::Version
   end
 end
 
-VERSION = "x.x.x"
+VERSION = "x.x.x".freeze
 
-SOME_CONSTANT = "some constant value"
+SOME_CONSTANT = "some constant value".freeze

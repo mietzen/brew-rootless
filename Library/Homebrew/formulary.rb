@@ -97,6 +97,11 @@ module Formulary
 
     require "formula"
     require "ignorable"
+    require "stringio"
+
+    # Capture stdout to prevent formulae from printing to stdout unexpectedly.
+    old_stdout = $stdout
+    $stdout = StringIO.new
 
     mod = Module.new
     remove_const(namespace) if const_defined?(namespace)
@@ -133,6 +138,16 @@ module Formulary
       remove_const(namespace)
       raise new_exception, "", e.backtrace
     end
+  ensure
+    # TODO: Make printing to stdout an error so that we can print a tap name.
+    # See discussion at https://github.com/Homebrew/brew/pull/20226#discussion_r2195886888
+    if (printed_to_stdout = $stdout.string.strip.presence)
+      opoo <<~WARNING
+        Formula #{name} attempted to print the following while being loaded:
+        #{printed_to_stdout}
+      WARNING
+    end
+    $stdout = old_stdout
   end
 
   sig { params(identifier: String).returns(String) }

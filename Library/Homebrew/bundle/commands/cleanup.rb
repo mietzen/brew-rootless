@@ -128,9 +128,10 @@ module Homebrew
             kept_formulae = @dsl.entries.select { |e| e.type == :brew }.map(&:name)
             kept_formulae += Homebrew::Bundle::CaskDumper.formula_dependencies(kept_casks)
             kept_formulae.map! do |f|
-              Homebrew::Bundle::FormulaDumper.formula_aliases[f] ||
-                Homebrew::Bundle::FormulaDumper.formula_oldnames[f] ||
-                f
+              Homebrew::Bundle::FormulaDumper.formula_aliases.fetch(
+                f,
+                Homebrew::Bundle::FormulaDumper.formula_oldnames.fetch(f, f),
+              )
             end
 
             kept_formulae + recursive_dependencies(Homebrew::Bundle::FormulaDumper.formulae, kept_formulae)
@@ -142,7 +143,11 @@ module Homebrew
           return @kept_casks if @kept_casks
 
           @dsl ||= Brewfile.read(global:, file:)
-          @kept_casks = @dsl.entries.select { |e| e.type == :cask }.map(&:name)
+          kept_casks = @dsl.entries.select { |e| e.type == :cask }.flat_map(&:name)
+          kept_casks.map! do |c|
+            Homebrew::Bundle::CaskDumper.cask_oldnames.fetch(c, c)
+          end
+          @kept_casks = kept_casks
         end
 
         private_class_method def self.recursive_dependencies(current_formulae, formulae_names, top_level: true)

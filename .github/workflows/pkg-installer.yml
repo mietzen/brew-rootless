@@ -233,7 +233,7 @@ jobs:
       - name: Upload installer to GitHub release
         if: github.event_name == 'release'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           INSTALLER_PATH: ${{ needs.build.outputs.installer_path }}
         run: |
           VERSION="${INSTALLER_PATH#Homebrew-}"

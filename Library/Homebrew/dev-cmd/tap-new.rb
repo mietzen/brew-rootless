@@ -99,7 +99,7 @@ module Homebrew
                   id: set-up-homebrew
                   uses: Homebrew/actions/setup-homebrew@main
                   with:
-                    token: ${{ github.token }}
+                    token: ${{ secrets.GITHUB_TOKEN }}
 
                 - name: Cache Homebrew Bundler RubyGems
                   uses: actions/cache@v4
@@ -118,7 +118,7 @@ module Homebrew
                   id: base64-encode
                   if: github.event_name == 'pull_request'
                   env:
-                    TOKEN: ${{ github.token }}
+                    TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   run: |
                     base64_token=$(echo -n "${TOKEN}" | base64 | tr -d "\\n")
                     echo "::add-mask::${base64_token}"
@@ -164,16 +164,16 @@ module Homebrew
                 - name: Set up Homebrew
                   uses: Homebrew/actions/setup-homebrew@main
                   with:
-                    token: ${{ github.token }}
+                    token: ${{ secrets.GITHUB_TOKEN }}
 
                 - name: Set up git
                   uses: Homebrew/actions/git-user-config@main
 
                 - name: Pull bottles
                   env:
-                    HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
+                    HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           <% if args.github_packages? -%>
-                    HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ github.token }}
+                    HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     HOMEBREW_GITHUB_PACKAGES_USER: ${{ github.repository_owner }}
           <% end -%>
                     PULL_REQUEST: ${{ github.event.pull_request.number }}

@@ -43,5 +43,6 @@ require_relative "text"
 require_relative "urls"
 require_relative "uses_from_macos"
 require_relative "version"
+require_relative "zero_zero_zero_zero"
 
 require_relative "rubocop-cask"

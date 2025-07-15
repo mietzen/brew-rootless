@@ -90,6 +90,30 @@ module RuboCop
             problem "Use separate `make` calls"
           end
 
+          find_every_method_call_by_name(body_node, :+).each do |plus_node|
+            next unless plus_node.receiver&.send_type?
+            next unless plus_node.first_argument&.str_type?
+
+            receiver_method = plus_node.receiver.method_name
+            path_arg = plus_node.first_argument.str_content
+
+            case receiver_method
+            when :prefix
+              next unless (match = path_arg.match(%r{^(bin|include|libexec|lib|sbin|share|Frameworks)(?:/| |$)}))
+
+              offending_node(plus_node)
+              problem "Use `#{match[1].downcase}` instead of `prefix + \"#{match[1]}\"`"
+            when :bin, :include, :libexec, :lib, :sbin, :share
+              next if path_arg.empty?
+
+              offending_node(plus_node)
+              good = "#{receiver_method}/\"#{path_arg}\""
+              problem "Use `#{good}` instead of `#{plus_node.source}`" do |corrector|
+                corrector.replace(plus_node.loc.expression, good)
+              end
+            end
+          end
+
           body_node.each_descendant(:dstr) do |dstr_node|
             dstr_node.each_descendant(:begin) do |interpolation_node|
               next unless interpolation_node.source.match?(/#\{\w+\s*\+\s*['"][^}]+\}/)
@@ -98,19 +122,7 @@ module RuboCop
               problem "Do not concatenate paths in string interpolation"
             end
           end
-
-          prefix_path(body_node) do |prefix_node, path|
-            next unless (match = path.match(%r{^(bin|include|libexec|lib|sbin|share|Frameworks)(?:/| |$)}))
-
-            offending_node(prefix_node)
-            problem "Use `#{match[1].downcase}` instead of `prefix + \"#{match[1]}\"`"
-          end
         end
-
-        # Find: prefix + "foo"
-        def_node_search :prefix_path, <<~EOS
-          $(send (send nil? :prefix) :+ (str $_))
-        EOS
       end
     end
 
