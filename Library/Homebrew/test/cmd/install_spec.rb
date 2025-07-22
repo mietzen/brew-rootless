@@ -67,7 +67,7 @@ RSpec.describe Homebrew::Cmd::InstallCmd do
     # Ignore dependencies, because we'll try to resolve requirements in build.rb
     # and there will be the git requirement, but we cannot instantiate git
     # formula since we only have testball1 formula.
-    expect { brew "install", "testball1", "--HEAD", "--ignore-dependencies" }
+    expect { brew "install", "testball1", "--HEAD", "--ignore-dependencies", "HOMEBREW_DOWNLOAD_CONCURRENCY" => "1" }
       .to output(%r{#{HOMEBREW_CELLAR}/testball1/HEAD-d5eb689}o).to_stdout
       .and output(/Cloning into/).to_stderr
       .and be_a_success

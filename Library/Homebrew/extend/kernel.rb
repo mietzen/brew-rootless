@@ -26,9 +26,8 @@ module Kernel
       require path
     end
     true
-  rescue LoadError => e
-    # we should raise on syntax errors but not if the file doesn't exist.
-    raise unless e.message.include?(path)
+  rescue LoadError
+    false
   end
 
   def ohai_title(title)
@@ -81,7 +80,7 @@ module Kernel
   sig { params(message: T.any(String, Exception)).void }
   def opoo(message)
     require "utils/github/actions"
-    return if GitHub::Actions.puts_annotation_if_env_set(:warning, message.to_s)
+    return if GitHub::Actions.puts_annotation_if_env_set!(:warning, message.to_s)
 
     require "utils/formatter"
 
@@ -107,7 +106,7 @@ module Kernel
   sig { params(message: T.any(String, Exception)).void }
   def onoe(message)
     require "utils/github/actions"
-    return if GitHub::Actions.puts_annotation_if_env_set(:error, message.to_s)
+    return if GitHub::Actions.puts_annotation_if_env_set!(:error, message.to_s)
 
     require "utils/formatter"
 
@@ -205,7 +204,7 @@ module Kernel
     disable = true if disable_for_developers && Homebrew::EnvConfig.developer?
     if disable || Homebrew.raise_deprecation_exceptions?
       require "utils/github/actions"
-      GitHub::Actions.puts_annotation_if_env_set(:error, message, file:, line:)
+      GitHub::Actions.puts_annotation_if_env_set!(:error, message, file:, line:)
       exception = MethodDeprecatedError.new(message)
       exception.set_backtrace(backtrace)
       raise exception

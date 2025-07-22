@@ -29,10 +29,13 @@ RSpec.describe Homebrew::Cmd::Deps do
     setup_test_formula "recommended_test"
     setup_test_formula "installed"
 
-    # Mock `Formula#any_version_installed?` by creating the tab in a plausible keg directory
-    keg_dir = HOMEBREW_CELLAR/"installed"/"1.0"
+    # Mock `Formula#any_version_installed?` by creating the tab in a plausible keg directory and opt link
+    keg_dir = HOMEBREW_CELLAR/"installed/1.0"
     keg_dir.mkpath
     touch keg_dir/AbstractTab::FILENAME
+    opt_link = HOMEBREW_PREFIX/"opt/installed"
+    opt_link.parent.mkpath
+    FileUtils.ln_sf keg_dir, opt_link
 
     expect { brew "deps", "baz", "--include-test", "--missing", "--skip-recommended" }
       .to be_a_success

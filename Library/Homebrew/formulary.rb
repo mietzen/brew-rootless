@@ -79,6 +79,9 @@ module Formulary
   end
 
   module PathnameWriteMkpath
+    # TODO: migrate away from refinements here, they don't play nicely with
+    # Sorbet, when we migrate to `typed: strict`
+    # rubocop:todo Sorbet/BlockMethodDefinition
     refine Pathname do
       def write(content, offset = nil, **open_args)
         T.bind(self, Pathname)
@@ -89,6 +92,7 @@ module Formulary
         super
       end
     end
+    # rubocop:enable Sorbet/BlockMethodDefinition
   end
 
   using PathnameWriteMkpath
@@ -133,7 +137,7 @@ module Formulary
     rescue NameError => e
       class_list = mod.constants
                       .map { |const_name| mod.const_get(const_name) }
-                      .select { |const| const.is_a?(Class) }
+                      .grep(Class)
       new_exception = FormulaClassUnavailableError.new(name, path, class_name, class_list)
       remove_const(namespace)
       raise new_exception, "", e.backtrace
@@ -170,7 +174,7 @@ module Formulary
   end
 
   sig { params(name: String, flags: T::Array[String]).returns(T.class_of(Formula)) }
-  def self.load_formula_from_api(name, flags:)
+  def self.load_formula_from_api!(name, flags:)
     namespace = :"FormulaNamespaceAPI#{namespace_key(name)}"
 
     mod = Module.new
@@ -264,6 +268,9 @@ module Formulary
       end
     end
 
+    # TODO: migrate away from this inline class here, they don't play nicely with
+    # Sorbet, when we migrate to `typed: strict`
+    # rubocop:todo Sorbet/BlockMethodDefinition
     klass = Class.new(::Formula) do
       @loaded_from_api = true
 
@@ -307,6 +314,7 @@ module Formulary
       end
 
       if (because = json_formula["no_autobump_msg"])
+        because = because.to_sym if NO_AUTOBUMP_REASONS_LIST.key?(because.to_sym)
         no_autobump!(because:)
       end
 
@@ -431,6 +439,7 @@ module Formulary
         Checksum.new(checksum) if checksum
       end
     end
+    # rubocop:enable Sorbet/BlockMethodDefinition
 
     mod.const_set(class_name, klass)
 
@@ -902,7 +911,7 @@ module Formulary
     private
 
     def load_from_api(flags:)
-      Formulary.load_formula_from_api(name, flags:)
+      Formulary.load_formula_from_api!(name, flags:)
     end
   end
 

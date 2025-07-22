@@ -37,15 +37,15 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         context "with a successful installation" do
           it "start service" do
             expect(Homebrew::Bundle::BrewServices).not_to receive(:start)
-            described_class.preinstall(formula_name, start_service: true)
-            described_class.install(formula_name, start_service: true)
+            described_class.preinstall!(formula_name, start_service: true)
+            described_class.install!(formula_name, start_service: true)
           end
         end
 
         context "with a skipped installation" do
           it "start service" do
             expect(Homebrew::Bundle::BrewServices).not_to receive(:start)
-            described_class.install(formula_name, preinstall: false, start_service: true)
+            described_class.install!(formula_name, preinstall: false, start_service: true)
           end
         end
       end
@@ -59,8 +59,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
           it "start service" do
             expect(Homebrew::Bundle::BrewServices).to \
               receive(:start).with(formula_name, file: nil, verbose: false).and_return(true)
-            described_class.preinstall(formula_name, start_service: true)
-            described_class.install(formula_name, start_service: true)
+            described_class.preinstall!(formula_name, start_service: true)
+            described_class.install!(formula_name, start_service: true)
           end
         end
 
@@ -68,7 +68,7 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
           it "start service" do
             expect(Homebrew::Bundle::BrewServices).to \
               receive(:start).with(formula_name, file: nil, verbose: false).and_return(true)
-            described_class.install(formula_name, preinstall: false, start_service: true)
+            described_class.install!(formula_name, preinstall: false, start_service: true)
           end
         end
       end
@@ -84,8 +84,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         it "restart service" do
           expect(Homebrew::Bundle::BrewServices).to \
             receive(:restart).with(formula_name, file: nil, verbose: false).and_return(true)
-          described_class.preinstall(formula_name, restart_service: :always)
-          described_class.install(formula_name, restart_service: :always)
+          described_class.preinstall!(formula_name, restart_service: :always)
+          described_class.install!(formula_name, restart_service: :always)
         end
       end
 
@@ -93,7 +93,7 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         it "restart service" do
           expect(Homebrew::Bundle::BrewServices).to \
             receive(:restart).with(formula_name, file: nil, verbose: false).and_return(true)
-          described_class.install(formula_name, preinstall: false, restart_service: :always)
+          described_class.install!(formula_name, preinstall: false, restart_service: :always)
         end
       end
     end
@@ -107,8 +107,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         allow_any_instance_of(described_class).to receive(:linked?).and_return(false)
         expect(Homebrew::Bundle).to receive(:system).with(HOMEBREW_BREW_FILE, "link", "mysql",
                                                           verbose: false).and_return(true)
-        described_class.preinstall(formula_name, link: true)
-        described_class.install(formula_name, link: true)
+        described_class.preinstall!(formula_name, link: true)
+        described_class.install!(formula_name, link: true)
       end
 
       it "force-links keg-only formula" do
@@ -116,8 +116,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         allow_any_instance_of(described_class).to receive(:keg_only?).and_return(true)
         expect(Homebrew::Bundle).to receive(:system).with(HOMEBREW_BREW_FILE, "link", "--force", "mysql",
                                                           verbose: false).and_return(true)
-        described_class.preinstall(formula_name, link: true)
-        described_class.install(formula_name, link: true)
+        described_class.preinstall!(formula_name, link: true)
+        described_class.install!(formula_name, link: true)
       end
     end
 
@@ -130,8 +130,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         allow_any_instance_of(described_class).to receive(:linked?).and_return(false)
         expect(Homebrew::Bundle).to receive(:system).with(HOMEBREW_BREW_FILE, "link", "--overwrite", "mysql",
                                                           verbose: false).and_return(true)
-        described_class.preinstall(formula_name, link: :overwrite)
-        described_class.install(formula_name, link: :overwrite)
+        described_class.preinstall!(formula_name, link: :overwrite)
+        described_class.install!(formula_name, link: :overwrite)
       end
     end
 
@@ -144,8 +144,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         allow_any_instance_of(described_class).to receive(:linked?).and_return(true)
         expect(Homebrew::Bundle).to receive(:system).with(HOMEBREW_BREW_FILE, "unlink", "mysql",
                                                           verbose: false).and_return(true)
-        described_class.preinstall(formula_name, link: false)
-        described_class.install(formula_name, link: false)
+        described_class.preinstall!(formula_name, link: false)
+        described_class.install!(formula_name, link: false)
       end
     end
 
@@ -159,8 +159,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
       it "links formula" do
         expect(Homebrew::Bundle).to receive(:system).with(HOMEBREW_BREW_FILE, "link", "mysql",
                                                           verbose: false).and_return(true)
-        described_class.preinstall(formula_name, link: nil)
-        described_class.install(formula_name, link: nil)
+        described_class.preinstall!(formula_name, link: nil)
+        described_class.install!(formula_name, link: nil)
       end
     end
 
@@ -174,9 +174,9 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
       it "unlinks formula" do
         expect(Homebrew::Bundle).to receive(:system).with(HOMEBREW_BREW_FILE, "unlink", "mysql",
                                                           verbose: false).and_return(true)
-        described_class.preinstall(formula_name, link: nil)
+        described_class.preinstall!(formula_name, link: nil)
 
-        described_class.install(formula_name, link: nil)
+        described_class.install!(formula_name, link: nil)
       end
     end
 
@@ -188,8 +188,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
           conflicts_with: ["mysql55"],
         )
         allow(described_class).to receive(:formula_installed?).and_return(true)
-        allow_any_instance_of(described_class).to receive(:install!).and_return(true)
-        allow_any_instance_of(described_class).to receive(:upgrade!).and_return(true)
+        allow_any_instance_of(described_class).to receive(:install_formula!).and_return(true)
+        allow_any_instance_of(described_class).to receive(:upgrade_formula!).and_return(true)
       end
 
       it "unlinks conflicts and stops their services" do
@@ -203,8 +203,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         expect(Homebrew::Bundle::BrewServices).to receive(:stop).with("mysql56", verbose:).and_return(true)
         expect(Homebrew::Bundle::BrewServices).to receive(:restart).with(formula_name, file:    nil,
                                                                                        verbose:).and_return(true)
-        described_class.preinstall(formula_name, restart_service: :always, conflicts_with: ["mysql56"])
-        described_class.install(formula_name, restart_service: :always, conflicts_with: ["mysql56"])
+        described_class.preinstall!(formula_name, restart_service: :always, conflicts_with: ["mysql56"])
+        described_class.install!(formula_name, restart_service: :always, conflicts_with: ["mysql56"])
       end
 
       it "prints a message" do
@@ -219,8 +219,10 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         expect(Homebrew::Bundle::BrewServices).to receive(:stop).with("mysql56", verbose:).and_return(true)
         expect(Homebrew::Bundle::BrewServices).to receive(:restart).with(formula_name, file:    nil,
                                                                                        verbose:).and_return(true)
-        described_class.preinstall(formula_name, restart_service: :always, conflicts_with: ["mysql56"], verbose: true)
-        described_class.install(formula_name, restart_service: :always, conflicts_with: ["mysql56"], verbose: true)
+        described_class.preinstall!(formula_name, restart_service: :always, conflicts_with: ["mysql56"],
+        verbose: true)
+        described_class.install!(formula_name, restart_service: :always, conflicts_with: ["mysql56"],
+        verbose: true)
       end
     end
 
@@ -237,14 +239,14 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
 
         it "runs the postinstall command" do
           expect(Kernel).to receive(:system).with("custom command").and_return(true)
-          described_class.preinstall(formula_name, postinstall: "custom command")
-          described_class.install(formula_name, postinstall: "custom command")
+          described_class.preinstall!(formula_name, postinstall: "custom command")
+          described_class.install!(formula_name, postinstall: "custom command")
         end
 
         it "reports a failure" do
           expect(Kernel).to receive(:system).with("custom command").and_return(false)
-          described_class.preinstall(formula_name, postinstall: "custom command")
-          expect(described_class.install(formula_name, postinstall: "custom command")).to be(false)
+          described_class.preinstall!(formula_name, postinstall: "custom command")
+          expect(described_class.install!(formula_name, postinstall: "custom command")).to be(false)
         end
       end
 
@@ -255,8 +257,8 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
 
         it "does not run the postinstall command" do
           expect(Kernel).not_to receive(:system)
-          described_class.preinstall(formula_name, postinstall: "custom command")
-          described_class.install(formula_name, postinstall: "custom command")
+          described_class.preinstall!(formula_name, postinstall: "custom command")
+          described_class.install!(formula_name, postinstall: "custom command")
         end
       end
     end
@@ -281,16 +283,16 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
 
         it "writes the version to the file" do
           expect(File).to receive(:write).with(version_file, "#{version}\n")
-          described_class.preinstall(formula_name, version_file:)
-          described_class.install(formula_name, version_file:)
+          described_class.preinstall!(formula_name, version_file:)
+          described_class.install!(formula_name, version_file:)
         end
       end
 
       context "when using the latest formula" do
         it "writes the version to the file" do
           expect(File).to receive(:write).with(version_file, "#{version}\n")
-          described_class.preinstall(formula_name, version_file:)
-          described_class.install(formula_name, version_file:)
+          described_class.preinstall!(formula_name, version_file:)
+          described_class.install!(formula_name, version_file:)
         end
       end
     end
@@ -304,7 +306,7 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
 
     it "did not call restart service" do
       expect(Homebrew::Bundle::BrewServices).not_to receive(:restart)
-      described_class.preinstall(formula_name, restart_service: true)
+      described_class.preinstall!(formula_name, restart_service: true)
     end
   end
 
@@ -386,16 +388,16 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
         expect(Homebrew::Bundle).to receive(:system)
           .with(HOMEBREW_BREW_FILE, "install", "--formula", formula_name, "--with-option", verbose: false)
           .and_return(true)
-        expect(installer.preinstall).to be(true)
-        expect(installer.install).to be(true)
+        expect(installer.preinstall!).to be(true)
+        expect(installer.install!).to be(true)
       end
 
       it "reports a failure" do
         expect(Homebrew::Bundle).to receive(:system)
           .with(HOMEBREW_BREW_FILE, "install", "--formula", formula_name, "--with-option", verbose: false)
           .and_return(false)
-        expect(installer.preinstall).to be(true)
-        expect(installer.install).to be(false)
+        expect(installer.preinstall!).to be(true)
+        expect(installer.install!).to be(false)
       end
     end
 
@@ -416,16 +418,16 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
           expect(Homebrew::Bundle).to \
             receive(:system).with(HOMEBREW_BREW_FILE, "upgrade", "--formula", formula_name, verbose: false)
                             .and_return(true)
-          expect(installer.preinstall).to be(true)
-          expect(installer.install).to be(true)
+          expect(installer.preinstall!).to be(true)
+          expect(installer.install!).to be(true)
         end
 
         it "reports a failure" do
           expect(Homebrew::Bundle).to \
             receive(:system).with(HOMEBREW_BREW_FILE, "upgrade", "--formula", formula_name, verbose: false)
                             .and_return(false)
-          expect(installer.preinstall).to be(true)
-          expect(installer.install).to be(false)
+          expect(installer.preinstall!).to be(true)
+          expect(installer.install!).to be(false)
         end
 
         context "when formula pinned" do
@@ -436,7 +438,7 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
           it "does not upgrade formula" do
             expect(Homebrew::Bundle).not_to \
               receive(:system).with(HOMEBREW_BREW_FILE, "upgrade", "--formula", formula_name, verbose: false)
-            expect(installer.preinstall).to be(false)
+            expect(installer.preinstall!).to be(false)
           end
         end
 
@@ -447,7 +449,7 @@ RSpec.describe Homebrew::Bundle::FormulaInstaller do
 
           it "does not upgrade formula" do
             expect(Homebrew::Bundle).not_to receive(:system)
-            expect(installer.preinstall).to be(false)
+            expect(installer.preinstall!).to be(false)
           end
         end
       end

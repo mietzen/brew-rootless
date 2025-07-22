@@ -189,7 +189,7 @@ on_request: true)
       when :deprecated
         opoo message_full
       when :disabled
-        GitHub::Actions.puts_annotation_if_env_set(:error, message)
+        GitHub::Actions.puts_annotation_if_env_set!(:error, message)
         raise CaskCannotBeInstalledError.new(@cask, message)
       end
     end

@@ -118,6 +118,7 @@ update
 update-if-needed
 update-license-data
 update-maintainers
+update-perl-resources
 update-python-resources
 update-reset
 update-sponsors

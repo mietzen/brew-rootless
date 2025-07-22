@@ -102,9 +102,9 @@ If no search term is provided, all locally available formulae are listed.
 
 ## COMMANDS
 
-### `alias` \[*`alias`* ... \| *`alias`*=*`command`*\]
+### `alias` \[`--edit`\] \[*`alias`*\|*`alias`*=*`command`*\]
 
-Show existing aliases. If no aliases are given, print the whole list.
+Show an alias's command. If no alias is given, print the whole list.
 
 `--edit`
 
@@ -3319,6 +3319,22 @@ Update SPDX license data in the Homebrew repository.
 ### `update-maintainers`
 
 Update the list of maintainers in the `Homebrew/brew` README.
+
+### `update-perl-resources` \[*`options`*\] *`formula`* \[...\]
+
+Update versions for CPAN resource blocks in *`formula`*.
+
+`-p`, `--print-only`
+
+: Print the updated resource blocks instead of changing *`formula`*.
+
+`-s`, `--silent`
+
+: Suppress any output.
+
+`--ignore-errors`
+
+: Continue processing even if some resources can't be resolved.
 
 ### `update-python-resources` \[*`options`*\] *`formula`* \[...\]
 

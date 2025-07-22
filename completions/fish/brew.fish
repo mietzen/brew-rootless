@@ -319,7 +319,7 @@ __fish_brew_complete_arg 'abv; and not __fish_seen_argument -l cask -l casks' -a
 __fish_brew_complete_arg 'abv; and not __fish_seen_argument -l formula -l formulae' -a '(__fish_brew_suggest_casks_all)'
 
 
-__fish_brew_complete_cmd 'alias' 'Show existing aliases'
+__fish_brew_complete_cmd 'alias' 'Show an alias\'s command'
 __fish_brew_complete_arg 'alias' -l debug -d 'Display any debugging information'
 __fish_brew_complete_arg 'alias' -l edit -d 'Edit aliases in a text editor. Either one or all aliases may be opened at once. If the given alias doesn\'t exist it\'ll be pre-populated with a template'
 __fish_brew_complete_arg 'alias' -l help -d 'Show this message'
@@ -1841,6 +1841,17 @@ __fish_brew_complete_arg 'update-maintainers' -l debug -d 'Display any debugging
 __fish_brew_complete_arg 'update-maintainers' -l help -d 'Show this message'
 __fish_brew_complete_arg 'update-maintainers' -l quiet -d 'Make some output more quiet'
 __fish_brew_complete_arg 'update-maintainers' -l verbose -d 'Make some output more verbose'
+
+
+__fish_brew_complete_cmd 'update-perl-resources' 'Update versions for CPAN resource blocks in formula'
+__fish_brew_complete_arg 'update-perl-resources' -l debug -d 'Display any debugging information'
+__fish_brew_complete_arg 'update-perl-resources' -l help -d 'Show this message'
+__fish_brew_complete_arg 'update-perl-resources' -l ignore-errors -d 'Continue processing even if some resources can\'t be resolved'
+__fish_brew_complete_arg 'update-perl-resources' -l print-only -d 'Print the updated resource blocks instead of changing formula'
+__fish_brew_complete_arg 'update-perl-resources' -l quiet -d 'Make some output more quiet'
+__fish_brew_complete_arg 'update-perl-resources' -l silent -d 'Suppress any output'
+__fish_brew_complete_arg 'update-perl-resources' -l verbose -d 'Make some output more verbose'
+__fish_brew_complete_arg 'update-perl-resources' -a '(__fish_brew_suggest_formulae_all)'
 
 
 __fish_brew_complete_cmd 'update-python-resources' 'Update versions for PyPI resource blocks in formula'

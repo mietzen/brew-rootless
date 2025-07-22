@@ -62,8 +62,8 @@ List all installed formulae\.
 .SS "\fBsearch\fP \fR[\fItext\fP|\fB/\fP\fItext\fP\fB/\fP]"
 Perform a substring search of cask tokens and formula names for \fItext\fP\&\. If \fItext\fP is flanked by slashes, it is interpreted as a regular expression\. The search for \fItext\fP is extended online to \fBhomebrew/core\fP and \fBhomebrew/cask\fP\&\. If no search term is provided, all locally available formulae are listed\.
 .SH "COMMANDS"
-.SS "\fBalias\fP \fR[\fIalias\fP \.\.\. | \fIalias\fP=\fIcommand\fP]"
-Show existing aliases\. If no aliases are given, print the whole list\.
+.SS "\fBalias\fP \fR[\fB\-\-edit\fP] \fR[\fIalias\fP|\fIalias\fP=\fIcommand\fP]"
+Show an alias\[u2019]s command\. If no alias is given, print the whole list\.
 .TP
 \fB\-\-edit\fP
 Edit aliases in a text editor\. Either one or all aliases may be opened at once\. If the given alias doesn\[u2019]t exist it\[u2019]ll be pre\-populated with a template\.
@@ -2111,6 +2111,17 @@ Overwrite the destination directory if it already exists\.
 Update SPDX license data in the Homebrew repository\.
 .SS "\fBupdate\-maintainers\fP"
 Update the list of maintainers in the \fBHomebrew/brew\fP README\.
+.SS "\fBupdate\-perl\-resources\fP \fR[\fIoptions\fP] \fIformula\fP \fR[\.\.\.]"
+Update versions for CPAN resource blocks in \fIformula\fP\&\.
+.TP
+\fB\-p\fP, \fB\-\-print\-only\fP
+Print the updated resource blocks instead of changing \fIformula\fP\&\.
+.TP
+\fB\-s\fP, \fB\-\-silent\fP
+Suppress any output\.
+.TP
+\fB\-\-ignore\-errors\fP
+Continue processing even if some resources can\[u2019]t be resolved\.
 .SS "\fBupdate\-python\-resources\fP \fR[\fIoptions\fP] \fIformula\fP \fR[\.\.\.]"
 Update versions for PyPI resource blocks in \fIformula\fP\&\.
 .TP

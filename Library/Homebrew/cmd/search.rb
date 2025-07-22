@@ -65,7 +65,7 @@ module Homebrew
 
       sig { override.void }
       def run
-        return if search_package_manager
+        return if search_package_manager!
 
         query = args.named.join(" ")
         string_or_regex = Search.query_regexp(query)
@@ -108,7 +108,7 @@ module Homebrew
       end
 
       sig { returns(T::Boolean) }
-      def search_package_manager
+      def search_package_manager!
         package_manager = PACKAGE_MANAGERS.find { |name,| args.public_send(:"#{name}?") }
         return false if package_manager.nil?
 

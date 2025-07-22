@@ -6,6 +6,7 @@ require "fileutils"
 require "hardware"
 require "development_tools"
 require "upgrade"
+require "download_queue"
 
 module Homebrew
   # Helper module for performing (pre-)install checks.
@@ -313,30 +314,43 @@ module Homebrew
         skip_post_install: false,
         skip_link: false
       )
-        unless dry_run
+        formulae_names_to_install = formula_installers.map { |fi| fi.formula.name }
+        return if formulae_names_to_install.empty?
+
+        if dry_run
+          ohai "Would install #{Utils.pluralize("formula", formulae_names_to_install.count,
+                                                plural: "e", include_count: true)}:"
+          puts formulae_names_to_install.join(" ")
+
           formula_installers.each do |fi|
-            fi.prelude
-            fi.fetch
+            print_dry_run_dependencies(fi.formula, fi.compute_dependencies, &:name)
+          end
+          return
+        end
+
+        formula_sentence = formulae_names_to_install.map { |name| Formatter.identifier(name) }.to_sentence
+        oh1 "Fetching downloads for: #{formula_sentence}", truncate: false
+        if EnvConfig.download_concurrency > 1
+          download_queue = Homebrew::DownloadQueue.new(pour: true)
+          formula_installers.each do |fi|
+            fi.download_queue = download_queue
+          end
+        end
+        begin
+          [:prelude_fetch, :prelude, :fetch].each do |step|
+            formula_installers.each do |fi|
+              fi.public_send(step)
+            rescue UnsatisfiedRequirements, DownloadError, ChecksumMismatchError => e
+              ofail "#{fi.formula}: #{e}"
+              next
+            end
+            download_queue&.fetch
           rescue CannotInstallFormulaError => e
             ofail e.message
             next
-          rescue UnsatisfiedRequirements, DownloadError, ChecksumMismatchError => e
-            ofail "#{fi.formula}: #{e}"
-            next
           end
-        end
-
-        if dry_run
-          if (formulae_name_to_install = formula_installers.map { |fi| fi.formula.name })
-            ohai "Would install #{Utils.pluralize("formula", formulae_name_to_install.count,
-                                                  plural: "e", include_count: true)}:"
-            puts formulae_name_to_install.join(" ")
-
-            formula_installers.each do |fi|
-              print_dry_run_dependencies(fi.formula, fi.compute_dependencies, &:name)
-            end
-          end
-          return
+        ensure
+          download_queue&.shutdown
         end
 
         formula_installers.each do |fi|
@@ -465,9 +479,7 @@ module Homebrew
 
       def collect_dependencies(formulae_installer, dependants)
         formulae_dependencies = formulae_installer.flat_map do |f|
-          [f.formula, f.compute_dependencies.flatten.filter do |c|
-            c.is_a? Dependency
-          end.flat_map(&:to_formula)]
+          [f.formula, f.compute_dependencies.flatten.grep(Dependency).flat_map(&:to_formula)]
         end.flatten.uniq
         formulae_dependencies.concat(dependants.upgradeable) if dependants&.upgradeable
         formulae_dependencies.uniq

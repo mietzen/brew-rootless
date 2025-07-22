@@ -259,7 +259,7 @@ module Homebrew
           if !Homebrew::EnvConfig.no_install_upgrade? && installed_casks.any?
             require "cask/upgrade"
 
-            Cask::Upgrade.upgrade_casks(
+            Cask::Upgrade.upgrade_casks!(
               *installed_casks,
               force:          args.force?,
               dry_run:        args.dry_run?,

@@ -16,6 +16,7 @@ last_review_date: "2025-02-08"
 - [`brew` Shell Completion](Shell-Completion.md)
 - [Homebrew on Linux](Homebrew-on-Linux.md)
 - [Homebrew Bundle, `brew bundle` and `Brewfile`](Brew-Bundle-and-Brewfile.md)
+- [Homebrew MCP Server](MCP-Server.md)
 
 - [Bottles (binary packages)](Bottles.md)
 - [Taps (third-party repositories)](Taps.md)

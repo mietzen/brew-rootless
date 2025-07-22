@@ -340,8 +340,10 @@ class Pathname
     Pathname.glob("#{self}/*") do |file|
       next if file.directory?
 
-      dst.install(file)
       new_file = dst.join(file.basename)
+      raise Errno::EEXIST, new_file if new_file.exist?
+
+      dst.install(file)
       file.write_env_script(new_file, env)
     end
   end

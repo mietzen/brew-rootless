@@ -139,7 +139,7 @@ __brew_internal_commands() {
     '--prefix:Display Homebrew'\''s install path'
     '--repository:Display where Homebrew'\''s Git repository is located'
     '--version:Print the version numbers of Homebrew, Homebrew/homebrew-core and Homebrew/homebrew-cask (if tapped) to standard output'
-    'alias:Show existing aliases'
+    'alias:Show an alias'\''s command'
     'analytics:Control Homebrew'\''s anonymous aggregate user behaviour analytics'
     'audit:Check formula or cask for Homebrew coding style violations'
     'autoremove:Uninstall formulae that were only installed as a dependency of another formula and are now no longer needed'
@@ -236,6 +236,7 @@ __brew_internal_commands() {
     'update-if-needed:Runs `brew update --auto-update` only if needed'
     'update-license-data:Update SPDX license data in the Homebrew repository'
     'update-maintainers:Update the list of maintainers in the `Homebrew/brew` README'
+    'update-perl-resources:Update versions for CPAN resource blocks in formula'
     'update-python-resources:Update versions for PyPI resource blocks in formula'
     'update-report:The Ruby implementation of `brew update`'
     'update-reset:Fetch and reset Homebrew and all tap repositories (or any specified repository) using `git`(1) to their latest `origin/HEAD`'
@@ -654,10 +655,10 @@ _brew_bundle() {
     '--cleanup[`install` performs cleanup operation, same as running `cleanup --force`. Enabled by default if `$HOMEBREW_BUNDLE_INSTALL_CLEANUP` is set and `--global` is passed]' \
     '--debug[Display any debugging information]' \
     '--describe[`dump` adds a description comment above each line, unless the dependency does not have a description. Enabled by default if `$HOMEBREW_BUNDLE_DUMP_DESCRIBE` is set]' \
-    '--file[Read from or write to the `Brewfile` from this location. Use `--file=-` to pipe to stdin/stdout]' \
+    '(--global)--file[Read from or write to the `Brewfile` from this location. Use `--file=-` to pipe to stdin/stdout]' \
     '--force[`install` runs with `--force`/`--overwrite`. `dump` overwrites an existing `Brewfile`. `cleanup` actually performs its cleanup operations]' \
     '--formula[`list`, `dump` or `cleanup` Homebrew formula dependencies]' \
-    '--global[Read from or write to the `Brewfile` from `$HOMEBREW_BUNDLE_FILE_GLOBAL` (if set), `${XDG_CONFIG_HOME}/homebrew/Brewfile` (if `$XDG_CONFIG_HOME` is set), `~/.homebrew/Brewfile` or `~/.Brewfile` otherwise]' \
+    '(--file)--global[Read from or write to the `Brewfile` from `$HOMEBREW_BUNDLE_FILE_GLOBAL` (if set), `${XDG_CONFIG_HOME}/homebrew/Brewfile` (if `$XDG_CONFIG_HOME` is set), `~/.homebrew/Brewfile` or `~/.Brewfile` otherwise]' \
     '--help[Show this message]' \
     '(--upgrade)--install[Run `install` before continuing to other operations e.g. `exec`]' \
     '--mas[`list` or `dump` Mac App Store dependencies]' \
@@ -2268,6 +2269,20 @@ _brew_update_maintainers() {
     '--help[Show this message]' \
     '--quiet[Make some output more quiet]' \
     '--verbose[Make some output more verbose]'
+}
+
+# brew update-perl-resources
+_brew_update_perl_resources() {
+  _arguments \
+    '--debug[Display any debugging information]' \
+    '--help[Show this message]' \
+    '--ignore-errors[Continue processing even if some resources can'\''t be resolved]' \
+    '--print-only[Print the updated resource blocks instead of changing formula]' \
+    '--quiet[Make some output more quiet]' \
+    '--silent[Suppress any output]' \
+    '--verbose[Make some output more verbose]' \
+    - formula \
+    '*:formula:__brew_formulae'
 }
 
 # brew update-python-resources

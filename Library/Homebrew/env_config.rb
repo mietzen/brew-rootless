@@ -630,5 +630,13 @@ module Homebrew
     def devcmdrun?
       Homebrew::Settings.read("devcmdrun") == "true"
     end
+
+    sig { returns(Integer) }
+    def download_concurrency
+      # TODO: document this variable when ready to publicly announce it.
+      concurrency = ENV.fetch("HOMEBREW_DOWNLOAD_CONCURRENCY", 1).to_i
+      concurrency = 1 if concurrency <= 1
+      concurrency
+    end
   end
 end

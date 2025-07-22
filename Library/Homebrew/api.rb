@@ -13,6 +13,7 @@ module Homebrew
 
     HOMEBREW_CACHE_API = T.let((HOMEBREW_CACHE/"api").freeze, Pathname)
     HOMEBREW_CACHE_API_SOURCE = T.let((HOMEBREW_CACHE/"api-source").freeze, Pathname)
+    TAP_MIGRATIONS_STALE_SECONDS = T.let(86400, Integer) # 1 day
 
     sig { params(endpoint: String).returns(T::Hash[String, T.untyped]) }
     def self.fetch(endpoint)
@@ -33,11 +34,11 @@ module Homebrew
     end
 
     sig {
-      params(endpoint: String, target: Pathname,
-             stale_seconds: Integer).returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
+      params(endpoint: String, target: Pathname, stale_seconds: Integer, download_queue: T.nilable(DownloadQueue))
+        .returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
     }
     def self.fetch_json_api_file(endpoint, target: HOMEBREW_CACHE_API/endpoint,
-                                 stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
+                                 stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i, download_queue: nil)
       # Lazy-load dependency.
       require "development_tools"
 
@@ -64,6 +65,14 @@ module Homebrew
                         (Homebrew::EnvConfig.no_auto_update? && !Homebrew::EnvConfig.force_api_auto_update?) ||
                       ((Time.now - stale_seconds) < target.mtime))
       skip_download ||= Homebrew.running_as_root_but_not_owned_by_root?
+
+      if download_queue
+        unless skip_download
+          download = Homebrew::API::Download.new(url, nil, cache: HOMEBREW_CACHE_API, require_checksum: false)
+          download_queue.enqueue(download)
+        end
+        return [{}, false]
+      end
 
       json_data = begin
         begin
@@ -142,7 +151,7 @@ module Homebrew
     end
 
     sig { params(names: T::Array[String], type: String, regenerate: T::Boolean).returns(T::Boolean) }
-    def self.write_names_file(names, type, regenerate:)
+    def self.write_names_file!(names, type, regenerate:)
       names_path = HOMEBREW_CACHE_API/"#{type}_names.txt"
       if !names_path.exist? || regenerate
         names_path.write(names.join("\n"))

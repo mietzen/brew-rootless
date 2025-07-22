@@ -127,6 +127,7 @@ module Homebrew
         conflicts "--all", "--no-vscode"
         conflicts "--vscode", "--no-vscode"
         conflicts "--install", "--upgrade"
+        conflicts "--file=", "--global"
 
         named_args %w[install dump cleanup check exec list sh env edit]
       end

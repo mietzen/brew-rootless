@@ -137,8 +137,8 @@ module Homebrew
 
         formulae = Homebrew::Attestation.sort_formulae_for_install(formulae) if Homebrew::Attestation.enabled?
 
-        upgrade_outdated_formulae(formulae) unless only_upgrade_casks
-        upgrade_outdated_casks(casks) unless only_upgrade_formulae
+        upgrade_outdated_formulae!(formulae) unless only_upgrade_casks
+        upgrade_outdated_casks!(casks) unless only_upgrade_formulae
 
         Cleanup.periodic_clean!(dry_run: args.dry_run?)
 
@@ -148,7 +148,7 @@ module Homebrew
       private
 
       sig { params(formulae: T::Array[Formula]).returns(T::Boolean) }
-      def upgrade_outdated_formulae(formulae)
+      def upgrade_outdated_formulae!(formulae)
         return false if args.cask?
 
         if args.build_from_source?
@@ -280,12 +280,12 @@ module Homebrew
       end
 
       sig { params(casks: T::Array[Cask::Cask]).returns(T::Boolean) }
-      def upgrade_outdated_casks(casks)
+      def upgrade_outdated_casks!(casks)
         return false if args.formula?
 
         Install.ask_casks casks if args.ask?
 
-        Cask::Upgrade.upgrade_casks(
+        Cask::Upgrade.upgrade_casks!(
           *casks,
           force:               args.force?,
           greedy:              args.greedy?,

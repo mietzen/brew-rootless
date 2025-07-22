@@ -10,7 +10,13 @@ Homebrew/MoveToExtendOS:
     - "{extend,test,requirements}/**/*"
     - "os.rb"
 
-Naming/PredicateName:
+# We don't use Sorbet for RSpec tests so let's disable this there.
+Sorbet/BlockMethodDefinition:
+  Exclude:
+    - test/**/*
+
+# Want to preserve our own API for these methods for now.
+Naming/PredicatePrefix:
   inherit_mode:
     merge:
       - AllowedMethods

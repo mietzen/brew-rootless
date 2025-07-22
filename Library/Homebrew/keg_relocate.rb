@@ -35,7 +35,7 @@ class Keg
     end
 
     sig { params(text: String).returns(T::Boolean) }
-    def replace_text(text)
+    def replace_text!(text)
       replacements = @replacement_map.values.to_h
 
       sorted_keys = replacements.keys.sort_by do |key|
@@ -143,7 +143,7 @@ class Keg
     files.map { path.join(_1) }.group_by { |f| f.stat.ino }.each_value do |first, *rest|
       s = first.open("rb", &:read)
 
-      next unless relocation.replace_text(s)
+      next unless relocation.replace_text!(s)
 
       changed_files += [first, *rest].map { |file| file.relative_path_from(path) }
 

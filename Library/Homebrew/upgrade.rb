@@ -354,6 +354,9 @@ module Homebrew
             #{skipped * "\n  "}
         EOS
       end
+
+      upgradeable.reject! { |f| FormulaInstaller.installed.include?(f) }
+
       # Print the upgradable dependents.
       if upgradeable.blank?
         ohai "No outdated dependents to upgrade!" unless dry_run
@@ -374,8 +377,6 @@ module Homebrew
         end
         puts formulae_upgrades.join(", ")
       end
-
-      upgradeable.reject! { |f| FormulaInstaller.installed.include?(f) }
 
       return if upgradeable.blank?
 

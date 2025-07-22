@@ -12,7 +12,7 @@ class XcodeRequirement < Requirement
 
   satisfy(build_env: false) do
     T.bind(self, XcodeRequirement)
-    xcode_installed_version
+    xcode_installed_version!
   end
 
   sig { params(tags: T::Array[String]).void }
@@ -23,7 +23,7 @@ class XcodeRequirement < Requirement
   end
 
   sig { returns(T::Boolean) }
-  def xcode_installed_version
+  def xcode_installed_version!
     return false unless MacOS::Xcode.installed?
     return true unless @version
 

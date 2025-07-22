@@ -10,12 +10,12 @@ module Homebrew
         @pinned_formulae = nil
       end
 
-      def self.preinstall(name, no_upgrade: false, verbose: false, **options)
-        new(name, options).preinstall(no_upgrade:, verbose:)
+      def self.preinstall!(name, no_upgrade: false, verbose: false, **options)
+        new(name, options).preinstall!(no_upgrade:, verbose:)
       end
 
-      def self.install(name, preinstall: true, no_upgrade: false, verbose: false, force: false, **options)
-        new(name, options).install(preinstall:, no_upgrade:, verbose:, force:)
+      def self.install!(name, preinstall: true, no_upgrade: false, verbose: false, force: false, **options)
+        new(name, options).install!(preinstall:, no_upgrade:, verbose:, force:)
       end
 
       def initialize(name, options = {})
@@ -31,7 +31,7 @@ module Homebrew
         @changed = nil
       end
 
-      def preinstall(no_upgrade: false, verbose: false)
+      def preinstall!(no_upgrade: false, verbose: false)
         if installed? && (self.class.no_upgrade_with_args?(no_upgrade, @name) || !upgradable?)
           puts "Skipping install of #{@name} formula. It is already installed." if verbose
           @changed = nil
@@ -41,7 +41,7 @@ module Homebrew
         true
       end
 
-      def install(preinstall: true, no_upgrade: false, verbose: false, force: false)
+      def install!(preinstall: true, no_upgrade: false, verbose: false, force: false)
         install_result = if preinstall
           install_change_state!(no_upgrade:, verbose:, force:)
         else
@@ -80,9 +80,9 @@ module Homebrew
         return false unless resolve_conflicts!(verbose:)
 
         if installed?
-          upgrade!(verbose:, force:)
+          upgrade_formula!(verbose:, force:)
         else
-          install!(verbose:, force:)
+          install_formula!(verbose:, force:)
         end
       end
 
@@ -282,7 +282,7 @@ module Homebrew
         true
       end
 
-      def install!(verbose:, force:)
+      def install_formula!(verbose:, force:)
         install_args = @args.dup
         install_args << "--force" << "--overwrite" if force
         install_args << "--skip-link" if @link == false
@@ -298,7 +298,7 @@ module Homebrew
         true
       end
 
-      def upgrade!(verbose:, force:)
+      def upgrade_formula!(verbose:, force:)
         upgrade_args = []
         upgrade_args << "--force" if force
         with_args = " with #{upgrade_args.join(" ")}" if upgrade_args.present?

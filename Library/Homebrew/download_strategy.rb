@@ -30,19 +30,6 @@ class AbstractDownloadStrategy
 
   abstract!
 
-  # Extension for bottle downloads.
-  module Pourable
-    extend T::Helpers
-
-    requires_ancestor { AbstractDownloadStrategy }
-
-    sig { params(block: T.nilable(T.proc.params(arg0: String).returns(T.anything))).returns(T.nilable(T.anything)) }
-    def stage(&block)
-      ohai "Pouring #{basename}"
-      super
-    end
-  end
-
   # The download URL.
   #
   # @api public
@@ -74,7 +61,6 @@ class AbstractDownloadStrategy
     @cache = T.let(meta.fetch(:cache, HOMEBREW_CACHE), Pathname)
     @meta = T.let(meta, T::Hash[Symbol, T.untyped])
     @quiet = T.let(false, T.nilable(T::Boolean))
-    extend Pourable if meta[:bottle]
   end
 
   # Download and cache the resource at {#cached_location}.
@@ -341,7 +327,7 @@ class AbstractFileDownloadStrategy < AbstractDownloadStrategy
                         .reject { |path| path.extname.end_with?(".incomplete") }
 
     @cached_location = T.let(
-      if downloads.count == 1
+      if downloads.one?
         downloads.fetch(0)
       else
         HOMEBREW_CACHE/"downloads/#{url_sha256}--#{Utils.safe_filename(resolved_basename)}"
@@ -826,7 +812,6 @@ class LocalBottleDownloadStrategy < AbstractFileDownloadStrategy
   sig { params(path: Pathname).void }
   def initialize(path)
     @cached_location = T.let(path, Pathname)
-    extend Pourable
   end
   # rubocop:enable Lint/MissingSuper
 

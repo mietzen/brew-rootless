@@ -968,8 +968,12 @@ module GitHub
         pull_requests.fetch("pageInfo")
       end
     rescue => e
-      # Ignore SAML access errors (https://github.com/Homebrew/brew/issues/18610)
-      raise unless e.message.include?("Resource protected by organization SAML enforcement")
+      # Ignore SAML access errors (https://github.com/Homebrew/brew/issues/18610) and related
+      # IP allow list errors (https://github.com/orgs/Homebrew/discussions/6263)
+      return false if e.message.include?("Resource protected by organization SAML enforcement") ||
+                      e.message.include?("your IP address is not permitted to access this resource")
+
+      raise
     end
 
     false

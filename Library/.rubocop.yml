@@ -216,6 +216,10 @@ Naming/MethodParameterName:
     merge:
       - AllowedNames
 
+# Allows a nicer API for boolean methods with side effects.
+Naming/PredicateMethod:
+  AllowBangMethods: true
+
 # Both styles are used depending on context,
 # e.g. `sha256` and `something_countable_1`.
 Naming/VariableNumber:

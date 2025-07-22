@@ -86,7 +86,7 @@ module Homebrew
       end
 
       shfmt_result = files.present? && shell_files.empty?
-      shfmt_result ||= run_shfmt(shell_files, fix:)
+      shfmt_result ||= run_shfmt!(shell_files, fix:)
 
       actionlint_files = github_workflow_files if files.blank? && actionlint_files.blank?
       has_actionlint_workflow = actionlint_files.any? do |path|
@@ -94,7 +94,7 @@ module Homebrew
       end
       odebug "actionlint workflow detected. Skipping actionlint checks." if has_actionlint_workflow
       actionlint_result = files.present? && (has_actionlint_workflow || actionlint_files.empty?)
-      actionlint_result ||= run_actionlint(actionlint_files)
+      actionlint_result ||= run_actionlint!(actionlint_files)
 
       if output_type == :json
         Offenses.new(rubocop_result + shellcheck_result)
@@ -176,7 +176,7 @@ module Homebrew
 
         # Don't show the default formatter's progress dots
         # on CI or if only checking a single file.
-        args << "--format" << "clang" if ENV["CI"] || files.count { |f| !f.directory? } == 1
+        args << "--format" << "clang" if ENV["CI"] || files.one? { |f| !f.directory? }
 
         args << "--color" if Tty.color?
 
@@ -264,7 +264,7 @@ module Homebrew
       end
     end
 
-    def self.run_shfmt(files, fix: false)
+    def self.run_shfmt!(files, fix: false)
       files = shell_scripts if files.blank?
       # Do not format completions and Dockerfile
       files.delete(HOMEBREW_REPOSITORY/"completions/bash/brew")
@@ -277,7 +277,7 @@ module Homebrew
       $CHILD_STATUS.success?
     end
 
-    def self.run_actionlint(files)
+    def self.run_actionlint!(files)
       files = github_workflow_files if files.blank?
       # the ignore is to avoid false positives in e.g. actions, homebrew-test-bot
       system actionlint, "-shellcheck", shellcheck,

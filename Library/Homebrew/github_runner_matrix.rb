@@ -5,6 +5,10 @@ require "test_runner_formula"
 require "github_runner"
 
 class GitHubRunnerMatrix
+  # When bumping newest runner, run e.g. `git log -p --reverse -G "sha256 tahoe"`
+  # on homebrew/core and tag the first commit with a bottle e.g.
+  # `git tag 15-sequoia f42c4a659e4da887fc714f8f41cc26794a4bb320`
+  # to allow people to jump to specific commits based on their macOS version.
   NEWEST_HOMEBREW_CORE_MACOS_RUNNER = :sequoia
   OLDEST_HOMEBREW_CORE_MACOS_RUNNER = :ventura
   NEWEST_HOMEBREW_CORE_INTEL_MACOS_RUNNER = :sonoma

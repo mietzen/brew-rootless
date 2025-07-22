@@ -2,7 +2,9 @@
 # frozen_string_literal: true
 
 require "cachable"
+require "api"
 require "api/download"
+require "download_queue"
 
 module Homebrew
   module API
@@ -28,7 +30,7 @@ module Homebrew
 
       sig { params(cask: ::Cask::Cask).returns(::Cask::Cask) }
       def self.source_download(cask)
-        path = cask.ruby_source_path.to_s || "Casks/#{cask.token}.rb"
+        path = cask.ruby_source_path.to_s
         sha256 = cask.ruby_source_checksum[:sha256]
         checksum = Checksum.new(sha256) if sha256
         git_head = cask.tap_git_head || "HEAD"
@@ -52,9 +54,25 @@ module Homebrew
         HOMEBREW_CACHE_API/api_filename
       end
 
+      sig {
+        params(download_queue: T.nilable(::Homebrew::DownloadQueue), stale_seconds: Integer)
+          .returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
+      }
+      def self.fetch_api!(download_queue: nil, stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
+        Homebrew::API.fetch_json_api_file api_filename, stale_seconds:, download_queue:
+      end
+
+      sig {
+        params(download_queue: T.nilable(::Homebrew::DownloadQueue), stale_seconds: Integer)
+          .returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
+      }
+      def self.fetch_tap_migrations!(download_queue: nil, stale_seconds: Homebrew::API::TAP_MIGRATIONS_STALE_SECONDS)
+        Homebrew::API.fetch_json_api_file "cask_tap_migrations.jws.json", stale_seconds:, download_queue:
+      end
+
       sig { returns(T::Boolean) }
       def self.download_and_cache_data!
-        json_casks, updated = Homebrew::API.fetch_json_api_file api_filename
+        json_casks, updated = fetch_api!
 
         cache["renames"] = {}
         cache["casks"] = json_casks.to_h do |json_cask|
@@ -91,11 +109,21 @@ module Homebrew
         cache.fetch("renames")
       end
 
+      sig { returns(T::Hash[String, T.untyped]) }
+      def self.tap_migrations
+        unless cache.key?("tap_migrations")
+          json_migrations, = fetch_tap_migrations!
+          cache["tap_migrations"] = json_migrations
+        end
+
+        cache.fetch("tap_migrations")
+      end
+
       sig { params(regenerate: T::Boolean).void }
       def self.write_names(regenerate: false)
         download_and_cache_data! unless cache.key?("casks")
 
-        Homebrew::API.write_names_file(all_casks.keys, "cask", regenerate:)
+        Homebrew::API.write_names_file!(all_casks.keys, "cask", regenerate:)
       end
     end
   end
