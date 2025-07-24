@@ -95,4 +95,14 @@ RSpec.describe Homebrew::Cmd::InstallCmd do
 
     expect(HOMEBREW_CELLAR/"testball1/0.1/bin/test").to be_a_file
   end
+
+  it "refuses to install forbidden formulae", :integration_test do
+    setup_test_formula "testball1"
+
+    expect { brew "install", "testball1", { "HOMEBREW_FORBIDDEN_FORMULAE" => "testball1" } }
+      .to not_to_output(%r{#{HOMEBREW_CELLAR}/testball1/0\.1}o).to_stdout
+      .and output(/testball1 was forbidden/).to_stderr
+      .and be_a_failure
+    expect(HOMEBREW_CELLAR/"testball1").not_to exist
+  end
 end

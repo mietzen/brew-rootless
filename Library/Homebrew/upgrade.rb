@@ -92,18 +92,23 @@ module Homebrew
     end
 
     def self.upgrade_formulae(formula_installers, dry_run: false, verbose: false)
+      valid_formula_installers = formula_installers.dup
+
       unless dry_run
-        formula_installers.each do |fi|
+        valid_formula_installers.select! do |fi|
           fi.prelude
           fi.fetch
+          true
         rescue CannotInstallFormulaError => e
           ofail e
+          false
         rescue UnsatisfiedRequirements, DownloadError => e
           ofail "#{fi.formula.full_name}: #{e}"
+          false
         end
       end
 
-      formula_installers.each do |fi|
+      valid_formula_installers.each do |fi|
         upgrade_formula(fi, dry_run:, verbose:)
         Cleanup.install_formula_clean!(fi.formula, dry_run:)
       end

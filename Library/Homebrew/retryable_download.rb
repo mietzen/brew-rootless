@@ -1,6 +1,9 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "bottle"
+require "api/json_download"
+
 module Homebrew
   class RetryableDownload
     include Downloadable
@@ -14,13 +17,14 @@ module Homebrew
     sig { override.returns(T::Array[String]) }
     def mirrors = downloadable.mirrors
 
-    sig { params(downloadable: Downloadable, tries: Integer).void }
-    def initialize(downloadable, tries:)
+    sig { params(downloadable: Downloadable, tries: Integer, pour: T::Boolean).void }
+    def initialize(downloadable, tries:, pour: false)
       super()
 
       @downloadable = downloadable
       @try = T.let(0, Integer)
       @tries = tries
+      @pour = pour
     end
 
     sig { override.returns(String) }
@@ -65,10 +69,18 @@ module Homebrew
         puts "SHA256: #{download.sha256}"
       end
 
-      downloadable.verify_download_integrity(download) if verify_download_integrity
+      json_download = downloadable.is_a?(API::JSONDownload)
+      downloadable.verify_download_integrity(download) if verify_download_integrity && !json_download
+
+      if pour && downloadable.is_a?(Bottle)
+        UnpackStrategy.detect(download, prioritize_extension: true)
+                      .extract_nestedly(to: HOMEBREW_CELLAR)
+      elsif json_download
+        FileUtils.touch(download, mtime: Time.now)
+      end
 
       download
-    rescue DownloadError, ChecksumMismatchError
+    rescue DownloadError, ChecksumMismatchError, Resource::BottleManifest::Error
       tries_remaining = @tries - @try
       raise if tries_remaining.zero?
 
@@ -89,15 +101,12 @@ module Homebrew
     sig { override.returns(String) }
     def download_name = downloadable.download_name
 
-    sig { returns(T::Boolean) }
-    def bottle? = downloadable.is_a?(Bottle)
-
-    sig { returns(T::Boolean) }
-    def api? = downloadable.is_a?(API::Download)
-
     private
 
     sig { returns(Downloadable) }
     attr_reader :downloadable
+
+    sig { returns(T::Boolean) }
+    attr_reader :pour
   end
 end

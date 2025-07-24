@@ -28,4 +28,15 @@ RSpec.describe Homebrew::Cmd::UpgradeCmd do
     expect(HOMEBREW_CELLAR/"testball/0.1").to be_a_directory
     expect(HOMEBREW_CELLAR/"testball/0.0.1").not_to exist
   end
+
+  it "refuses to upgrades a forbidden formula", :integration_test do
+    setup_test_formula "testball"
+    (HOMEBREW_CELLAR/"testball/0.0.1/foo").mkpath
+
+    expect { brew "upgrade", "testball", { "HOMEBREW_FORBIDDEN_FORMULAE" => "testball" } }
+      .to not_to_output(%r{#{HOMEBREW_CELLAR}/testball/0\.1}o).to_stdout
+      .and output(/testball was forbidden/).to_stderr
+      .and be_a_failure
+    expect(HOMEBREW_CELLAR/"testball/0.1").not_to exist
+  end
 end

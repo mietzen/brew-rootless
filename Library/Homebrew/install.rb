@@ -336,24 +336,28 @@ module Homebrew
             fi.download_queue = download_queue
           end
         end
+
+        valid_formula_installers = formula_installers.dup
+
         begin
           [:prelude_fetch, :prelude, :fetch].each do |step|
-            formula_installers.each do |fi|
+            valid_formula_installers.select! do |fi|
               fi.public_send(step)
+              true
+            rescue CannotInstallFormulaError => e
+              ofail e.message
+              false
             rescue UnsatisfiedRequirements, DownloadError, ChecksumMismatchError => e
               ofail "#{fi.formula}: #{e}"
-              next
+              false
             end
             download_queue&.fetch
-          rescue CannotInstallFormulaError => e
-            ofail e.message
-            next
           end
         ensure
           download_queue&.shutdown
         end
 
-        formula_installers.each do |fi|
+        valid_formula_installers.each do |fi|
           install_formula(fi)
           Cleanup.install_formula_clean!(fi.formula)
         end
