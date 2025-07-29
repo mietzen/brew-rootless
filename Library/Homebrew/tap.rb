@@ -994,7 +994,8 @@ class Tap
     end
 
     @autobump ||= autobump_packages.select do |_, p|
-      next if p["deprecated"] || p["disabled"]
+      next if p["disabled"]
+      next if p["deprecated"] && p["deprecation_reason"] != "unsigned"
       next if p["skip_livecheck"]
 
       p["autobump"] == true

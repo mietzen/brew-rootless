@@ -44,7 +44,7 @@ class SystemCommand
 
   sig { returns(SystemCommand::Result) }
   def run!
-    $stderr.puts redact_secrets(command.shelljoin.gsub('\=', "="), @secrets) if verbose? || debug?
+    $stderr.puts redact_secrets(command.shelljoin.gsub('\=', "="), @secrets) if verbose? && debug?
 
     @output = []
 
@@ -104,7 +104,7 @@ class SystemCommand
     print_stdout: false,
     print_stderr: true,
     debug: nil,
-    verbose: false,
+    verbose: T.unsafe(nil),
     secrets: [],
     chdir: T.unsafe(nil),
     reset_uid: false,

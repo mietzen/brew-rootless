@@ -222,7 +222,7 @@ module Homebrew
         attestation = check_attestation bottle, HOMEBREW_CORE_REPO
         return attestation
       rescue MissingAttestationError
-        odebug "falling back on backfilled attestation for #{bottle}"
+        odebug "falling back on backfilled attestation for #{bottle.filename}"
 
         # Our backfilled attestation is a little unique: the subject is not just the bottle
         # filename, but also has the bottle's hosted URL hash prepended to it.

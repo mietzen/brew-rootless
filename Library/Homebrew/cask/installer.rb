@@ -426,6 +426,9 @@ on_request: true)
       end
 
       ohai "Installing dependencies: #{missing_formulae_and_casks.map(&:to_s).join(", ")}"
+      cask_installers = T.let([], T::Array[Installer])
+      formula_installers = T.let([], T::Array[FormulaInstaller])
+
       missing_formulae_and_casks.each do |cask_or_formula|
         if cask_or_formula.is_a?(Cask)
           if skip_cask_deps?
@@ -433,7 +436,7 @@ on_request: true)
             next
           end
 
-          Installer.new(
+          cask_installers << Installer.new(
             cask_or_formula,
             adopt:                   adopt?,
             binaries:                binaries?,
@@ -444,10 +447,9 @@ on_request: true)
             quiet:                   quiet?,
             require_sha:             require_sha?,
             verbose:                 verbose?,
-          ).install
+          )
         else
-          Homebrew::Install.perform_preinstall_checks_once
-          fi = FormulaInstaller.new(
+          formula_installers << FormulaInstaller.new(
             cask_or_formula,
             **{
               show_header:             true,
@@ -456,11 +458,17 @@ on_request: true)
               verbose:                 verbose?,
             }.compact,
           )
-          fi.prelude
-          fi.fetch
-          fi.install
-          fi.finish
         end
+      end
+
+      cask_installers.each(&:install)
+      return if formula_installers.blank?
+
+      Homebrew::Install.perform_preinstall_checks_once
+      valid_formula_installers = Homebrew::Install.fetch_formulae(formula_installers)
+      valid_formula_installers.each do |formula_installer|
+        formula_installer.install
+        formula_installer.finish
       end
     end
 

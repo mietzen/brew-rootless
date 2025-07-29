@@ -34,8 +34,12 @@ module OS
         def needs_libc_formula?
           return @needs_libc_formula unless @needs_libc_formula.nil?
 
-          @needs_libc_formula = T.let(OS::Linux::Glibc.below_ci_version?, T.nilable(T::Boolean))
-          @needs_libc_formula = !!@needs_libc_formula
+          @needs_libc_formula = T.let(nil, T.nilable(T::Boolean))
+
+          # Undocumented environment variable to make it easier to test libc
+          # formula automatic installation.
+          @needs_libc_formula = true if ENV["HOMEBREW_FORCE_LIBC_FORMULA"]
+          @needs_libc_formula ||= OS::Linux::Glibc.below_ci_version?
         end
 
         # Keep this method around for now to make it easier to add this functionality later.
@@ -52,7 +56,12 @@ module OS
           return @needs_compiler_formula unless @needs_compiler_formula.nil?
 
           @needs_compiler_formula = T.let(nil, T.nilable(T::Boolean))
-          @needs_compiler_formula = if host_gcc_path.exist?
+
+          # Undocumented environment variable to make it easier to test compiler
+          # formula automatic installation.
+          @needs_compiler_formula = true if ENV["HOMEBREW_FORCE_COMPILER_FORMULA"]
+
+          @needs_compiler_formula ||= if host_gcc_path.exist?
             ::DevelopmentTools.gcc_version(host_gcc_path.to_s) < OS::LINUX_GCC_CI_VERSION
           else
             true

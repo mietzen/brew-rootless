@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 module OS
@@ -30,18 +30,21 @@ module OS
           libstdc++.so.6
         ].freeze
 
+        sig { params(all_fatal: T::Boolean).void }
         def perform_preinstall_checks(all_fatal: false)
           super
           symlink_ld_so
           setup_preferred_gcc_libs
         end
 
+        sig { void }
         def global_post_install
           super
           symlink_ld_so
           setup_preferred_gcc_libs
         end
 
+        sig { void }
         def check_cpu
           return if ::Hardware::CPU.intel? && ::Hardware::CPU.is_64_bit?
           return if ::Hardware::CPU.arm?
@@ -56,6 +59,7 @@ module OS
           ::Kernel.abort message
         end
 
+        sig { void }
         def symlink_ld_so
           brew_ld_so = HOMEBREW_PREFIX/"lib/ld.so"
 
@@ -75,6 +79,7 @@ module OS
           FileUtils.ln_sf ld_so, brew_ld_so
         end
 
+        sig { void }
         def setup_preferred_gcc_libs
           gcc_opt_prefix = HOMEBREW_PREFIX/"opt/#{OS::LINUX_PREFERRED_GCC_RUNTIME_FORMULA}"
           glibc_installed = (HOMEBREW_PREFIX/"opt/glibc/bin/ld.so").readable?

@@ -13,7 +13,6 @@ require "sandbox"
 require "development_tools"
 require "cache_store"
 require "linkage_checker"
-require "install"
 require "messages"
 require "cask/cask_loader"
 require "cmd/install"
@@ -61,8 +60,8 @@ class FormulaInstaller
       bottle_arch:                T.nilable(String),
       ignore_deps:                T::Boolean,
       only_deps:                  T::Boolean,
-      include_test_formulae:      T::Array[Formula],
-      build_from_source_formulae: T::Array[Formula],
+      include_test_formulae:      T::Array[String],
+      build_from_source_formulae: T::Array[String],
       env:                        T.nilable(String),
       git:                        T::Boolean,
       interactive:                T::Boolean,
@@ -507,7 +506,10 @@ class FormulaInstaller
     lock
 
     start_time = Time.now
-    Homebrew::Install.perform_build_from_source_checks if !pour_bottle? && DevelopmentTools.installed?
+    if !pour_bottle? && DevelopmentTools.installed?
+      require "install"
+      Homebrew::Install.perform_build_from_source_checks
+    end
 
     # Warn if a more recent version of this formula is available in the tap.
     begin
@@ -896,6 +898,7 @@ on_request: installed_on_request?, options:)
       verbose:                    verbose?,
     )
     oh1 "Installing #{formula.full_name} dependency: #{Formatter.identifier(dep.name)}"
+    # prelude only needed to populate bottle_tab_runtime_dependencies, fetching has already been done.
     fi.prelude
     fi.install
     fi.finish
@@ -955,6 +958,7 @@ on_request: installed_on_request?, options:)
 
     fix_dynamic_linkage(keg) if !@poured_bottle || !formula.bottle_specification.skip_relocation?
 
+    require "install"
     Homebrew::Install.global_post_install
 
     if build_bottle? || skip_post_install?
@@ -1614,6 +1618,9 @@ on_request: installed_on_request?, options:)
 
     invalid_licenses = []
     forbidden_licenses = forbidden_licenses.split.each_with_object({}) do |license, hash|
+      license_sym = license.to_sym
+      license = license_sym if SPDX::ALLOWED_LICENSE_SYMBOLS.include?(license_sym)
+
       unless SPDX.valid_license?(license)
         invalid_licenses << license
         next

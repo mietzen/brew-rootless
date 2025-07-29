@@ -43,26 +43,37 @@ module Homebrew
         spinner = Spinner.new
         remaining_downloads = downloads.dup.to_a
         previous_pending_line_count = 0
+        tty = $stdout.tty?
 
         begin
-          $stdout.print Tty.hide_cursor
-          $stdout.flush
+          stdout_print_and_flush_if_tty Tty.hide_cursor
 
           output_message = lambda do |downloadable, future, last|
             status = case future.state
             when :fulfilled
-              "#{Tty.green}✔︎#{Tty.reset}"
+              if tty
+                "#{Tty.green}✔︎#{Tty.reset}"
+              else
+                "✔︎"
+              end
             when :rejected
-              "#{Tty.red}✘#{Tty.reset}"
+              if tty
+                "#{Tty.red}✘#{Tty.reset}"
+              else
+                "✘"
+              end
             when :pending, :processing
-              "#{Tty.blue}#{spinner}#{Tty.reset}"
+              "#{Tty.blue}#{spinner}#{Tty.reset}" if tty
             else
               raise future.state.to_s
             end
 
             message = "#{downloadable.download_type} #{downloadable.name}"
-            $stdout.print "#{status} #{message}#{"\n" unless last}"
-            $stdout.flush
+            if tty
+              stdout_print_and_flush "#{status} #{message}#{"\n" unless last}"
+            elsif status
+              puts "#{status} #{message}"
+            end
 
             if future.rejected?
               if (e = future.reason).is_a?(ChecksumMismatchError)
@@ -90,8 +101,7 @@ module Homebrew
 
               finished_downloads.each do |downloadable, future|
                 previous_pending_line_count -= 1
-                $stdout.print Tty.clear_to_end
-                $stdout.flush
+                stdout_print_and_flush_if_tty Tty.clear_to_end
                 output_message.call(downloadable, future, false)
               end
 
@@ -100,19 +110,17 @@ module Homebrew
               remaining_downloads.each_with_index do |(downloadable, future), i|
                 break if previous_pending_line_count >= max_lines
 
-                $stdout.print Tty.clear_to_end
-                $stdout.flush
+                stdout_print_and_flush_if_tty Tty.clear_to_end
                 last = i == max_lines - 1 || i == remaining_downloads.count - 1
                 previous_pending_line_count += output_message.call(downloadable, future, last)
               end
 
               if previous_pending_line_count.positive?
                 if (previous_pending_line_count - 1).zero?
-                  $stdout.print Tty.move_cursor_beginning
+                  stdout_print_and_flush_if_tty Tty.move_cursor_beginning
                 else
-                  $stdout.print Tty.move_cursor_up_beginning(previous_pending_line_count - 1)
+                  stdout_print_and_flush_if_tty Tty.move_cursor_up_beginning(previous_pending_line_count - 1)
                 end
-                $stdout.flush
               end
 
               sleep 0.05
@@ -124,20 +132,29 @@ module Homebrew
               cancel
 
               if previous_pending_line_count.positive?
-                $stdout.print Tty.move_cursor_down(previous_pending_line_count - 1)
-                $stdout.flush
+                stdout_print_and_flush_if_tty Tty.move_cursor_down(previous_pending_line_count - 1)
               end
 
               raise
             end
           end
         ensure
-          $stdout.print Tty.show_cursor
-          $stdout.flush
+          stdout_print_and_flush_if_tty Tty.show_cursor
         end
       end
 
       downloads.clear
+    end
+
+    sig { params(message: String).void }
+    def stdout_print_and_flush_if_tty(message)
+      stdout_print_and_flush(message) if $stdout.tty?
+    end
+
+    sig { params(message: String).void }
+    def stdout_print_and_flush(message)
+      $stdout.print(message)
+      $stdout.flush
     end
 
     sig { void }

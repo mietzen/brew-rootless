@@ -32,9 +32,9 @@ GEM
     minitest (5.25.5)
     netrc (0.11.0)
     parallel (1.27.0)
-    parallel_tests (5.3.0)
+    parallel_tests (5.3.1)
       parallel
-    parser (3.3.8.0)
+    parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
     patchelf (1.5.1)
@@ -90,7 +90,7 @@ GEM
       rubocop-ast (>= 1.45.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.45.1)
+    rubocop-ast (1.46.0)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
     rubocop-md (2.0.1)
@@ -124,16 +124,16 @@ GEM
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
     simpleidn (0.2.3)
-    sorbet (0.5.12230)
-      sorbet-static (= 0.5.12230)
-    sorbet-runtime (0.5.12230)
-    sorbet-static (0.5.12230-aarch64-linux)
-    sorbet-static (0.5.12230-universal-darwin)
-    sorbet-static (0.5.12230-x86_64-linux)
-    sorbet-static-and-runtime (0.5.12230)
-      sorbet (= 0.5.12230)
-      sorbet-runtime (= 0.5.12230)
-    spoom (1.7.4)
+    sorbet (0.5.12357)
+      sorbet-static (= 0.5.12357)
+    sorbet-runtime (0.5.12357)
+    sorbet-static (0.5.12357-aarch64-linux)
+    sorbet-static (0.5.12357-universal-darwin)
+    sorbet-static (0.5.12357-x86_64-linux)
+    sorbet-static-and-runtime (0.5.12357)
+      sorbet (= 0.5.12357)
+      sorbet-runtime (= 0.5.12357)
+    spoom (1.7.5)
       erubi (>= 1.10.0)
       prism (>= 0.28.0)
       rbi (>= 0.3.3)
@@ -167,7 +167,8 @@ GEM
 PLATFORMS
   aarch64-linux
   arm-linux
-  universal-darwin
+  arm64-darwin
+  x86_64-darwin
   x86_64-linux
 
 DEPENDENCIES
@@ -219,4 +220,4 @@ RUBY VERSION
    ruby 3.4.5p51
 
 BUNDLED WITH
-   2.6.9
+   2.6.8

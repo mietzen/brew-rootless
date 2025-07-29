@@ -229,13 +229,13 @@ module SPDX
   end
 
   sig {
-    params(license_expression: T.any(String, Symbol, T::Hash[Symbol, T.untyped]),
-           forbidden_licenses: T::Hash[Symbol, T.untyped]).returns(T::Boolean)
+    params(license_expression: T.any(String, Symbol, T::Hash[T.any(Symbol, String), T.untyped]),
+           forbidden_licenses: T::Hash[T.any(Symbol, String), T.untyped]).returns(T::Boolean)
   }
   def licenses_forbid_installation?(license_expression, forbidden_licenses)
     case license_expression
     when String, Symbol
-      forbidden_licenses_include? license_expression.to_s, forbidden_licenses
+      forbidden_licenses_include? license_expression, forbidden_licenses
     when Hash
       key = license_expression.keys.first
       return false if key.nil?

@@ -510,12 +510,15 @@ module Cask
           when Artifact::Pkg
             system_command("spctl", args: ["--assess", "--type", "install", path], print_stderr: false)
           when Artifact::App
-            system_command("spctl", args: ["--assess", "--type", "execute", path], print_stderr: false)
+            next opoo "gktool not found, skipping app signing audit" unless which("gktool")
+
+            system_command("gktool", args: ["scan", path], print_stderr: false)
           when Artifact::Binary
             # Shell scripts cannot be signed, so we skip them
             next if path.text_executable?
 
-            system_command("codesign",  args: ["--verify", path], print_stderr: false)
+            system_command("codesign",  args:         ["--verify", "-R=notarized", "--check-notarization", path],
+                                        print_stderr: false)
           else
             add_error "Unknown artifact type: #{artifact.class}", location: url.location
           end
@@ -580,13 +583,15 @@ module Cask
         }.compact
 
         Homebrew::Install.perform_preinstall_checks_once
+        valid_formula_installers = Homebrew::Install.fetch_formulae(primary_container.dependencies)
+
         primary_container.dependencies.each do |dep|
+          next unless valid_formula_installers.include?(dep)
+
           fi = FormulaInstaller.new(
             dep,
             **install_options,
           )
-          fi.prelude
-          fi.fetch
           fi.install
           fi.finish
         end

@@ -1159,7 +1159,7 @@ module Formulary
       NullLoader,
     ].each do |loader_class|
       if (loader = loader_class.try_new(ref, from:, warn:))
-        $stderr.puts "#{$PROGRAM_NAME} (#{loader_class}): loading #{ref}" if debug?
+        $stderr.puts "#{$PROGRAM_NAME} (#{loader_class}): loading #{ref}" if verbose? && debug?
         return loader
       end
     end
