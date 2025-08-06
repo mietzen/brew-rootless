@@ -32,7 +32,7 @@ module Cask
 
     def self.all(eval_all: false)
       if !eval_all && !Homebrew::EnvConfig.eval_all?
-        raise ArgumentError, "Cask::Cask#all cannot be used without `--eval-all` or HOMEBREW_EVAL_ALL"
+        raise ArgumentError, "Cask::Cask#all cannot be used without `--eval-all` or `HOMEBREW_EVAL_ALL=1`"
       end
 
       # Load core casks from tokens so they load from the API when the core cask is not tapped.

@@ -24,11 +24,6 @@ module Cask
       @quarantine = quarantine
     end
 
-    sig { override.returns(String) }
-    def name
-      cask.token
-    end
-
     sig { override.returns(T.nilable(::URL)) }
     def url
       return if (cask_url = cask.url).nil?
@@ -95,10 +90,10 @@ module Cask
     end
 
     sig { override.returns(String) }
-    def download_name = cask.token
+    def download_queue_name = "#{cask.token} (#{version})"
 
     sig { override.returns(String) }
-    def download_type = "Cask"
+    def download_queue_type = "Cask"
 
     private
 

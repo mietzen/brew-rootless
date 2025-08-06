@@ -211,9 +211,8 @@ merge_or_rebase() {
   if [[ "${DIR}" == "${HOMEBREW_REPOSITORY}" && -n "${HOMEBREW_UPDATE_TO_TAG}" ]]
   then
     UPSTREAM_TAG="$(
-      git tag --list |
-        sort --field-separator=. --key=1,1nr -k 2,2nr -k 3,3nr |
-        grep --max-count=1 '^[0-9]*\.[0-9]*\.[0-9]*$'
+      git tag --list --sort=-version:refname |
+        grep -m 1 '^[0-9]*\.[0-9]*\.[0-9]*$'
     )"
   else
     UPSTREAM_TAG=""
@@ -650,9 +649,9 @@ EOS
         if [[ -z "${HOMEBREW_NO_ENV_HINTS}" && -z "${HOMEBREW_AUTO_UPDATE_SECS}" ]]
         then
           # shellcheck disable=SC2016
-          echo 'Adjust how often this is run with HOMEBREW_AUTO_UPDATE_SECS or disable with' >&2
+          echo 'Adjust how often this is run with `$HOMEBREW_AUTO_UPDATE_SECS` or disable with' >&2
           # shellcheck disable=SC2016
-          echo 'HOMEBREW_NO_AUTO_UPDATE. Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).' >&2
+          echo '`$HOMEBREW_NO_AUTO_UPDATE=1`. Hide these hints with `$HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).' >&2
         fi
       else
         ohai 'Updating Homebrew...' >&2

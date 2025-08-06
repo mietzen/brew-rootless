@@ -28,9 +28,9 @@ class SoftwareSpec
   attr_reader :name, :full_name, :owner, :build, :resources, :patches, :options, :deprecated_flags,
               :deprecated_options, :dependency_collector, :bottle_specification, :compiler_failures
 
-  def_delegators :@resource, :stage, :fetch, :verify_download_integrity, :source_modified_time, :download_name,
+  def_delegators :@resource, :stage, :fetch, :verify_download_integrity, :source_modified_time,
                  :cached_download, :clear_cache, :checksum, :mirrors, :specs, :using, :version, :mirror,
-                 :downloader
+                 :downloader, :download_queue_name, :download_queue_type
 
   def_delegators :@resource, :sha256
 
@@ -80,9 +80,6 @@ class SoftwareSpec
     @compiler_failures.freeze
     super
   end
-
-  sig { override.returns(String) }
-  def download_type = "Formula"
 
   def owner=(owner)
     @name = owner.name

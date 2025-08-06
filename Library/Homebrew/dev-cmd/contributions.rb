@@ -15,28 +15,24 @@ module Homebrew
       MAX_REPO_COMMITS = 1000
 
       cmd_args do
-        usage_banner "`contributions` [--user=<email|username>] [<--repositories>`=`] [<--csv>]"
+        usage_banner "`contributions` [`--user=`] [`--repositories=`] [`--from=`] [`--to=`] [`--csv`]"
         description <<~EOS
           Summarise contributions to Homebrew repositories.
         EOS
-
+        comma_array "--user=",
+                    description: "Specify a comma-separated list of GitHub usernames or email addresses to find " \
+                                 "contributions from. Omitting this flag searches Homebrew maintainers."
         comma_array "--repositories",
                     description: "Specify a comma-separated list of repositories to search. " \
                                  "Supported repositories: #{SUPPORTED_REPOS.map { |t| "`#{t}`" }.to_sentence}. " \
                                  "Omitting this flag, or specifying `--repositories=primary`, searches only the " \
-                                 "main repositories: brew,core,cask. " \
-                                 "Specifying `--repositories=all`, searches all repositories. "
-        flag "--from=",
-             description: "Date (ISO-8601 format) to start searching contributions. " \
-                          "Omitting this flag searches the last year."
-
-        flag "--to=",
-             description: "Date (ISO-8601 format) to stop searching contributions."
-
-        comma_array "--user=",
-                    description: "Specify a comma-separated list of GitHub usernames or email addresses to find " \
-                                 "contributions from. Omitting this flag searches maintainers."
-
+                                 "main repositories: `brew`, `core`, `cask`. " \
+                                 "Specifying `--repositories=all` searches all repositories. "
+        flag   "--from=",
+               description: "Date (ISO 8601 format) to start searching contributions. " \
+                            "Omitting this flag searches the past year."
+        flag   "--to=",
+               description: "Date (ISO 8601 format) to stop searching contributions."
         switch "--csv",
                description: "Print a CSV of contributions across repositories over the time period."
       end

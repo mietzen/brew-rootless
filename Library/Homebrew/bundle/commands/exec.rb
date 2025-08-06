@@ -180,7 +180,7 @@ module Homebrew
               <<~EOS
                 Your shell has been configured to use a build environment from your `Brewfile`.
                 This should help you build stuff.
-                Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+                Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
                 When done, type `exit`.
               EOS
             end

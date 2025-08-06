@@ -97,7 +97,7 @@ module Formulary
 
   using PathnameWriteMkpath
   def self.load_formula(name, path, contents, namespace, flags:, ignore_errors:)
-    raise "Formula loading disabled by HOMEBREW_DISABLE_LOAD_FORMULA!" if Homebrew::EnvConfig.disable_load_formula?
+    raise "Formula loading disabled by `$HOMEBREW_DISABLE_LOAD_FORMULA`!" if Homebrew::EnvConfig.disable_load_formula?
 
     require "formula"
     require "ignorable"
@@ -661,7 +661,7 @@ module Formulary
 
       # Cache compiled regex
       @uri_regex ||= begin
-        uri_regex = ::URI::DEFAULT_PARSER.make_regexp
+        uri_regex = ::URI::RFC2396_PARSER.make_regexp
         Regexp.new("\\A#{uri_regex.source}\\Z", uri_regex.options)
       end
 

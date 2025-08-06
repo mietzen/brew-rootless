@@ -366,7 +366,7 @@ class AbstractFileDownloadStrategy < AbstractDownloadStrategy
   def parse_basename(url, search_query: true)
     components = { path: T.let([], T::Array[String]), query: T.let([], T::Array[String]) }
 
-    if url.match?(URI::DEFAULT_PARSER.make_regexp)
+    if url.match?(URI::RFC2396_PARSER.make_regexp)
       uri = URI(url)
 
       if (uri_query = uri.query.presence)
@@ -382,7 +382,7 @@ class AbstractFileDownloadStrategy < AbstractDownloadStrategy
 
       if (uri_path = uri.path.presence)
         components[:path] = uri_path.split("/").filter_map do |part|
-          URI::DEFAULT_PARSER.unescape(part).presence
+          URI::RFC2396_PARSER.unescape(part).presence
         end
       end
     else
@@ -609,7 +609,7 @@ class CurlDownloadStrategy < AbstractFileDownloadStrategy
 
     if Homebrew::EnvConfig.no_insecure_redirect? &&
        url.start_with?("https://") && !resolved_url.start_with?("https://")
-      $stderr.puts "HTTPS to HTTP redirect detected and HOMEBREW_NO_INSECURE_REDIRECT is set."
+      $stderr.puts "HTTPS to HTTP redirect detected and `$HOMEBREW_NO_INSECURE_REDIRECT` is set."
       raise CurlDownloadStrategyError, url
     end
 

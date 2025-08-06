@@ -186,7 +186,10 @@ class Bottle
   end
 
   sig { override.returns(String) }
-  def download_type = "Bottle"
+  def download_queue_type = "Bottle"
+
+  sig { override.returns(String) }
+  def download_queue_name = "#{name} (#{resource.version})"
 
   private
 

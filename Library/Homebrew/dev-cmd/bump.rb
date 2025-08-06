@@ -117,7 +117,7 @@ module Homebrew
           else
             raise UsageError,
                   "`brew bump` without named arguments needs `--installed` or `--eval-all` passed or " \
-                  "`$HOMEBREW_EVAL_ALL` set!"
+                  "`HOMEBREW_EVAL_ALL=1` set!"
           end
 
           if args.start_with
@@ -135,7 +135,7 @@ module Homebrew
 
           if args.repology? && !Utils::Curl.curl_supports_tls13?
             begin
-              ensure_formula_installed!("curl", reason: "Repology queries") unless HOMEBREW_BREWED_CURL_PATH.exist?
+              Formula["curl"].ensure_installed!(reason: "Repology queries") unless HOMEBREW_BREWED_CURL_PATH.exist?
             rescue FormulaUnavailableError
               opoo "A newer `curl` is required for Repology queries."
             end

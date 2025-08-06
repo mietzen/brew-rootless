@@ -89,10 +89,14 @@ module Homebrew
 
     # Match where our bundler gems are.
     gem_home = "#{RUBY_BUNDLE_VENDOR_DIRECTORY}/#{RbConfig::CONFIG["ruby_version"]}"
+    homebrew_cache = ENV.fetch("HOMEBREW_CACHE", nil)
+    gem_cache = "#{homebrew_cache}/gem-spec-cache" if homebrew_cache
+
     Gem.paths = {
-      "GEM_HOME" => gem_home,
-      "GEM_PATH" => gem_home,
-    }
+      "GEM_HOME"       => gem_home,
+      "GEM_PATH"       => gem_home,
+      "GEM_SPEC_CACHE" => gem_cache,
+    }.compact
 
     # Set TMPDIR so Xcode's `make` doesn't fall back to `/var/tmp/`,
     # which may be not user-writable.
@@ -110,6 +114,7 @@ module Homebrew
     # We don't do this unless requested as some formulae may invoke system Ruby instead of ours.
     ENV["GEM_HOME"] = gem_home
     ENV["GEM_PATH"] = gem_home
+    ENV["GEM_SPEC_CACHE"] = gem_cache if gem_cache
   end
 
   def self.install_gem!(name, version: nil, setup_gem_environment: true)
@@ -222,6 +227,7 @@ module Homebrew
     old_path = ENV.fetch("PATH", nil)
     old_gem_path = ENV.fetch("GEM_PATH", nil)
     old_gem_home = ENV.fetch("GEM_HOME", nil)
+    old_gem_spec_cache = ENV.fetch("GEM_SPEC_CACHE", nil)
     old_bundle_gemfile = ENV.fetch("BUNDLE_GEMFILE", nil)
     old_bundle_with = ENV.fetch("BUNDLE_WITH", nil)
     old_bundle_frozen = ENV.fetch("BUNDLE_FROZEN", nil)
@@ -343,6 +349,7 @@ module Homebrew
       ENV["PATH"] = old_path
       ENV["GEM_PATH"] = old_gem_path
       ENV["GEM_HOME"] = old_gem_home
+      ENV["GEM_SPEC_CACHE"] = old_gem_spec_cache
       ENV["BUNDLE_GEMFILE"] = old_bundle_gemfile
       ENV["BUNDLE_WITH"] = old_bundle_with
       ENV["BUNDLE_FROZEN"] = old_bundle_frozen

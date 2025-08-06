@@ -58,7 +58,6 @@ module Homebrew
                hidden:      true
         switch "--[no-]signing",
                description: "Audit for app signatures, which are required by macOS on ARM."
-        # should be odeprecated in future
         switch "--token-conflicts",
                description: "Audit for token conflicts.",
                hidden:      true
@@ -105,6 +104,8 @@ module Homebrew
 
       sig { override.void }
       def run
+        odeprecated "brew audit --token-conflicts" if args.token_conflicts?
+
         Formulary.enable_factory_cache!
 
         os_arch_combinations = args.os_arch_combinations
@@ -142,7 +143,7 @@ module Homebrew
             unless eval_all
               # This odisabled should probably stick around indefinitely.
               odisabled "brew audit",
-                        "brew audit --eval-all or HOMEBREW_EVAL_ALL"
+                        "`brew audit --eval-all` or set `HOMEBREW_EVAL_ALL=1`"
             end
             no_named_args = true
             [

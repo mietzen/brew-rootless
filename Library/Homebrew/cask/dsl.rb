@@ -98,10 +98,9 @@ module Cask
       :disable_reason,
       :disable_replacement_cask,
       :disable_replacement_formula,
-      :discontinued?, # TODO: remove once discontinued? is removed (4.5.0)
       :livecheck,
       :livecheck_defined?,
-      :livecheckable?, # TODO: remove once `#livecheckable?` is removed
+      :livecheckable?, # TODO: remove once `#livecheckable?` was odisabled and is now removed
       :no_autobump!,
       :autobump?,
       :no_autobump_message,
@@ -556,7 +555,7 @@ module Cask
     # for `#livecheck_defined?`.
     sig { returns(T::Boolean) }
     def livecheckable?
-      odeprecated "`livecheckable?`", "`livecheck_defined?`"
+      odisabled "`livecheckable?`", "`livecheck_defined?`"
       @livecheck_defined == true
     end
 

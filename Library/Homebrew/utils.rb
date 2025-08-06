@@ -19,9 +19,11 @@ module Homebrew
       end
       exit! 1 # never gets here unless exec failed
     end
-    Process.wait(T.must(pid))
+    Process.wait(pid)
     $CHILD_STATUS.success?
   end
+  # TODO: make private_class_method when possible
+  # private_class_method :_system
   # rubocop:enable Naming/PredicateMethod
 
   def self.system(cmd, *args, **options)
@@ -37,9 +39,9 @@ module Homebrew
   # rubocop:disable Style/GlobalVars
   sig { params(the_module: Module, pattern: Regexp).void }
   def self.inject_dump_stats!(the_module, pattern)
-    @injected_dump_stat_modules ||= {}
+    @injected_dump_stat_modules ||= T.let({}, T.nilable(T::Hash[Module, T::Array[String]]))
     @injected_dump_stat_modules[the_module] ||= []
-    injected_methods = @injected_dump_stat_modules[the_module]
+    injected_methods = @injected_dump_stat_modules.fetch(the_module)
     the_module.module_eval do
       instance_methods.grep(pattern).each do |name|
         next if injected_methods.include? name

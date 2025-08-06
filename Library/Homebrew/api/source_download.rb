@@ -37,10 +37,7 @@ module Homebrew
       end
 
       sig { override.returns(String) }
-      def name = download_name
-
-      sig { override.returns(String) }
-      def download_type = "API Source"
+      def download_queue_type = "API Source"
 
       sig { override.returns(Pathname) }
       def cache

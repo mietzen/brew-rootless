@@ -49,13 +49,13 @@ module Homebrew
         boolean:     true,
       },
       HOMEBREW_ASK:                              {
-        description: "If set, pass `--ask`to all formulae `brew install`, `brew upgrade` and `brew reinstall` " \
+        description: "If set, pass `--ask` to all formulae `brew install`, `brew upgrade` and `brew reinstall` " \
                      "commands.",
         boolean:     true,
       },
       HOMEBREW_AUTO_UPDATE_SECS:                 {
         description:  "Run `brew update` once every `$HOMEBREW_AUTO_UPDATE_SECS` seconds before some commands, " \
-                      "e.g. `brew install`, `brew upgrade` and `brew tap`. Alternatively, " \
+                      "e.g. `brew install`, `brew upgrade` or `brew tap`. Alternatively, " \
                       "disable auto-update entirely with `$HOMEBREW_NO_AUTO_UPDATE`.",
         default_text: "`86400` (24 hours), `3600` (1 hour) if a developer command has been run " \
                       "or `300` (5 minutes) if `$HOMEBREW_NO_INSTALL_FROM_API` is set.",
@@ -182,6 +182,13 @@ module Homebrew
         description: "Use this bearer token for authenticating with a Docker registry proxying GitHub Packages. " \
                      "Preferred over `$HOMEBREW_DOCKER_REGISTRY_BASIC_AUTH_TOKEN`.",
       },
+      HOMEBREW_DOWNLOAD_CONCURRENCY:             {
+        description: "If set, Homebrew will download in parallel using this many concurrent connections. " \
+                     "Setting to `auto` will use twice the number of available CPU cores " \
+                     "(what our benchmarks showed to produce the best performance). " \
+                     "If set to `1` (the default), Homebrew will download in serial.",
+        default:     1,
+      },
       HOMEBREW_EDITOR:                           {
         description:  "Use this editor when editing a single formula, or several formulae in the " \
                       "same directory." \
@@ -267,17 +274,17 @@ module Homebrew
       HOMEBREW_FORMULA_BUILD_NETWORK:            {
         description: "If set, controls network access to the sandbox for formulae builds. Overrides any " \
                      "controls set through DSL usage inside formulae. Must be `allow` or `deny`. If no value is " \
-                     "set through this environment variable or DSL usage, the default behavior is `allow`.",
+                     "set through this environment variable or DSL usage, the default behaviour is `allow`.",
       },
       HOMEBREW_FORMULA_POSTINSTALL_NETWORK:      {
         description: "If set, controls network access to the sandbox for formulae postinstall. Overrides any " \
                      "controls set through DSL usage inside formulae. Must be `allow` or `deny`. If no value is " \
-                     "set through this environment variable or DSL usage, the default behavior is `allow`.",
+                     "set through this environment variable or DSL usage, the default behaviour is `allow`.",
       },
       HOMEBREW_FORMULA_TEST_NETWORK:             {
         description: "If set, controls network access to the sandbox for formulae test. Overrides any " \
                      "controls set through DSL usage inside formulae. Must be `allow` or `deny`. If no value is " \
-                     "set through this environment variable or DSL usage, the default behavior is `allow`.",
+                     "set through this environment variable or DSL usage, the default behaviour is `allow`.",
       },
       HOMEBREW_GITHUB_API_TOKEN:                 {
         description: "Use this personal access token for the GitHub API, for features such as " \
@@ -359,7 +366,7 @@ module Homebrew
       },
       HOMEBREW_NO_AUTO_UPDATE:                   {
         description: "If set, do not automatically update before running some commands, e.g. " \
-                     "`brew install`, `brew upgrade` and `brew tap`. Preferably, " \
+                     "`brew install`, `brew upgrade` or `brew tap`. Preferably, " \
                      "run this less often by setting `$HOMEBREW_AUTO_UPDATE_SECS` to a value higher than the " \
                      "default. Note that setting this and e.g. tapping new taps may result in a broken  " \
                      "configuration. Please ensure you always run `brew update` before reporting any issues.",
@@ -398,7 +405,7 @@ module Homebrew
       HOMEBREW_NO_INSECURE_REDIRECT:             {
         description: "If set, forbid redirects from secure HTTPS to insecure HTTP." \
                      "\n\n    *Note:* while ensuring your downloads are fully secure, this is likely to cause " \
-                     "from-source SourceForge, some GNU & GNOME-hosted formulae to fail to download.",
+                     "sources for certain formulae hosted by SourceForge, GNU or GNOME to fail to download.",
         boolean:     true,
       },
       HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK:    {
@@ -633,10 +640,16 @@ module Homebrew
 
     sig { returns(Integer) }
     def download_concurrency
-      # TODO: document this variable when ready to publicly announce it.
-      concurrency = ENV.fetch("HOMEBREW_DOWNLOAD_CONCURRENCY", 1).to_i
-      concurrency = 1 if concurrency <= 1
-      concurrency
+      concurrency = ENV.fetch("HOMEBREW_DOWNLOAD_CONCURRENCY", 1)
+      concurrency = if concurrency == "auto"
+        require "os"
+        require "hardware"
+        Hardware::CPU.cores * 2
+      else
+        concurrency.to_i
+      end
+
+      [concurrency, 1].max
     end
   end
 end

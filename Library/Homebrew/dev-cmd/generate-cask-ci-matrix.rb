@@ -28,7 +28,6 @@ module Homebrew
           Generate a GitHub Actions matrix for a given pull request URL or list of cask names.
           For internal use in Homebrew taps.
         EOS
-
         switch "--url",
                description: "Treat named argument as a pull request URL."
         switch "--cask", "--casks",
@@ -45,6 +44,7 @@ module Homebrew
         conflicts "--syntax-only", "--new"
 
         named_args [:cask, :url], min: 0
+
         hide_from_man_page!
       end
 

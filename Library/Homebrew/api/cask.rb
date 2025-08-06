@@ -28,8 +28,8 @@ module Homebrew
         Homebrew::API.fetch "cask/#{token}.json"
       end
 
-      sig { params(cask: ::Cask::Cask).returns(::Cask::Cask) }
-      def self.source_download(cask)
+      sig { params(cask: ::Cask::Cask, download_queue: T.nilable(Homebrew::DownloadQueue)).returns(Homebrew::API::SourceDownload) }
+      def self.source_download(cask, download_queue: nil)
         path = cask.ruby_source_path.to_s
         sha256 = cask.ruby_source_checksum[:sha256]
         checksum = Checksum.new(sha256) if sha256
@@ -44,7 +44,20 @@ module Homebrew
           ],
           cache:   HOMEBREW_CACHE_API_SOURCE/"#{tap}/#{git_head}/Cask",
         )
-        download.fetch
+
+        if download_queue
+          download_queue.enqueue(download)
+        elsif !download.symlink_location.exist?
+          download.fetch
+        end
+
+        download
+      end
+
+      sig { params(cask: ::Cask::Cask).returns(::Cask::Cask) }
+      def self.source_download_cask(cask)
+        download = source_download(cask)
+
         ::Cask::CaskLoader::FromPathLoader.new(download.symlink_location)
                                           .load(config: cask.config)
       end

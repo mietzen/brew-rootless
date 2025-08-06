@@ -7,10 +7,6 @@ require "utils/curl"
 module Cask
   # Class corresponding to the `url` stanza.
   class URL < SimpleDelegator
-    BlockReturn = T.type_alias do
-      T.any(URI::Generic, String, [T.any(URI::Generic, String), T::Hash[Symbol, T.untyped]])
-    end
-
     # Methods for the `url` stanza.
     class DSL
       sig { returns(T.any(URI::Generic, String)) }
@@ -102,96 +98,6 @@ module Cask
       end
     end
 
-    # Allow passing a block to the `url` stanza.
-    class BlockDSL
-      # Allow accessing the URL associated with page contents.
-      class PageWithURL < SimpleDelegator
-        # Get the URL of the fetched page.
-        #
-        # ### Example
-        #
-        # ```ruby
-        # url "https://example.org/download" do |page|
-        #   file_path = page[/href="([^"]+\.dmg)"/, 1]
-        #   URI.join(page.url, file_path)
-        # end
-        # ```
-        #
-        # @api public
-        sig { returns(URI::Generic) }
-        attr_accessor :url
-
-        sig { params(str: String, url: URI::Generic).void }
-        def initialize(str, url)
-          super(str)
-          @url = T.let(url, URI::Generic)
-        end
-      end
-
-      sig {
-        params(
-          uri:   T.nilable(T.any(URI::Generic, String)),
-          dsl:   ::Cask::DSL,
-          block: T.proc.params(arg0: T.all(String, PageWithURL)).returns(BlockReturn),
-        ).void
-      }
-      def initialize(uri, dsl:, &block)
-        @uri = T.let(uri, T.nilable(T.any(URI::Generic, String)))
-        @dsl = T.let(dsl, ::Cask::DSL)
-        @block = T.let(block, T.proc.params(arg0: T.all(String, PageWithURL)).returns(BlockReturn))
-
-        odisabled "cask `url do` blocks" if @block
-      end
-
-      sig { returns(BlockReturn) }
-      def call
-        if @uri
-          result = ::Utils::Curl.curl_output("--fail", "--silent", "--location", @uri.to_s)
-          result.assert_success!
-
-          page = PageWithURL.new(result.stdout, URI(@uri))
-          instance_exec(page, &@block)
-        else
-          instance_exec(&@block)
-        end
-      end
-
-      private
-
-      # Allows calling a nested `url` stanza in a `url do` block.
-      #
-      # @api public
-      sig {
-        params(
-          uri:   T.any(URI::Generic, String),
-          block: T.proc.params(arg0: T.all(String, PageWithURL)).returns(BlockReturn),
-        ).returns(BlockReturn)
-      }
-      def url(uri, &block)
-        self.class.new(uri, dsl: @dsl, &block).call
-      end
-
-      # This allows calling DSL methods from inside a `url` block.
-      #
-      # @api public
-      sig {
-        override.params(method: Symbol, args: T.untyped, block: T.nilable(T.proc.returns(T.untyped)))
-                .returns(T.anything)
-      }
-      def method_missing(method, *args, &block)
-        if @dsl.respond_to?(method)
-          @dsl.public_send(method, *args, &block)
-        else
-          super
-        end
-      end
-
-      sig { override.params(method_name: T.any(Symbol, String), include_private: T::Boolean).returns(T::Boolean) }
-      def respond_to_missing?(method_name, include_private = false)
-        @dsl.respond_to?(method_name, include_private) || super
-      end
-    end
-
     sig {
       params(
         uri:             T.nilable(T.any(URI::Generic, String)),
@@ -210,28 +116,18 @@ module Cask
         only_path:       T.nilable(String),
         caller_location: Thread::Backtrace::Location,
         dsl:             T.nilable(::Cask::DSL),
-        block:           T.nilable(T.proc.params(arg0: T.all(String, BlockDSL::PageWithURL)).returns(BlockReturn)),
       ).void
     }
     def initialize(
       uri = nil, verified: nil, using: nil, tag: nil, branch: nil, revisions: nil, revision: nil, trust_cert: nil,
       cookies: nil, referer: nil, header: nil, user_agent: nil, data: nil, only_path: nil,
-      caller_location: caller_locations.fetch(0), dsl: nil, &block
+      caller_location: caller_locations.fetch(0), dsl: nil
     )
       super(
-        if block
-          LazyObject.new do
-            uri2, options = *BlockDSL.new(uri, dsl: T.must(dsl), &block).call
-            options ||= {}
-            DSL.new(uri2, **options)
-          end
-        else
-          DSL.new(T.must(uri), verified:, using:, tag:, branch:, revisions:, revision:, trust_cert:, cookies:,
-          referer:, header:, user_agent:, data:, only_path:)
-        end
+        DSL.new(T.must(uri), verified:, using:, tag:, branch:, revisions:, revision:, trust_cert:, cookies:,
+        referer:, header:, user_agent:, data:, only_path:)
       )
 
-      @from_block = T.let(!block.nil?, T::Boolean)
       @caller_location = T.let(caller_location, Thread::Backtrace::Location)
     end
 
@@ -250,11 +146,6 @@ module Cask
       interpolated_url = interpolated_url.gsub(/\#{\s*version\s*\.major\s*}/, "") if ignore_major_version
 
       interpolated_url.exclude?('#{')
-    end
-
-    sig { returns(T::Boolean) }
-    def from_block?
-      @from_block
     end
 
     private

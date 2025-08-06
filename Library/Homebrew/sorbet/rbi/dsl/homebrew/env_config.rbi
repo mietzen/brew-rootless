@@ -109,6 +109,9 @@ module Homebrew::EnvConfig
     sig { returns(T.nilable(::String)) }
     def docker_registry_token; end
 
+    sig { returns(Integer) }
+    def download_concurrency; end
+
     sig { returns(T.nilable(::String)) }
     def editor; end
 

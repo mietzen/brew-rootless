@@ -28,10 +28,10 @@ module Homebrew
     end
 
     sig { override.returns(String) }
-    def name = downloadable.name
+    def download_queue_name = downloadable.download_queue_name
 
     sig { override.returns(String) }
-    def download_type = downloadable.download_type
+    def download_queue_type = downloadable.download_queue_type
 
     sig { override.returns(Pathname) }
     def cached_download = downloadable.cached_download
@@ -60,7 +60,11 @@ module Homebrew
 
       already_downloaded = downloadable.downloaded?
 
-      download = downloadable.fetch(verify_download_integrity: false, timeout:, quiet:)
+      download = if downloadable.is_a?(Resource) && (resource = T.cast(downloadable, Resource))
+        resource.fetch(verify_download_integrity: false, timeout:, quiet:, skip_patches: true)
+      else
+        downloadable.fetch(verify_download_integrity: false, timeout:, quiet:)
+      end
 
       return download unless download.file?
 
@@ -73,6 +77,7 @@ module Homebrew
       downloadable.verify_download_integrity(download) if verify_download_integrity && !json_download
 
       if pour && downloadable.is_a?(Bottle)
+        HOMEBREW_CELLAR.mkpath
         UnpackStrategy.detect(download, prioritize_extension: true)
                       .extract_nestedly(to: HOMEBREW_CELLAR)
       elsif json_download
@@ -97,9 +102,6 @@ module Homebrew
 
     sig { override.params(filename: Pathname).void }
     def verify_download_integrity(filename) = downloadable.verify_download_integrity(filename)
-
-    sig { override.returns(String) }
-    def download_name = downloadable.download_name
 
     private
 

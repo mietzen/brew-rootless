@@ -83,6 +83,7 @@ module Homebrew
                     description: "Exclude these Python packages when finding resources."
         comma_array "--bump-synced=",
                     hidden: true
+
         conflicts "--dry-run", "--write-only"
         conflicts "--no-audit", "--strict"
         conflicts "--no-audit", "--online"

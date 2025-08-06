@@ -354,9 +354,7 @@ module Homebrew
         end
         return if gnu_tar_formula.blank?
 
-        ensure_formula_installed!(gnu_tar_formula, reason: "bottling")
-
-        gnu_tar_formula
+        gnu_tar_formula.ensure_installed!(reason: "bottling")
       end
 
       sig { params(mtime: String, default_tar: T::Boolean).returns([String, T::Array[String]]) }

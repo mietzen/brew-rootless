@@ -142,7 +142,7 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
         with:
-          core: false
+          core: true
           cask: false
           test-bot: false
 
@@ -368,6 +368,7 @@ jobs:
     env:
       HOMEBREW_TEST_BOT_ANALYTICS: 1
       HOMEBREW_ENFORCE_SBOM: 1
+      HOMEBREW_DOWNLOAD_CONCURRENCY: auto
     steps:
       - name: Install Homebrew and Homebrew's dependencies
         # All other images are built from our Homebrew Dockerfile.

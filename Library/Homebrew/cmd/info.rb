@@ -360,7 +360,9 @@ module Homebrew
         end
 
         caveats = Caveats.new(formula)
-        ohai "Caveats", caveats.to_s unless caveats.empty?
+        if (caveats_string = caveats.to_s.presence)
+          ohai "Caveats", caveats_string
+        end
 
         Utils::Analytics.formula_output(formula, args:)
       end

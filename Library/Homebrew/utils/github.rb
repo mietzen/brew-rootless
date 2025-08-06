@@ -899,7 +899,7 @@ module GitHub
   end
 
   def self.count_repo_commits(nwo, user, from: nil, to: nil, max: nil)
-    odie "Cannot count commits, HOMEBREW_NO_GITHUB_API set!" if Homebrew::EnvConfig.no_github_api?
+    odie "Cannot count commits as `$HOMEBREW_NO_GITHUB_API` is set!" if Homebrew::EnvConfig.no_github_api?
 
     author_shas = repo_commits_for_user(nwo, user, "author", from, to, max)
     committer_shas = repo_commits_for_user(nwo, user, "committer", from, to, max)
@@ -922,7 +922,7 @@ module GitHub
     # BrewTestBot can open as many PRs as it wants.
     return false if ENV["HOMEBREW_TEST_BOT_AUTOBUMP"].present?
 
-    odie "Cannot count PRs, HOMEBREW_NO_GITHUB_API set!" if Homebrew::EnvConfig.no_github_api?
+    odie "Cannot count PRs as `$HOMEBREW_NO_GITHUB_API` is set!" if Homebrew::EnvConfig.no_github_api?
 
     query = <<~EOS
       query($after: String) {

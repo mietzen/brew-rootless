@@ -173,7 +173,7 @@ __brew_internal_commands() {
     'formula:Display the path where formula is located'
     'formula-analytics:Query Homebrew'\''s analytics'
     'formulae:List all locally installable formulae including short names'
-    'generate-analytics-api:Generates analytics API data files for formulae.brew.sh'
+    'generate-analytics-api:Generates analytics API data files for https://formulae.brew.sh'
     'generate-cask-api:Generate `homebrew/cask` API data files for https://formulae.brew.sh'
     'generate-cask-ci-matrix:Generate a GitHub Actions matrix for a given pull request URL or list of cask names'
     'generate-formula-api:Generate `homebrew/core` API data files for https://formulae.brew.sh'
@@ -660,7 +660,7 @@ _brew_bundle() {
     '--formula[`list`, `dump` or `cleanup` Homebrew formula dependencies]' \
     '(--file)--global[Read from or write to the `Brewfile` from `$HOMEBREW_BUNDLE_FILE_GLOBAL` (if set), `${XDG_CONFIG_HOME}/homebrew/Brewfile` (if `$XDG_CONFIG_HOME` is set), `~/.homebrew/Brewfile` or `~/.Brewfile` otherwise]' \
     '--help[Show this message]' \
-    '(--upgrade)--install[Run `install` before continuing to other operations e.g. `exec`]' \
+    '(--upgrade)--install[Run `install` before continuing to other operations, e.g. `exec`]' \
     '--mas[`list` or `dump` Mac App Store dependencies]' \
     '--no-restart[`dump` does not add `restart_service` to formula lines]' \
     '--no-upgrade[`install` does not run `brew upgrade` on outdated dependencies. `check` does not check for outdated dependencies. Note they may still be upgraded by `brew install` if needed. Enabled by default if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set]' \
@@ -765,12 +765,12 @@ _brew_contributions() {
   _arguments \
     '--csv[Print a CSV of contributions across repositories over the time period]' \
     '--debug[Display any debugging information]' \
-    '--from[Date (ISO-8601 format) to start searching contributions. Omitting this flag searches the last year]' \
+    '--from[Date (ISO 8601 format) to start searching contributions. Omitting this flag searches the past year]' \
     '--help[Show this message]' \
     '--quiet[Make some output more quiet]' \
-    '--repositories[Specify a comma-separated list of repositories to search. Supported repositories: `brew`, `core`, `cask`, `command-not-found` and `test-bot`. Omitting this flag, or specifying `--repositories=primary`, searches only the main repositories: brew,core,cask. Specifying `--repositories=all`, searches all repositories. ]' \
-    '--to[Date (ISO-8601 format) to stop searching contributions]' \
-    '--user[Specify a comma-separated list of GitHub usernames or email addresses to find contributions from. Omitting this flag searches maintainers]' \
+    '--repositories[Specify a comma-separated list of repositories to search. Supported repositories: `brew`, `core`, `cask`, `command-not-found` and `test-bot`. Omitting this flag, or specifying `--repositories=primary`, searches only the main repositories: `brew`, `core`, `cask`. Specifying `--repositories=all` searches all repositories. ]' \
+    '--to[Date (ISO 8601 format) to stop searching contributions]' \
+    '--user[Specify a comma-separated list of GitHub usernames or email addresses to find contributions from. Omitting this flag searches Homebrew maintainers]' \
     '--verbose[Make some output more verbose]'
 }
 
@@ -875,7 +875,7 @@ _brew_determine_test_runners() {
   _arguments \
     '(--dependents)--all-supported[Instead of selecting runners based on the chosen formula, return all supported runners]' \
     '--debug[Display any debugging information]' \
-    '(--all-supported)--dependents[Determine runners for testing dependents. Requires `--eval-all` or `$HOMEBREW_EVAL_ALL` to be set]' \
+    '(--all-supported)--dependents[Determine runners for testing dependents. Requires `--eval-all` or `HOMEBREW_EVAL_ALL=1` to be set]' \
     '--eval-all[Evaluate all available formulae, whether installed or not, to determine testing dependents. Enabled by default if `$HOMEBREW_EVAL_ALL` is set]' \
     '--help[Show this message]' \
     '--quiet[Make some output more quiet]' \
@@ -1041,19 +1041,19 @@ _brew_formula_analytics() {
     '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run-options --brew-test-bot-test)--brew-command-run[Output `brew` commands run]' \
     '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-test-bot-test)--brew-command-run-options[Output `brew` commands run with options]' \
     '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options)--brew-test-bot-test[Output `brew test-bot` steps run]' \
-    '(--install --cask-install --install-on-request --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--build-error[Output the number of build errors for the formulae]' \
+    '(--install --cask-install --install-on-request --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--build-error[Output the number of build errors for formulae]' \
     '(--install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--cask-install[Output the number of installations of casks]' \
     '--days-ago[Query from the specified days ago until the present. The default is 30 days]' \
     '--debug[Display any debugging information]' \
     '--help[Show this message]' \
-    '(--install --cask-install --install-on-request --build-error --os-version --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--homebrew-devcmdrun-developer[Output devcmdrun/HOMEBREW_DEVELOPER]' \
-    '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--homebrew-os-arch-ci[Output OS/Architecture/CI]' \
+    '(--install --cask-install --install-on-request --build-error --os-version --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--homebrew-devcmdrun-developer[Output the number of devcmdrun/HOMEBREW_DEVELOPER events]' \
+    '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--homebrew-os-arch-ci[Output the number of OS/Architecture/CI events]' \
     '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--homebrew-prefixes[Output Homebrew prefixes]' \
     '(--install --cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --brew-command-run --brew-command-run-options --brew-test-bot-test)--homebrew-versions[Output Homebrew versions]' \
-    '(--cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--install[Output the number of specifically requested installations or installation as dependencies of the formula. This is the default]' \
-    '(--install --cask-install --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--install-on-request[Output the number of specifically requested installations of the formula]' \
+    '(--cask-install --install-on-request --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--install[Output the number of specifically requested installations or installation as dependencies of formulae. This is the default]' \
+    '(--install --cask-install --build-error --os-version --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--install-on-request[Output the number of specifically requested installations of formulae]' \
     '(--all-core-formulae-json --setup)--json[Output JSON. This is required: plain text support has been removed]' \
-    '(--install --cask-install --install-on-request --build-error --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--os-version[Output OS versions]' \
+    '(--install --cask-install --install-on-request --build-error --homebrew-devcmdrun-developer --homebrew-os-arch-ci --homebrew-prefixes --homebrew-versions --brew-command-run --brew-command-run-options --brew-test-bot-test)--os-version[Output the number of events by OS name and version]' \
     '--quiet[Make some output more quiet]' \
     '(--json --all-core-formulae-json)--setup[Install the necessary gems, require them and exit without running a query]' \
     '--verbose[Make some output more verbose]'
@@ -1345,7 +1345,7 @@ _brew_lc() {
     '--help[Show this message]' \
     '(--tap --eval-all)--installed[Check formulae and casks that are currently installed]' \
     '(--debug)--json[Output information in JSON format]' \
-    '--newer-only[Show the latest version only if it'\''s newer than the formula/cask]' \
+    '--newer-only[Show the latest version only if it'\''s newer than the current formula or cask version]' \
     '--quiet[Suppress warnings, don'\''t print a progress bar for JSON output]' \
     '--resources[Also check resources for formulae]' \
     '(--eval-all --installed)--tap[Check formulae and casks within the given tap, specified as user`/`repo]' \
@@ -1416,7 +1416,7 @@ _brew_list() {
     '(--installed-on-request --installed-as-dependency --poured-from-bottle --built-from-source -1 -l -r -t --full-name)--versions[Show the version number for installed formulae, or only the specified formulae if formula are provided]' \
     '(--versions --pinned)-1[Force output to be one entry per line. This is the default when output is not to a terminal]' \
     '(--installed-on-request --installed-as-dependency --poured-from-bottle --built-from-source --versions --pinned --full-name)-l[List formulae and/or casks in long format. Has no effect when a formula or cask name is passed as an argument]' \
-    '(--versions --pinned --full-name)-r[Reverse the order of the formulae and/or casks sort to list the oldest entries first. Has no effect when a formula or cask name is passed as an argument]' \
+    '(--versions --pinned --full-name)-r[Reverse the order of formula and/or cask sorting to list the oldest entries first. Has no effect when a formula or cask name is passed as an argument]' \
     '(--versions --pinned --full-name)-t[Sort formulae and/or casks by time modified, listing most recently modified first. Has no effect when a formula or cask name is passed as an argument]' \
     - installed_formula \
     '(--cask)--formula[List only formulae, or treat all named arguments as formulae]' \
@@ -1437,7 +1437,7 @@ _brew_livecheck() {
     '--help[Show this message]' \
     '(--tap --eval-all)--installed[Check formulae and casks that are currently installed]' \
     '(--debug)--json[Output information in JSON format]' \
-    '--newer-only[Show the latest version only if it'\''s newer than the formula/cask]' \
+    '--newer-only[Show the latest version only if it'\''s newer than the current formula or cask version]' \
     '--quiet[Suppress warnings, don'\''t print a progress bar for JSON output]' \
     '--resources[Also check resources for formulae]' \
     '(--eval-all --installed)--tap[Check formulae and casks within the given tap, specified as user`/`repo]' \
@@ -1502,7 +1502,7 @@ _brew_ls() {
     '(--installed-on-request --installed-as-dependency --poured-from-bottle --built-from-source -1 -l -r -t --full-name)--versions[Show the version number for installed formulae, or only the specified formulae if formula are provided]' \
     '(--versions --pinned)-1[Force output to be one entry per line. This is the default when output is not to a terminal]' \
     '(--installed-on-request --installed-as-dependency --poured-from-bottle --built-from-source --versions --pinned --full-name)-l[List formulae and/or casks in long format. Has no effect when a formula or cask name is passed as an argument]' \
-    '(--versions --pinned --full-name)-r[Reverse the order of the formulae and/or casks sort to list the oldest entries first. Has no effect when a formula or cask name is passed as an argument]' \
+    '(--versions --pinned --full-name)-r[Reverse the order of formula and/or cask sorting to list the oldest entries first. Has no effect when a formula or cask name is passed as an argument]' \
     '(--versions --pinned --full-name)-t[Sort formulae and/or casks by time modified, listing most recently modified first. Has no effect when a formula or cask name is passed as an argument]' \
     - installed_formula \
     '(--cask)--formula[List only formulae, or treat all named arguments as formulae]' \
@@ -2365,7 +2365,7 @@ _brew_upgrade() {
     '(--formula)--fontdir[Target location for Fonts (default: `~/Library/Fonts`)]' \
     '--force[Install formulae without checking for previously installed keg-only or non-migrated versions. When installing casks, overwrite existing files (binaries and symlinks are excluded, unless originally from the same cask)]' \
     '(--cask --build-from-source)--force-bottle[Install from a bottle if it exists for the current or newest version of macOS, even if it would not normally be used for installation]' \
-    '(--formula)--greedy[Also include casks with `auto_updates true` or `version :latest`]' \
+    '(--formula)--greedy[Also include casks with `auto_updates true` or `version :latest`. Enabled by default if `$HOMEBREW_UPGRADE_GREEDY` is set]' \
     '(--formula)--greedy-auto-updates[Also include casks with `auto_updates true`]' \
     '(--formula)--greedy-latest[Also include casks with `version :latest`]' \
     '--help[Show this message]' \
@@ -2443,14 +2443,14 @@ _brew_vendor_install() {
 # brew verify
 _brew_verify() {
   _arguments \
-    '(--bottle-tag)--arch[Download for the given CPU architecture.(Pass `all` to download for all architectures.)]' \
+    '(--bottle-tag)--arch[Download for the given CPU architecture. (Pass `all` to download for all architectures.)]' \
     '(--os --arch)--bottle-tag[Download a bottle for given tag]' \
     '--debug[Display any debugging information]' \
     '--deps[Also download dependencies for any listed formula]' \
     '--force[Remove a previously cached version and re-fetch]' \
     '--help[Show this message]' \
     '--json[Return JSON for the attestation data for each bottle]' \
-    '(--bottle-tag)--os[Download for the given operating system.(Pass `all` to download for all operating systems.)]' \
+    '(--bottle-tag)--os[Download for the given operating system. (Pass `all` to download for all operating systems.)]' \
     '--quiet[Make some output more quiet]' \
     '--verbose[Make some output more verbose]' \
     - formula \

@@ -113,7 +113,7 @@ module GitHub
         when :env_token
           require "utils/formatter"
           <<~EOS
-            HOMEBREW_GITHUB_API_TOKEN may be invalid or expired; check:
+            `$HOMEBREW_GITHUB_API_TOKEN` may be invalid or expired; check:
               #{Formatter.url("https://github.com/settings/tokens")}
           EOS
         when :none

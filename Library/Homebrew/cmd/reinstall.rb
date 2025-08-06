@@ -44,7 +44,9 @@ module Homebrew
                             "Print download, install and net install sizes of bottles and dependencies.",
                env:         :ask
         [
-          [:switch, "--formula", "--formulae", { description: "Treat all named arguments as formulae." }],
+          [:switch, "--formula", "--formulae", {
+            description: "Treat all named arguments as formulae.",
+          }],
           [:switch, "-s", "--build-from-source", {
             description: "Compile <formula> from source even if a bottle is available.",
           }],
@@ -74,12 +76,14 @@ module Homebrew
         end
         formula_options
         [
-          [:switch, "--cask", "--casks", { description: "Treat all named arguments as casks." }],
+          [:switch, "--cask", "--casks", {
+            description: "Treat all named arguments as casks.",
+          }],
           [:switch, "--[no-]binaries", {
             description: "Disable/enable linking of helper executables (default: enabled).",
             env:         :cask_opts_binaries,
           }],
-          [:switch, "--require-sha",  {
+          [:switch, "--require-sha", {
             description: "Require all casks to have a checksum.",
             env:         :cask_opts_require_sha,
           }],

@@ -91,6 +91,7 @@ module Homebrew
           }],
           [:switch, "-g", "--greedy", {
             description: "Also include casks with `auto_updates true` or `version :latest`.",
+            env:         :upgrade_greedy,
           }],
           [:switch, "--greedy-latest", {
             description: "Also include casks with `version :latest`.",
@@ -102,7 +103,7 @@ module Homebrew
             description: "Disable/enable linking of helper executables (default: enabled).",
             env:         :cask_opts_binaries,
           }],
-          [:switch, "--require-sha",  {
+          [:switch, "--require-sha", {
             description: "Require all casks to have a checksum.",
             env:         :cask_opts_require_sha,
           }],

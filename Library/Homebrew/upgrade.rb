@@ -170,7 +170,7 @@ module Homebrew
         if Homebrew::EnvConfig.no_installed_dependents_check?
           unless Homebrew::EnvConfig.no_env_hints?
             opoo <<~EOS
-              HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK is set: not checking for outdated
+              `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set: not checking for outdated
               dependents or dependents with broken linkage!
             EOS
           end
@@ -418,8 +418,8 @@ module Homebrew
         return if Homebrew::EnvConfig.no_installed_dependents_check?
         return if @puts_no_installed_dependents_check_disable_message_if_not_already
 
-        puts "Disable this behaviour by setting HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK."
-        puts "Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`)."
+        puts "Disable this behaviour by setting `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1`."
+        puts "Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`)."
         @puts_no_installed_dependents_check_disable_message_if_not_already = T.let(true, T.nilable(T::Boolean))
       end
 

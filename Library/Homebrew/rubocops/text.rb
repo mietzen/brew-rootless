@@ -38,7 +38,7 @@ module RuboCop
             end
 
             if find_node_method_by_name(body_node, :keg_only)&.source&.include?("HOMEBREW_PREFIX")
-              problem "`keg_only` reason should not include `HOMEBREW_PREFIX` " \
+              problem "`keg_only` reason should not include `$HOMEBREW_PREFIX` " \
                       "as it creates confusing `brew info` output."
             end
           end

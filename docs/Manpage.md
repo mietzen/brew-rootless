@@ -19,7 +19,8 @@ Linux distribution without requiring `sudo`.
 
 **cask**
 
-: Homebrew package definition that installs macOS native applications
+: Homebrew package definition that installs native applications directly from
+  upstream
 
 **prefix**
 
@@ -199,7 +200,7 @@ By default, only Homebrew formula dependencies are listed.
   of the corresponding type. Passing `--formula` also removes matches against
   formula aliases and old formula names.
 
-`brew bundle exec` \[--check\] *`command`*
+`brew bundle exec` \[`--check`\] *`command`*
 
 : Run an external command in an isolated build environment based on the
   `Brewfile` dependencies.
@@ -210,11 +211,11 @@ commands like `bundle install`, `npm install`, etc. It will also add compiler
 flags which will help with finding keg-only dependencies like `openssl`,
 `icu4c`, etc.
 
-`brew bundle sh` \[--check\]
+`brew bundle sh` \[`--check`\]
 
 : Run your shell in a `brew bundle exec` environment.
 
-`brew bundle env` \[--check\]
+`brew bundle env` \[`--check`\]
 
 : Print the environment variables that would be set in a `brew bundle exec`
   environment.
@@ -254,7 +255,7 @@ flags which will help with finding keg-only dependencies like `openssl`,
 
 `--install`
 
-: Run `install` before continuing to other operations e.g. `exec`.
+: Run `install` before continuing to other operations, e.g. `exec`.
 
 `--services`
 
@@ -1010,7 +1011,7 @@ paths within its current keg. If *`cask`* is provided, list its artifacts.
 
 `-r`
 
-: Reverse the order of the formulae and/or casks sort to list the oldest entries
+: Reverse the order of formula and/or cask sorting to list the oldest entries
   first. Has no effect when a formula or cask name is passed as an argument.
 
 `-t`
@@ -1754,7 +1755,8 @@ for the upgraded formulae or, every 30 days, for all formulae.
 
 `-g`, `--greedy`
 
-: Also include casks with `auto_updates true` or `version :latest`.
+: Also include casks with `auto_updates true` or `version :latest`. Enabled by
+  default if `$HOMEBREW_UPGRADE_GREEDY` is set.
 
 `--greedy-latest`
 
@@ -2393,31 +2395,31 @@ Display the source of a *`formula`* or *`cask`*.
 
 : Treat all named arguments as casks.
 
-### `contributions` \[--user=*`email|username`*\] \[*`--repositories`*`=`\] \[*`--csv`*\]
+### `contributions` \[`--user=`\] \[`--repositories=`\] \[`--from=`\] \[`--to=`\] \[`--csv`\]
 
 Summarise contributions to Homebrew repositories.
+
+`--user`
+
+: Specify a comma-separated list of GitHub usernames or email addresses to find
+  contributions from. Omitting this flag searches Homebrew maintainers.
 
 `--repositories`
 
 : Specify a comma-separated list of repositories to search. Supported
   repositories: `brew`, `core`, `cask`, `command-not-found` and `test-bot`.
   Omitting this flag, or specifying `--repositories=primary`, searches only the
-  main repositories: brew,core,cask. Specifying `--repositories=all`, searches
-  all repositories.
+  main repositories: `brew`, `core`, `cask`. Specifying `--repositories=all`
+  searches all repositories.
 
 `--from`
 
-: Date (ISO-8601 format) to start searching contributions. Omitting this flag
-  searches the last year.
+: Date (ISO 8601 format) to start searching contributions. Omitting this flag
+  searches the past year.
 
 `--to`
 
-: Date (ISO-8601 format) to stop searching contributions.
-
-`--user`
-
-: Specify a comma-separated list of GitHub usernames or email addresses to find
-  contributions from. Omitting this flag searches maintainers.
+: Date (ISO 8601 format) to stop searching contributions.
 
 `--csv`
 
@@ -2625,31 +2627,31 @@ Query Homebrew's analytics.
 `--install`
 
 : Output the number of specifically requested installations or installation as
-  dependencies of the formula. This is the default.
+  dependencies of formulae. This is the default.
+
+`--install-on-request`
+
+: Output the number of specifically requested installations of formulae.
 
 `--cask-install`
 
 : Output the number of installations of casks.
 
-`--install-on-request`
-
-: Output the number of specifically requested installations of the formula.
-
 `--build-error`
 
-: Output the number of build errors for the formulae.
+: Output the number of build errors for formulae.
 
 `--os-version`
 
-: Output OS versions.
+: Output the number of events by OS name and version.
 
 `--homebrew-devcmdrun-developer`
 
-: Output devcmdrun/HOMEBREW\_DEVELOPER.
+: Output the number of devcmdrun/HOMEBREW\_DEVELOPER events.
 
 `--homebrew-os-arch-ci`
 
-: Output OS/Architecture/CI.
+: Output the number of OS/Architecture/CI events.
 
 `--homebrew-prefixes`
 
@@ -2686,9 +2688,8 @@ Query Homebrew's analytics.
 
 ### `generate-analytics-api`
 
-Generates analytics API data files for formulae.brew.sh.
-
-The generated files are written to the current directory.
+Generates analytics API data files for <https://formulae.brew.sh>. The generated
+files are written to the current directory.
 
 ### `generate-cask-api` \[`--dry-run`\]
 
@@ -2789,7 +2790,8 @@ from `$HOMEBREW_LIVECHECK_WATCHLIST` or `~/.homebrew/livecheck_watchlist.txt`.
 
 `--newer-only`
 
-: Show the latest version only if it's newer than the formula/cask.
+: Show the latest version only if it's newer than the current formula or cask
+  version.
 
 `--json`
 
@@ -3426,12 +3428,12 @@ Note that this command depends on the GitHub CLI. Run `brew install gh`.
 
 `--os`
 
-: Download for the given operating system.(Pass `all` to download for all
+: Download for the given operating system. (Pass `all` to download for all
   operating systems.)
 
 `--arch`
 
-: Download for the given CPU architecture.(Pass `all` to download for all
+: Download for the given CPU architecture. (Pass `all` to download for all
   architectures.)
 
 `--bottle-tag`
@@ -3569,6 +3571,10 @@ and Linux workers.
 `--cleanup`
 
 : Clean all state from the Homebrew directory. Use with care!
+
+`--concurrent-downloads`
+
+: Invoke `brew` with `HOMEBREW_DOWNLOAD_CONCURRENCY=auto`.
 
 `--skip-setup`
 
@@ -3828,8 +3834,8 @@ User-specific environment files take precedence over prefix-specific files and
 prefix-specific files take precedence over system-wide files (unless
 `$HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY` is set, see below).
 
-Note that these files do not support shell variable expansion e.g. `$HOME` or
-command execution e.g. `$(cat file)`.
+Note that these files do not support shell variable expansion (e.g. `$HOME`) or
+command execution (e.g. `$(cat file)`).
 
 `HOMEBREW_ALLOWED_TAPS`
 
@@ -3879,13 +3885,13 @@ command execution e.g. `$(cat file)`.
 
 `HOMEBREW_ASK`
 
-: If set, pass `--ask`to all formulae `brew install`, `brew upgrade` and `brew
+: If set, pass `--ask` to all formulae `brew install`, `brew upgrade` and `brew
   reinstall` commands.
 
 `HOMEBREW_AUTO_UPDATE_SECS`
 
 : Run `brew update` once every `$HOMEBREW_AUTO_UPDATE_SECS` seconds before some
-  commands, e.g. `brew install`, `brew upgrade` and `brew tap`. Alternatively,
+  commands, e.g. `brew install`, `brew upgrade` or `brew tap`. Alternatively,
   disable auto-update entirely with `$HOMEBREW_NO_AUTO_UPDATE`.
   
   *Default:* `86400` (24 hours), `3600` (1 hour) if a developer command has been
@@ -4042,6 +4048,15 @@ command execution e.g. `$(cat file)`.
 : Use this bearer token for authenticating with a Docker registry proxying
   GitHub Packages. Preferred over `$HOMEBREW_DOCKER_REGISTRY_BASIC_AUTH_TOKEN`.
 
+`HOMEBREW_DOWNLOAD_CONCURRENCY`
+
+: If set, Homebrew will download in parallel using this many concurrent
+  connections. Setting to `auto` will use twice the number of available CPU
+  cores (what our benchmarks showed to produce the best performance). If set to
+  `1` (the default), Homebrew will download in serial.
+  
+  *Default:* `1`.
+
 `HOMEBREW_EDITOR`
 
 : Use this editor when editing a single formula, or several formulae in the same
@@ -4144,21 +4159,21 @@ command execution e.g. `$(cat file)`.
 : If set, controls network access to the sandbox for formulae builds. Overrides
   any controls set through DSL usage inside formulae. Must be `allow` or `deny`.
   If no value is set through this environment variable or DSL usage, the default
-  behavior is `allow`.
+  behaviour is `allow`.
 
 `HOMEBREW_FORMULA_POSTINSTALL_NETWORK`
 
 : If set, controls network access to the sandbox for formulae postinstall.
   Overrides any controls set through DSL usage inside formulae. Must be `allow`
   or `deny`. If no value is set through this environment variable or DSL usage,
-  the default behavior is `allow`.
+  the default behaviour is `allow`.
 
 `HOMEBREW_FORMULA_TEST_NETWORK`
 
 : If set, controls network access to the sandbox for formulae test. Overrides
   any controls set through DSL usage inside formulae. Must be `allow` or `deny`.
   If no value is set through this environment variable or DSL usage, the default
-  behavior is `allow`.
+  behaviour is `allow`.
 
 `HOMEBREW_GITHUB_API_TOKEN`
 
@@ -4256,7 +4271,7 @@ command execution e.g. `$(cat file)`.
 `HOMEBREW_NO_AUTO_UPDATE`
 
 : If set, do not automatically update before running some commands, e.g. `brew
-  install`, `brew upgrade` and `brew tap`. Preferably, run this less often by
+  install`, `brew upgrade` or `brew tap`. Preferably, run this less often by
   setting `$HOMEBREW_AUTO_UPDATE_SECS` to a value higher than the default. Note
   that setting this and e.g. tapping new taps may result in a broken
   configuration. Please ensure you always run `brew update` before reporting any
@@ -4300,8 +4315,8 @@ command execution e.g. `$(cat file)`.
 : If set, forbid redirects from secure HTTPS to insecure HTTP.
   
   *Note:* while ensuring your downloads are fully secure, this is likely to
-  cause from-source SourceForge, some GNU & GNOME-hosted formulae to fail to
-  download.
+  cause sources for certain formulae hosted by SourceForge, GNU or GNOME to fail
+  to download.
 
 `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`
 

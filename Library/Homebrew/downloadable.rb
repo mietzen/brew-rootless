@@ -48,14 +48,11 @@ module Downloadable
     super
   end
 
-  sig { abstract.returns(String) }
-  def name; end
-
   sig { returns(String) }
-  def download_type
-    class_name = T.let(self.class, T::Class[Downloadable]).name&.split("::")&.last
-    T.must(class_name).gsub(/([[:lower:]])([[:upper:]])/, '\1 \2').downcase
-  end
+  def download_queue_name = download_name
+
+  sig { abstract.returns(String) }
+  def download_queue_type; end
 
   sig(:final) { returns(T::Boolean) }
   def downloaded?
@@ -135,12 +132,12 @@ module Downloadable
     EOS
   end
 
+  private
+
   sig { overridable.returns(String) }
   def download_name
     @download_name ||= File.basename(determine_url.to_s).freeze
   end
-
-  private
 
   sig { overridable.returns(T::Boolean) }
   def silence_checksum_missing_error?

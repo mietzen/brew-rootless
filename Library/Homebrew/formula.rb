@@ -302,6 +302,44 @@ class Formula
     Requirement.clear_cache
   end
 
+  # Ensure the given formula is installed
+  # This is useful for installing a utility formula (e.g. `shellcheck` for `brew style`)
+  sig {
+    params(
+      reason:           String,
+      latest:           T::Boolean,
+      output_to_stderr: T::Boolean,
+      quiet:            T::Boolean,
+    ).returns(T.self_type)
+  }
+  def ensure_installed!(reason: "", latest: false, output_to_stderr: true, quiet: false)
+    if output_to_stderr || quiet
+      file = if quiet
+        File::NULL
+      else
+        $stderr
+      end
+      # Call this method itself with redirected stdout
+      redirect_stdout(file) do
+        return ensure_installed!(latest:, reason:, output_to_stderr: false)
+      end
+    end
+
+    reason = " for #{reason}" if reason.present?
+
+    unless any_version_installed?
+      ohai "Installing `#{name}`#{reason}..."
+      safe_system HOMEBREW_BREW_FILE, "install", "--formula", full_name
+    end
+
+    if latest && !latest_version_installed?
+      ohai "Upgrading `#{name}`#{reason}..."
+      safe_system HOMEBREW_BREW_FILE, "upgrade", "--formula", full_name
+    end
+
+    self
+  end
+
   private
 
   # Allow full name logic to be re-used between names, aliases and installed aliases.
@@ -1320,6 +1358,7 @@ class Formula
       path = Pathname.new(path)
       path.extend(InstallRenamed)
       path.cp_path_sub(bottle_prefix, HOMEBREW_PREFIX)
+      path
     end
   end
 
@@ -1934,7 +1973,7 @@ class Formula
   sig { params(source: Pathname, target: Pathname).returns(String) }
   def rpath(source: bin, target: lib)
     unless target.to_s.start_with?(HOMEBREW_PREFIX)
-      raise "rpath `target` should only be used for paths inside HOMEBREW_PREFIX!"
+      raise "rpath `target` should only be used for paths inside `$HOMEBREW_PREFIX`!"
     end
 
     "#{loader_path}/#{target.relative_path_from(source)}"
@@ -2205,7 +2244,7 @@ class Formula
   sig { params(eval_all: T::Boolean).returns(T::Array[Formula]) }
   def self.all(eval_all: false)
     if !eval_all && !Homebrew::EnvConfig.eval_all?
-      raise ArgumentError, "Formula#all without `--eval-all` or HOMEBREW_EVAL_ALL"
+      raise ArgumentError, "Formula#all cannot be used without `--eval-all` or `HOMEBREW_EVAL_ALL=1`"
     end
 
     (core_names + tap_files).filter_map do |name_or_file|
@@ -2796,24 +2835,6 @@ class Formula
     self.class.on_system_blocks_exist? || @on_system_blocks_exist
   end
 
-  sig {
-    params(
-      verify_download_integrity: T::Boolean,
-      timeout:                   T.nilable(T.any(Integer, Float)),
-      quiet:                     T::Boolean,
-    ).returns(Pathname)
-  }
-  def fetch(verify_download_integrity: true, timeout: nil, quiet: false)
-    odisabled "Formula#fetch", "Resource#fetch on Formula#resource"
-    active_spec.fetch(verify_download_integrity:, timeout:, quiet:)
-  end
-
-  sig { params(filename: T.any(Pathname, String)).void }
-  def verify_download_integrity(filename)
-    odisabled "Formula#verify_download_integrity", "Resource#verify_download_integrity on Formula#resource"
-    active_spec.verify_download_integrity(filename)
-  end
-
   sig { params(keep_tmp: T::Boolean).returns(T.untyped) }
   def run_test(keep_tmp: false)
     @prefix_returns_versioned_prefix = T.let(true, T.nilable(T::Boolean))
@@ -2909,22 +2930,15 @@ class Formula
   # @api public
   sig {
     params(
-      paths:            T.any(T::Enumerable[T.any(String, Pathname)], String, Pathname),
-      before:           T.nilable(T.any(Pathname, Regexp, String)),
-      after:            T.nilable(T.any(Pathname, String, Symbol)),
-      old_audit_result: T.nilable(T::Boolean),
-      audit_result:     T::Boolean,
-      global:           T::Boolean,
-      block:            T.nilable(T.proc.params(s: StringInreplaceExtension).void),
+      paths:        T.any(T::Enumerable[T.any(String, Pathname)], String, Pathname),
+      before:       T.nilable(T.any(Pathname, Regexp, String)),
+      after:        T.nilable(T.any(Pathname, String, Symbol)),
+      audit_result: T::Boolean,
+      global:       T::Boolean,
+      block:        T.nilable(T.proc.params(s: StringInreplaceExtension).void),
     ).void
   }
-  def inreplace(paths, before = nil, after = nil, old_audit_result = nil, audit_result: true, global: true, &block)
-    # NOTE: must check for `#nil?` and not `#blank?`, or else `old_audit_result = false` will not call `odeprecated`.
-    unless old_audit_result.nil?
-      odisabled "inreplace(paths, before, after, #{old_audit_result})",
-                "inreplace(paths, before, after, audit_result: #{old_audit_result})"
-      audit_result = old_audit_result
-    end
+  def inreplace(paths, before = nil, after = nil, audit_result: true, global: true, &block)
     Utils::Inreplace.inreplace(paths, before, after, audit_result:, global:, &block)
   rescue Utils::Inreplace::Error => e
     onoe e.to_s
@@ -3558,7 +3572,7 @@ class Formula
     # and `false` otherwise.
     sig { returns(T::Boolean) }
     def livecheckable?
-      odeprecated "`livecheckable?`", "`livecheck_defined?`"
+      odisabled "`livecheckable?`", "`livecheck_defined?`"
       @livecheck_defined == true
     end
 

@@ -20,8 +20,8 @@ module Homebrew
           Generate `homebrew/core` API data files for <#{HOMEBREW_API_WWW}>.
           The generated files are written to the current directory.
         EOS
-
-        switch "-n", "--dry-run", description: "Generate API data without writing it to files."
+        switch "-n", "--dry-run",
+               description: "Generate API data without writing it to files."
 
         named_args :none
       end

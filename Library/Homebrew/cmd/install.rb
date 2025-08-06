@@ -134,12 +134,14 @@ module Homebrew
         end
         formula_options
         [
-          [:switch, "--cask", "--casks", { description: "Treat all named arguments as casks." }],
+          [:switch, "--cask", "--casks", {
+            description: "Treat all named arguments as casks.",
+          }],
           [:switch, "--[no-]binaries", {
             description: "Disable/enable linking of helper executables (default: enabled).",
             env:         :cask_opts_binaries,
           }],
-          [:switch, "--require-sha",  {
+          [:switch, "--require-sha", {
             description: "Require all casks to have a checksum.",
             env:         :cask_opts_require_sha,
           }],
@@ -241,6 +243,24 @@ module Homebrew
           require "cask/installer"
 
           installed_casks, new_casks = casks.partition(&:installed?)
+
+          download_queue = Homebrew::DownloadQueue.new(pour: true) if Homebrew::EnvConfig.download_concurrency > 1
+          fetch_casks = Homebrew::EnvConfig.no_install_upgrade? ? new_casks : casks
+
+          if download_queue
+            fetch_casks_sentence = fetch_casks.map { |cask| Formatter.identifier(cask.full_name) }.to_sentence
+            oh1 "Fetching downloads for: #{fetch_casks_sentence}", truncate: false
+
+            fetch_casks.each do |cask|
+              Cask::Installer.new(cask, binaries: args.binaries?, verbose: args.verbose?,
+                                                   force: args.force?, skip_cask_deps: args.skip_cask_deps?,
+                                                   require_sha: args.require_sha?, reinstall: true,
+                                                   quarantine: args.quarantine?, zap: args.zap?, download_queue:)
+                             .enqueue_downloads
+            end
+
+            download_queue.fetch
+          end
 
           new_casks.each do |cask|
             Cask::Installer.new(

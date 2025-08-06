@@ -258,8 +258,8 @@ module Homebrew
       return if Homebrew::EnvConfig.no_env_hints?
       return if Homebrew::EnvConfig.no_install_cleanup?
 
-      puts "Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP."
-      puts "Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`)."
+      puts "Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`."
+      puts "Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`)."
     end
 
     def self.puts_no_install_cleanup_disable_message_if_not_already!
@@ -315,8 +315,8 @@ module Homebrew
         end
 
         if ENV["HOMEBREW_AUTOREMOVE"].present?
-          opoo "HOMEBREW_AUTOREMOVE is now a no-op as it is the default behaviour. " \
-               "Set HOMEBREW_NO_AUTOREMOVE=1 to disable it."
+          opoo "`$HOMEBREW_AUTOREMOVE` is now a no-op as it is the default behaviour. " \
+               "Set `HOMEBREW_NO_AUTOREMOVE=1` to disable it."
         end
         Cleanup.autoremove(dry_run: dry_run?) unless Homebrew::EnvConfig.no_autoremove?
 

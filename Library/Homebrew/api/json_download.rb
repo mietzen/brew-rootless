@@ -44,10 +44,7 @@ module Homebrew
       end
 
       sig { override.returns(String) }
-      def name = download_name
-
-      sig { override.returns(String) }
-      def download_type = "JSON API"
+      def download_queue_type = "JSON API"
     end
   end
 end

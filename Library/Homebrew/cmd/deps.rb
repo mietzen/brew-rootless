@@ -130,7 +130,7 @@ module Homebrew
             opoo <<~EOS
               `brew deps` is not the actual runtime dependencies because #{not_using_runtime_dependencies_reason}!
               This means dependencies may differ from a formula's declared dependencies.
-              Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+              Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
             EOS
           end
 

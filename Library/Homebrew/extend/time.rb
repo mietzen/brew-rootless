@@ -7,7 +7,7 @@ class Time
   # Backwards compatibility for formulae that used this ActiveSupport extension
   sig { returns(String) }
   def rfc3339
-    odeprecated "Time#rfc3339", "Time#xmlschema"
+    odisabled "Time#rfc3339", "Time#xmlschema"
     xmlschema
   end
 end

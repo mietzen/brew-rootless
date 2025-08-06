@@ -22,7 +22,7 @@ module Homebrew
           Manage background services with macOS' `launchctl`(1) daemon manager or
           Linux's `systemctl`(1) service manager.
 
-          If `sudo` is passed, operate on `/Library/LaunchDaemons` or `/usr/lib/systemd/system`  (started at boot).
+          If `sudo` is passed, operate on `/Library/LaunchDaemons` or `/usr/lib/systemd/system` (started at boot).
           Otherwise, operate on `~/Library/LaunchAgents` or `~/.config/systemd/user` (started at login).
 
           [`sudo`] `brew services` [`list`] (`--json`) (`--debug`):
@@ -51,15 +51,24 @@ module Homebrew
           [`sudo`] `brew services cleanup`:
           Remove all unused services.
         EOS
-        flag "--file=", description: "Use the service file from this location to `start` the service."
-        flag "--sudo-service-user=", description: "When run as root on macOS, run the service(s) as this user."
-        flag "--max-wait=", description: "Wait at most this many seconds for `stop` to finish stopping a service. " \
-                                         "Defaults to 60. Set this to zero (0) seconds to wait indefinitely."
-        switch "--all", description: "Run <subcommand> on all services."
-        switch "--json", description: "Output as JSON."
-        switch "--no-wait", description: "Don't wait for `stop` to finish stopping the service."
-        switch "--keep", description: "When stopped, don't unregister the service from launching at login (or boot)."
+        flag   "--file=",
+               description: "Use the service file from this location to `start` the service."
+        flag   "--sudo-service-user=",
+               description: "When run as root on macOS, run the service(s) as this user."
+        flag   "--max-wait=",
+               description: "Wait at most this many seconds for `stop` to finish stopping a service. " \
+                            "Defaults to 60. Set this to zero (0) seconds to wait indefinitely."
+        switch "--all",
+               description: "Run <subcommand> on all services."
+        switch "--json",
+               description: "Output as JSON."
+        switch "--no-wait",
+               description: "Don't wait for `stop` to finish stopping the service."
+        switch "--keep",
+               description: "When stopped, don't unregister the service from launching at login (or boot)."
+
         conflicts "--max-wait=", "--no-wait"
+
         named_args %w[list info run start stop kill restart cleanup]
       end
 

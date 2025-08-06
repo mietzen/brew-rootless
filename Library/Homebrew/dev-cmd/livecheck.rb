@@ -25,7 +25,7 @@ module Homebrew
         switch "--installed",
                description: "Check formulae and casks that are currently installed."
         switch "--newer-only",
-               description: "Show the latest version only if it's newer than the formula/cask."
+               description: "Show the latest version only if it's newer than the current formula or cask version."
         switch "--json",
                description: "Output information in JSON format."
         switch "-r", "--resources",

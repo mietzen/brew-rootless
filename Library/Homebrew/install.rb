@@ -445,9 +445,11 @@ module Homebrew
 
         puts "#{::Utils.pluralize("Formula", formulae.count, plural: "e")} \
 (#{formulae.count}): #{formulae.join(", ")}\n\n"
-        puts "Download Size: #{disk_usage_readable(sizes[:download])}"
-        puts "Install Size:  #{disk_usage_readable(sizes[:installed])}"
-        puts "Net Install Size: #{disk_usage_readable(sizes[:net])}" if sizes[:net] != 0
+        puts "Download Size: #{disk_usage_readable(sizes.fetch(:download))}"
+        puts "Install Size:  #{disk_usage_readable(sizes.fetch(:installed))}"
+        if (net_install_size = sizes[:net]) && net_install_size != 0
+          puts "Net Install Size: #{disk_usage_readable(net_install_size)}"
+        end
 
         ask_input
       end

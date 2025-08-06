@@ -32,12 +32,14 @@ module Homebrew
     def fetch
       return if downloads.empty?
 
-      if concurrency == 1 || downloads.one?
+      if concurrency == 1
         downloads.each do |downloadable, promise|
           promise.wait!
         rescue ChecksumMismatchError => e
-          opoo "#{downloadable.download_type} reports different checksum: #{e.expected}"
+          opoo "#{downloadable.download_queue_type} reports different checksum: #{e.expected}"
           Homebrew.failed = true if downloadable.is_a?(Resource::Patch)
+        rescue => e
+          raise e unless bottle_manifest_error?(downloadable, e)
         end
       else
         spinner = Spinner.new
@@ -68,7 +70,10 @@ module Homebrew
               raise future.state.to_s
             end
 
-            message = "#{downloadable.download_type} #{downloadable.name}"
+            exception = future.reason if future.rejected?
+            next 1 if bottle_manifest_error?(downloadable, exception)
+
+            message = "#{downloadable.download_queue_type} #{downloadable.download_queue_name}"
             if tty
               stdout_print_and_flush "#{status} #{message}#{"\n" unless last}"
             elsif status
@@ -76,14 +81,13 @@ module Homebrew
             end
 
             if future.rejected?
-              if (e = future.reason).is_a?(ChecksumMismatchError)
-                opoo "#{downloadable.download_type} reports different checksum: #{e.expected}"
+              if exception.is_a?(ChecksumMismatchError)
+                opoo "#{downloadable.download_queue_type} reports different checksum: #{exception.expected}"
                 Homebrew.failed = true if downloadable.is_a?(Resource::Patch)
                 next 2
               else
                 message = future.reason.to_s
-                onoe message
-                Homebrew.failed = true
+                ofail message
                 next message.count("\n")
               end
             end
@@ -164,6 +168,13 @@ module Homebrew
     end
 
     private
+
+    sig { params(downloadable: Downloadable, exception: T.nilable(Exception)).returns(T::Boolean) }
+    def bottle_manifest_error?(downloadable, exception)
+      return false if exception.nil?
+
+      downloadable.is_a?(Resource::BottleManifest) || exception.is_a?(Resource::BottleManifest::Error)
+    end
 
     sig { void }
     def cancel

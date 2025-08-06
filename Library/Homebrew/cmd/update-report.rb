@@ -56,7 +56,7 @@ module Homebrew
 
           if Homebrew::EnvConfig.core_git_remote != HOMEBREW_CORE_DEFAULT_GIT_REMOTE
             opoo <<~EOS
-              HOMEBREW_CORE_GIT_REMOTE was set: #{Homebrew::EnvConfig.core_git_remote}.
+              `$HOMEBREW_CORE_GIT_REMOTE` was set: #{Homebrew::EnvConfig.core_git_remote}.
               It has been unset for the migration.
               You may need to change this from a linuxbrew-core mirror to a homebrew-core one.
 
@@ -66,7 +66,7 @@ module Homebrew
 
           if Homebrew::EnvConfig.bottle_domain != HOMEBREW_BOTTLE_DEFAULT_DOMAIN
             opoo <<~EOS
-              HOMEBREW_BOTTLE_DOMAIN was set: #{Homebrew::EnvConfig.bottle_domain}.
+              `$HOMEBREW_BOTTLE_DOMAIN` was set: #{Homebrew::EnvConfig.bottle_domain}.
               It has been unset for the migration.
               You may need to change this from a Linuxbrew package mirror to a Homebrew one.
 
@@ -412,9 +412,9 @@ module Homebrew
                                   !Homebrew::EnvConfig.automatically_set_no_install_from_api?
         return unless no_install_from_api_set
 
-        ohai "You have HOMEBREW_NO_INSTALL_FROM_API set"
+        ohai "You have `$HOMEBREW_NO_INSTALL_FROM_API` set"
         puts "Homebrew >=4.1.0 is dramatically faster and less error-prone when installing"
-        puts "from the JSON API. Please consider unsetting HOMEBREW_NO_INSTALL_FROM_API."
+        puts "from the JSON API. Please consider unsetting `$HOMEBREW_NO_INSTALL_FROM_API`."
         puts "This message will only be printed once."
         puts "\n\n"
 

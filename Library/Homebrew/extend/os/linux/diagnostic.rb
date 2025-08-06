@@ -37,7 +37,7 @@ module OS
 
           message + <<~EOS
             If you don't have administrative privileges on this machine,
-            create a directory and set the HOMEBREW_TEMP environment variable,
+            create a directory and set the `$HOMEBREW_TEMP` environment variable,
             for example:
               install -d -m 1755 ~/tmp
               #{Utils::Shell.set_variable_in_profile("HOMEBREW_TEMP", "~/tmp")}
@@ -53,7 +53,7 @@ module OS
 
           <<~EOS
             The directory #{HOMEBREW_TEMP} does not permit executing
-            programs. It is likely mounted as "noexec". Please set HOMEBREW_TEMP
+            programs. It is likely mounted as "noexec". Please set `$HOMEBREW_TEMP`
             in your #{Utils::Shell.profile} to a different directory, for example:
               export HOMEBREW_TEMP=~/tmp
               echo 'export HOMEBREW_TEMP=~/tmp' >> #{Utils::Shell.profile}
@@ -148,7 +148,7 @@ module OS
           return unless Homebrew::EnvConfig.bottle_domain.include?("linuxbrew")
 
           <<~EOS
-            Your HOMEBREW_BOTTLE_DOMAIN still contains "linuxbrew".
+            Your `$HOMEBREW_BOTTLE_DOMAIN` still contains "linuxbrew".
             You must unset it (or adjust it to not contain linuxbrew
             e.g. by using homebrew instead).
           EOS

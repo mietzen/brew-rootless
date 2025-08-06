@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "cask/denylist"
@@ -18,6 +18,14 @@ module Cask
   class Audit
     include SystemCommand::Mixin
     include ::Utils::Curl
+
+    Error = T.type_alias do
+      {
+        message:   T.nilable(String),
+        location:  T.nilable(Homebrew::SourceLocation),
+        corrected: T::Boolean,
+      }
+    end
 
     sig { returns(Cask) }
     attr_reader :cask
@@ -47,6 +55,7 @@ module Cask
       download ||= online || signing
 
       @cask = cask
+      @download = T.let(nil, T.nilable(Download))
       @download = Download.new(cask, quarantine:) if download
       @online = online
       @strict = strict
@@ -88,8 +97,9 @@ module Cask
       self
     end
 
+    sig { returns(T::Array[Error]) }
     def errors
-      @errors ||= []
+      @errors ||= T.let([], T.nilable(T::Array[Error]))
     end
 
     sig { returns(T::Boolean) }
@@ -113,9 +123,10 @@ module Cask
       # Only raise non-critical audits if the user specified `--strict`.
       return if strict_only && !@strict
 
-      errors << ({ message:, location:, corrected: false })
+      errors << { message:, location:, corrected: false }
     end
 
+    sig { returns(T.nilable(String)) }
     def result
       Formatter.error("failed") if errors?
     end
@@ -313,7 +324,6 @@ module Cask
       return if cask.deprecated? || cask.disabled?
       return if cask.version&.latest?
       return if (url = cask.url).nil?
-      return if block_url_offline?
       return if cask.livecheck_defined?
       return if livecheck_result == :auto_detected
 
@@ -337,7 +347,6 @@ module Cask
     sig { void }
     def audit_download_url_format
       return if (url = cask.url).nil?
-      return if block_url_offline?
 
       odebug "Auditing URL format"
       return unless bad_sourceforge_url?
@@ -346,9 +355,9 @@ module Cask
                 location: url.location
     end
 
+    sig { void }
     def audit_download_url_is_osdn
       return if (url = cask.url).nil?
-      return if block_url_offline?
       return unless bad_osdn_url?
 
       add_error "OSDN download urls are disabled.", location: url.location, strict_only: true
@@ -360,7 +369,6 @@ module Cask
     sig { void }
     def audit_unnecessary_verified
       return unless cask.url
-      return if block_url_offline?
       return unless verified_present?
       return unless url_match_homepage?
       return unless verified_matches_url?
@@ -373,7 +381,6 @@ module Cask
     sig { void }
     def audit_missing_verified
       return unless cask.url
-      return if block_url_offline?
       return if file_url?
       return if url_match_homepage?
       return if verified_present?
@@ -386,7 +393,6 @@ module Cask
     sig { void }
     def audit_no_match
       return if (url = cask.url).nil?
-      return if block_url_offline?
       return unless verified_present?
       return if verified_matches_url?
 
@@ -541,8 +547,15 @@ module Cask
       end
     end
 
-    sig { void }
-    def extract_artifacts
+    sig {
+      params(
+        _block: T.nilable(T.proc.params(
+          arg0: T::Array[T.any(Artifact::Pkg, Artifact::Relocated)],
+          arg1: Pathname,
+        ).void),
+      ).void
+    }
+    def extract_artifacts(&_block)
       return unless online?
       return if (download = self.download).nil?
 
@@ -557,7 +570,7 @@ module Cask
 
       return if artifacts.empty?
 
-      @tmpdir ||= Pathname(Dir.mktmpdir("cask-audit", HOMEBREW_TEMP))
+      @tmpdir ||= T.let(Pathname(Dir.mktmpdir("cask-audit", HOMEBREW_TEMP)), T.nilable(Pathname))
 
       # Clean up tmp dir when @tmpdir object is destroyed
       ObjectSpace.define_finalizer(
@@ -606,7 +619,8 @@ module Cask
                       .extract_nestedly(to: @tmpdir, verbose: false)
       end
 
-      @artifacts_extracted = true # Set the flag to indicate that extraction has occurred.
+      # Set the flag to indicate that extraction has occurred.
+      @artifacts_extracted = T.let(true, T.nilable(TrueClass))
 
       # Yield the artifacts and temp directory to the block if provided.
       yield artifacts, @tmpdir if block_given?
@@ -626,8 +640,8 @@ module Cask
       extract_artifacts do |artifacts, tmpdir|
         is_container = artifacts.any? { |a| a.is_a?(Artifact::App) || a.is_a?(Artifact::Pkg) }
 
-        artifacts.filter { |a| a.is_a?(Artifact::App) || a.is_a?(Artifact::Binary) }
-                 .each do |artifact|
+        artifacts.each do |artifact|
+          next if !artifact.is_a?(Artifact::App) && !artifact.is_a?(Artifact::Binary)
           next if artifact.is_a?(Artifact::Binary) && is_container
 
           path = tmpdir/artifact.source.relative_path_from(cask.staged_path)
@@ -644,10 +658,10 @@ module Cask
 
             system_command("lipo", args: ["-archs", main_binary], print_stderr: false)
           when Artifact::Binary
-            binary_path = path.to_s.gsub(cask.appdir, tmpdir)
+            binary_path = path.to_s.gsub(cask.appdir, tmpdir.to_s)
             system_command("lipo", args: ["-archs", binary_path], print_stderr: true)
           else
-            add_error "Unknown artifact type: #{artifact.class}", location: url.location
+            T.absurd(artifact)
           end
 
           # binary stanza can contain shell scripts, so we just continue if lipo fails.
@@ -795,7 +809,7 @@ module Cask
       return unless online?
 
       min_os = T.let(nil, T.untyped)
-      @staged_path ||= cask.staged_path
+      @staged_path ||= T.let(cask.staged_path, T.nilable(Pathname))
 
       extract_artifacts do |artifacts, tmpdir|
         artifacts.each do |artifact|
@@ -1104,15 +1118,15 @@ module Cask
 
     sig { returns(T::Boolean) }
     def bad_osdn_url?
-      domain.match?(%r{^(?:\w+\.)*osdn\.jp(?=/|$)})
+      T.must(domain).match?(%r{^(?:\w+\.)*osdn\.jp(?=/|$)})
     end
 
-    # sig { returns(String) }
+    sig { returns(T.nilable(String)) }
     def homepage
       URI(cask.homepage.to_s).host
     end
 
-    # sig { returns(String) }
+    sig { returns(T.nilable(String)) }
     def domain
       URI(cask.url.to_s).host
     end
@@ -1127,24 +1141,25 @@ module Cask
         host_uri.host
       end
 
-      return false if homepage.blank?
+      home = homepage
+      return false if home.blank?
 
-      home = homepage.downcase
+      home.downcase!
       if (split_host = T.must(host).split(".")).length >= 3
         host = T.must(split_host[-2..]).join(".")
       end
-      if (split_home = homepage.split(".")).length >= 3
-        home = split_home[-2..].join(".")
+      if (split_home = home.split(".")).length >= 3
+        home = T.must(split_home[-2..]).join(".")
       end
       host == home
     end
 
-    # sig { params(url: String).returns(String) }
+    sig { params(url: String).returns(String) }
     def strip_url_scheme(url)
       url.sub(%r{^[^:/]+://(www\.)?}, "")
     end
 
-    # sig { returns(String) }
+    sig { returns(String) }
     def url_from_verified
       strip_url_scheme(T.must(cask.url).verified)
     end
@@ -1154,8 +1169,10 @@ module Cask
       url_domain, url_path = strip_url_scheme(cask.url.to_s).split("/", 2)
       verified_domain, verified_path = url_from_verified.split("/", 2)
 
-      (url_domain == verified_domain || (verified_domain && url_domain&.end_with?(".#{verified_domain}"))) &&
-        (!verified_path || url_path&.start_with?(verified_path))
+      domains_match = (url_domain == verified_domain) ||
+                      (verified_domain && url_domain&.end_with?(".#{verified_domain}"))
+      paths_match = !verified_path || url_path&.start_with?(verified_path)
+      (domains_match && paths_match) || false
     end
 
     sig { returns(T::Boolean) }
@@ -1168,19 +1185,12 @@ module Cask
       URI(cask.url.to_s).scheme == "file"
     end
 
-    sig { returns(T::Boolean) }
-    def block_url_offline?
-      return false if online?
-
-      !!cask.url&.from_block?
-    end
-
     sig { returns(Tap) }
     def core_tap
-      @core_tap ||= CoreTap.instance
+      @core_tap ||= T.let(CoreTap.instance, T.nilable(Tap))
     end
 
-    # sig { returns(T::Array[String]) }
+    sig { returns(T::Array[String]) }
     def core_formula_names
       core_tap.formula_names
     end

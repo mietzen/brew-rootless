@@ -28,8 +28,8 @@ module Homebrew
         Homebrew::API.fetch "formula/#{name}.json"
       end
 
-      sig { params(formula: ::Formula).returns(::Formula) }
-      def self.source_download(formula)
+      sig { params(formula: ::Formula, download_queue: T.nilable(Homebrew::DownloadQueue)).returns(Homebrew::API::SourceDownload) }
+      def self.source_download(formula, download_queue: nil)
         path = formula.ruby_source_path || "Formula/#{formula.name}.rb"
         git_head = formula.tap_git_head || "HEAD"
         tap = formula.tap&.full_name || "Homebrew/homebrew-core"
@@ -39,7 +39,19 @@ module Homebrew
           formula.ruby_source_checksum,
           cache: HOMEBREW_CACHE_API_SOURCE/"#{tap}/#{git_head}/Formula",
         )
-        download.fetch
+
+        if download_queue
+          download_queue.enqueue(download)
+        elsif !download.symlink_location.exist?
+          download.fetch
+        end
+
+        download
+      end
+
+      sig { params(formula: ::Formula).returns(::Formula) }
+      def self.source_download_formula(formula)
+        download = source_download(formula)
 
         with_env(HOMEBREW_FORBID_PACKAGES_FROM_PATHS: nil) do
           Formulary.factory(download.symlink_location,

@@ -323,7 +323,7 @@ RSpec.describe "Utils::Curl" do
   end
 
   describe "::curl_executable" do
-    it "returns `HOMEBREW_BREWED_CURL_PATH` when `use_homebrew_curl` is `true`" do
+    it "returns HOMEBREW_BREWED_CURL_PATH when `use_homebrew_curl` is `true`" do
       expect(curl_executable(use_homebrew_curl: true)).to eq(HOMEBREW_BREWED_CURL_PATH)
     end
 

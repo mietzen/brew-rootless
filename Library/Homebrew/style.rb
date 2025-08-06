@@ -320,25 +320,20 @@ module Homebrew
       HOMEBREW_REPOSITORY.glob(".github/workflows/*.yml")
     end
 
-    def self.rubocop
-      ensure_formula_installed!("rubocop", latest: true,
-                                           reason: "Ruby style checks").opt_bin/"rubocop"
-    end
-
     def self.shellcheck
-      ensure_formula_installed!("shellcheck", latest: true,
-                                              reason: "shell style checks").opt_bin/"shellcheck"
+      require "formula"
+      Formula["shellcheck"].ensure_installed!(latest: true, reason: "shell style checks").opt_bin/"shellcheck"
     end
 
     def self.shfmt
-      ensure_formula_installed!("shfmt", latest: true,
-                                         reason: "formatting shell scripts")
+      require "formula"
+      Formula["shfmt"].ensure_installed!(latest: true, reason: "formatting shell scripts")
       HOMEBREW_LIBRARY/"Homebrew/utils/shfmt.sh"
     end
 
     def self.actionlint
-      ensure_formula_installed!("actionlint", latest: true,
-                                              reason: "GitHub Actions checks").opt_bin/"actionlint"
+      require "formula"
+      Formula["actionlint"].ensure_installed!(latest: true, reason: "GitHub Actions checks").opt_bin/"actionlint"
     end
 
     # Collection of style offenses.

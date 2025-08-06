@@ -36,7 +36,7 @@ Linux distribution without requiring `sudo`.
 
 **cask**
 
-: Homebrew package definition that installs macOS native applications
+: Homebrew package definition that installs native applications directly from upstream
 
 **prefix**
 
@@ -186,8 +186,8 @@ User-specific environment files take precedence over prefix-specific files and
 prefix-specific files take precedence over system-wide files (unless
 `$HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY` is set, see below).
 
-Note that these files do not support shell variable expansion e.g. `$HOME` or
-command execution e.g. `$(cat file)`.
+Note that these files do not support shell variable expansion (e.g. `$HOME`) or
+command execution (e.g. `$(cat file)`).
 
 <%= environment_variables %>
 

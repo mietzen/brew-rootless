@@ -475,7 +475,7 @@ module Homebrew
                           which resolves to: #{HOMEBREW_CELLAR.realpath}
 
           The recommended Homebrew installations are either:
-          (A) Have Cellar be a real directory inside of your HOMEBREW_PREFIX
+          (A) Have Cellar be a real directory inside of your `$HOMEBREW_PREFIX`
           (B) Symlink "bin/brew" into your prefix, but don't symlink "Cellar".
 
           Older installations of Homebrew may have created a symlinked Cellar, but this can
@@ -548,7 +548,7 @@ module Homebrew
         core_cask_tap = CoreCaskTap.instance
         return unless core_cask_tap.installed?
 
-        broken_tap(core_cask_tap) || examine_git_origin(core_cask_tap.git_repository, core_cask_tap.remote)
+        broken_tap(core_cask_tap) || examine_git_origin(core_cask_tap.git_repository, T.must(core_cask_tap.remote))
       end
 
       sig { returns(T.nilable(String)) }

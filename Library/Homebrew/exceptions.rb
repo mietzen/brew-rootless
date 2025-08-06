@@ -331,9 +331,9 @@ end
 class TapCoreRemoteMismatchError < TapRemoteMismatchError
   def message
     <<~EOS
-      Tap #{name} remote does not match HOMEBREW_CORE_GIT_REMOTE.
+      Tap #{name} remote does not match `$HOMEBREW_CORE_GIT_REMOTE`.
       #{expected_remote} != #{actual_remote}
-      Please set HOMEBREW_CORE_GIT_REMOTE="#{actual_remote}" and run `brew update` instead.
+      Please set `HOMEBREW_CORE_GIT_REMOTE="#{actual_remote}"` and run `brew update` instead.
     EOS
   end
 end
@@ -632,7 +632,7 @@ class DownloadError < RuntimeError
 
   def initialize(downloadable, cause)
     super <<~EOS
-      Failed to download resource #{downloadable.download_name.inspect}
+      Failed to download resource #{downloadable.download_queue_name.inspect}
       #{cause.message}
     EOS
     @cause = cause

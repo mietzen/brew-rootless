@@ -445,7 +445,7 @@ module Homebrew
                  .gsub(/`(.*?)`/m, "#{Tty.bold}\\1#{Tty.reset}")
                  .gsub(%r{<([^\s]+?://[^\s]+?)>}) { |url| Formatter.url(url) }
                  .gsub(/\*(.*?)\*|<(.*?)>/m) do |underlined|
-                   underlined[1...-1].gsub(/^(\s*)(.*?)$/, "\\1#{Tty.underline}\\2#{Tty.reset}")
+                   T.must(underlined[1...-1]).gsub(/^(\s*)(.*?)$/, "\\1#{Tty.underline}\\2#{Tty.reset}")
                  end
       end
 

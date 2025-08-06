@@ -51,20 +51,20 @@ module Homebrew
           `brew bundle remove` <name> [...]:
           Remove entries that match `name` from your `Brewfile`. Use `--formula`, `--cask`, `--tap`, `--mas`, `--whalebrew` or `--vscode` to remove only entries of the corresponding type. Passing `--formula` also removes matches against formula aliases and old formula names.
 
-          `brew bundle exec` [--check] <command>:
+          `brew bundle exec` [`--check`] <command>:
           Run an external command in an isolated build environment based on the `Brewfile` dependencies.
 
           This sanitized build environment ignores unrequested dependencies, which makes sure that things you didn't specify in your `Brewfile` won't get picked up by commands like `bundle install`, `npm install`, etc. It will also add compiler flags which will help with finding keg-only dependencies like `openssl`, `icu4c`, etc.
 
-          `brew bundle sh` [--check]:
+          `brew bundle sh` [`--check`]:
           Run your shell in a `brew bundle exec` environment.
 
-          `brew bundle env` [--check]:
+          `brew bundle env` [`--check`]:
           Print the environment variables that would be set in a `brew bundle exec` environment.
         EOS
-        flag "--file=",
-             description: "Read from or write to the `Brewfile` from this location. " \
-                          "Use `--file=-` to pipe to stdin/stdout."
+        flag   "--file=",
+               description: "Read from or write to the `Brewfile` from this location. " \
+                            "Use `--file=-` to pipe to stdin/stdout."
         switch "--global",
                description: "Read from or write to the `Brewfile` from `$HOMEBREW_BUNDLE_FILE_GLOBAL` (if set), " \
                             "`${XDG_CONFIG_HOME}/homebrew/Brewfile` (if `$XDG_CONFIG_HOME` is set), " \
@@ -80,11 +80,11 @@ module Homebrew
         switch "--upgrade",
                description: "`install` runs `brew upgrade` on outdated dependencies, " \
                             "even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set."
-        flag "--upgrade-formulae=", "--upgrade-formula=",
-             description: "`install` runs `brew upgrade` on any of these comma-separated formulae, " \
-                          "even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set."
+        flag   "--upgrade-formulae=", "--upgrade-formula=",
+               description: "`install` runs `brew upgrade` on any of these comma-separated formulae, " \
+                            "even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set."
         switch "--install",
-               description: "Run `install` before continuing to other operations e.g. `exec`."
+               description: "Run `install` before continuing to other operations, e.g. `exec`."
         switch "--services",
                description: "Temporarily start services while running the `exec` or `sh` command.",
                env:         :bundle_services
