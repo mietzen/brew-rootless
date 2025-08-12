@@ -1,5 +1,5 @@
 ---
-last_review_date: 2025-05-18
+last_review_date: "2025-05-18"
 ---
 
 # Cask Cookbook
@@ -646,21 +646,19 @@ Refer to the [`brew livecheck`](Brew-Livecheck.md) documentation for how to writ
 
 ### Stanza: `no_autobump!`
 
-The `no_autobump!` stanza excludes the cask for autobump list. That means the future updates will be handled by Homebrew contributors rather than by an automated process.
+The `no_autobump!` stanza excludes a cask from the autobump list. This means all updates are to be handled manually by submitting pull requests to the `Homebrew/homebrew-cask` repository.
 
-To use this stanza, a reason must be provided. The preferred way is to use one of the available symbols. These symbols can be found in the [`NO_AUTOBUMP_REASONS_LIST`](https://rubydoc.brew.sh/top-level-namespace.html#NO_AUTOBUMP_REASONS_LIST-constant).
+`no_autobump!` requires a reason to be provided with the `because:` paramater. It accepts a string or a symbol that corresponds to a preset reason, for example:
 
 ```ruby
 no_autobump! because: :incompatible_version_format
 ```
 
-A custom reason can be provided if none of the available symbols fits:
+A complete list of allowed symbols can be found in [`NO_AUTOBUMP_REASONS_LIST`](https://rubydoc.brew.sh/top-level-namespace.html#NO_AUTOBUMP_REASONS_LIST-constant).
 
-```ruby
-no_autobump! because: "some unique reason"
-```
+Casks that use `strategy :extract_plist` in their `livecheck` block or have `version :latest` are always excluded from the autobump list and do not require `no_autobump!` to be declared.
 
-Refer to [Autobump](Autobump.md) page for more information about the autobump process in Homebrew.
+Refer to the [Autobump](Autobump.md) page for more information about the autobump process in Homebrew.
 
 ### Stanza: `name`
 

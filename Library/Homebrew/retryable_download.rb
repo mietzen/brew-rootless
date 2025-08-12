@@ -70,7 +70,7 @@ module Homebrew
 
       unless quiet
         puts "Downloaded to: #{download}" unless already_downloaded
-        puts "SHA256: #{download.sha256}"
+        puts "SHA-256: #{download.sha256}"
       end
 
       json_download = downloadable.is_a?(API::JSONDownload)

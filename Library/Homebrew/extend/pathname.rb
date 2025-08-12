@@ -290,7 +290,7 @@ class Pathname
 
   # Writes an exec script that sets environment variables.
   sig {
-    params(target:      Pathname,
+    params(target:      T.any(Pathname, String),
            args_or_env: T.any(String, T::Array[String], T::Hash[String, String], T::Hash[Symbol, String]),
            env:         T.any(T::Hash[String, String], T::Hash[Symbol, String])).void
   }
@@ -430,7 +430,7 @@ class Pathname
   private
 
   sig {
-    params(src: T.any(String, Pathname), new_basename: String,
+    params(src: T.any(String, Pathname), new_basename: T.any(String, Pathname),
            _block: T.nilable(T.proc.params(src: Pathname, dst: Pathname).returns(T.nilable(Pathname)))).void
   }
   def install_p(src, new_basename, &_block)
@@ -455,7 +455,7 @@ class Pathname
     end
   end
 
-  sig { params(src: T.any(String, Pathname), new_basename: String).void }
+  sig { params(src: T.any(String, Pathname), new_basename: T.any(String, Pathname)).void }
   def install_symlink_p(src, new_basename)
     mkpath
     dstdir = realpath

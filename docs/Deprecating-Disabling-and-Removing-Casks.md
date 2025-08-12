@@ -20,14 +20,15 @@ If a user attempts to install a deprecated cask, they will be shown a warning me
 
 A cask should be deprecated to indicate to users that the cask should not be used and will be disabled in the future. Deprecated casks should continue to be maintained by the Homebrew maintainers if they continue to be installable. If this is not possible, they should be immediately disabled.
 
-The most common reasons for deprecation are when the upstream project is deprecated, unmaintained or archived.
+The most common reasons for deprecation are when the upstream project is unsigned, deprecated, unmaintained or archived.
 
 Casks should only be deprecated if at least one of the following are true:
 
+- the software installed by the cask is unsigned or does not meet signature requirements for supported OS versions
 - the software installed by the cask cannot be run on any supported OS versions
-- the cask has outstanding CVEs
-- the cask has [zero installs in the last 90 days](https://formulae.brew.sh/analytics/cask-install/90d/)
+- the software installed by the cask has outstanding CVEs
 - the software installed by the cask has been discontinued or abandoned upstream
+- the cask has [zero installs in the last 90 days](https://formulae.brew.sh/analytics/cask-install/90d/)
 
 To deprecate a cask, add a `deprecate!` call. This call should include a deprecation date in the ISO 8601 format and a deprecation reason:
 
@@ -39,7 +40,7 @@ The `date` parameter should be set to the date that the deprecation period shoul
 
 The `because` parameter can be a preset reason (using a symbol) or a custom reason. See the [Deprecate and Disable Reasons](#deprecate-and-disable-reasons) section below for more details about the `because` parameter.
 
-An optional `replacement_formula` or `replacement_cask` parameter may also be specified to suggest a replacement formula or cask to the user. The value of the parameter is a string.
+An optional `replacement_formula` or `replacement_cask` parameter may also be specified to suggest a replacement formula or cask to the user. The value for the parameter is a string.
 
 ```ruby
 deprecate! date: "YYYY-MM-DD", because: :reason, replacement_formula: "foo"
@@ -72,7 +73,7 @@ The `date` parameter should be set to the date that the reason for disabling cam
 
 The `because` parameter can be a preset reason (using a symbol) or a custom reason. See the [Deprecate and Disable Reasons](#deprecate-and-disable-reasons) section below for more details about the `because` parameter.
 
-Similar to deprecated casks, an optional `replacement_formula` or `replacement_cask` parameter may also be specified for disabled casks to suggest a replacement formula or cask to the user. The value of the parameter is a string.
+Similar to deprecated casks, an optional `replacement_formula` or `replacement_cask` parameter may also be specified for disabled casks to suggest a replacement formula or cask to the user. The value for the parameter is a string.
 
 ```ruby
 disable! date: "YYYY-MM-DD", because: :reason, replacement_cask: "foo"

@@ -5,7 +5,7 @@ require "api"
 require "commands"
 require "settings"
 
-# A {Tap} is used to extend the formulae provided by Homebrew core.
+# A {Tap} is used to encapsulate Homebrew formulae, casks and custom commands.
 # Usually, it's synced with a remote Git repository. And it's likely
 # a GitHub repository with the name of `user/homebrew-repository`. In such
 # cases, `user/repository` will be used as the {#name} of this {Tap}, where

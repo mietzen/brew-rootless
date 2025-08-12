@@ -115,18 +115,21 @@ module Cask
         download_queue = Homebrew::DownloadQueue.new(pour: true)
 
         fetchable_casks = upgradable_casks.map(&:last)
-        fetchable_casks_sentence = fetchable_casks.map { |cask| Formatter.identifier(cask.full_name) }.to_sentence
-        oh1 "Fetching downloads for: #{fetchable_casks_sentence}", truncate: false
-
-        fetchable_casks.each do |cask|
+        fetchable_cask_installers = fetchable_casks.map do |cask|
           # This is significantly easier given the weird difference in Sorbet signatures here.
           # rubocop:disable Style/DoubleNegation
           Installer.new(cask, binaries: !!binaries, verbose: !!verbose, force: !!force,
                                                skip_cask_deps: !!skip_cask_deps, require_sha: !!require_sha,
                                                upgrade: true, quarantine:, download_queue:)
-                   .enqueue_downloads
           # rubocop:enable Style/DoubleNegation
         end
+
+        fetchable_cask_installers.each(&:prelude)
+
+        fetchable_casks_sentence = fetchable_casks.map { |cask| Formatter.identifier(cask.full_name) }.to_sentence
+        oh1 "Fetching downloads for: #{fetchable_casks_sentence}", truncate: false
+
+        fetchable_cask_installers.each(&:enqueue_downloads)
 
         download_queue.fetch
       end

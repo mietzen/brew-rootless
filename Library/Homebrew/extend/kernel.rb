@@ -3,7 +3,7 @@
 
 # Contains shorthand Homebrew utility methods like `ohai`, `opoo`, `odisabled`.
 # TODO: move these out of `Kernel` into `Homebrew::GlobalMethods` and add
-# necessary Sorbet and global Kernel inclusions.
+#       necessary Sorbet and global Kernel inclusions.
 
 module Kernel
   sig { params(env: T.nilable(String)).returns(T::Boolean) }

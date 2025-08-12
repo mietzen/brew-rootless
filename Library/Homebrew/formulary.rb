@@ -80,7 +80,7 @@ module Formulary
 
   module PathnameWriteMkpath
     # TODO: migrate away from refinements here, they don't play nicely with
-    # Sorbet, when we migrate to `typed: strict`
+    #       Sorbet, when we migrate to `typed: strict`
     # rubocop:todo Sorbet/BlockMethodDefinition
     refine Pathname do
       def write(content, offset = nil, **open_args)
@@ -144,7 +144,7 @@ module Formulary
     end
   ensure
     # TODO: Make printing to stdout an error so that we can print a tap name.
-    # See discussion at https://github.com/Homebrew/brew/pull/20226#discussion_r2195886888
+    #       See discussion at https://github.com/Homebrew/brew/pull/20226#discussion_r2195886888
     if (printed_to_stdout = $stdout.string.strip.presence)
       opoo <<~WARNING
         Formula #{name} attempted to print the following while being loaded:
@@ -269,7 +269,7 @@ module Formulary
     end
 
     # TODO: migrate away from this inline class here, they don't play nicely with
-    # Sorbet, when we migrate to `typed: strict`
+    #       Sorbet, when we migrate to `typed: strict`
     # rubocop:todo Sorbet/BlockMethodDefinition
     klass = Class.new(::Formula) do
       @loaded_from_api = true

@@ -68,10 +68,10 @@ module Homebrew
         users = args.user.presence || GitHub.members_by_team("Homebrew", "maintainers").keys
         users.each do |username|
           # TODO: Using the GitHub username to scan the `git log` undercounts some
-          # contributions as people might not always have configured their Git
-          # committer details to match the ones on GitHub.
+          #       contributions as people might not always have configured their Git
+          #       committer details to match the ones on GitHub.
           # TODO: Switch to using the GitHub APIs instead of `git log` if
-          # they ever support trailers.
+          #       they ever support trailers.
           results[username] = scan_repositories(repos, username, from:)
           grand_totals[username] = total(results[username])
 

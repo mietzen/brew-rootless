@@ -487,7 +487,7 @@ class Keg
            /^ruby/
         :mkpath
       else
-        # Everything else is symlinked to the cellar
+        # Everything else is symlinked to the Cellar
         :link
       end
     end

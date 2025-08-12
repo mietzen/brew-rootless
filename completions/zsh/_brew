@@ -431,6 +431,7 @@ _brew_abv() {
     '(--eval-all --all)--installed[Print JSON of formulae that are currently installed]' \
     '(--fetch-manifest)--json[Print a JSON representation. Currently the default value for version is `v1` for formula. For formula and cask use `v2`. See the docs for examples of using the JSON output: https://docs.brew.sh/Querying-Brew]' \
     '--quiet[Make some output more quiet]' \
+    '--sizes[Show the size of installed formulae and casks]' \
     '--variations[Include the variations hash in each formula'\''s JSON output]' \
     '--verbose[Show more verbose analytics data for formula]' \
     - formula \
@@ -1180,6 +1181,7 @@ _brew_info() {
     '(--eval-all --all)--installed[Print JSON of formulae that are currently installed]' \
     '(--fetch-manifest)--json[Print a JSON representation. Currently the default value for version is `v1` for formula. For formula and cask use `v2`. See the docs for examples of using the JSON output: https://docs.brew.sh/Querying-Brew]' \
     '--quiet[Make some output more quiet]' \
+    '--sizes[Show the size of installed formulae and casks]' \
     '--variations[Include the variations hash in each formula'\''s JSON output]' \
     '--verbose[Show more verbose analytics data for formula]' \
     - formula \

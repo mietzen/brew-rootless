@@ -3,7 +3,7 @@
 
 require "utils/shell"
 
-# Checks to perform on a formula's cellar.
+# Checks to perform on a formula's keg (versioned Cellar path).
 module FormulaCellarChecks
   extend T::Helpers
 

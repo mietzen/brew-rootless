@@ -113,6 +113,11 @@ module SharedEnvExtension
     self[key] = PATH.new(self[key]).append(path)
   end
 
+  sig { params(rustflags: String).void }
+  def append_to_rustflags(rustflags)
+    append("HOMEBREW_RUSTFLAGS", rustflags)
+  end
+
   # Prepends a directory to `PATH`.
   # Is the formula struggling to find the pkgconfig file? Point it to it.
   # This is done automatically for keg-only formulae.

@@ -468,7 +468,7 @@ class CurlDownloadStrategy < AbstractFileDownloadStrategy
         # The cached location is no longer fresh if either:
         # - Last-Modified value is newer than the file's timestamp
         # - Content-Length value is different than the file's size
-        if cached_location_valid && (content_type.nil? || !content_type.start_with?("text/"))
+        if cached_location_valid && (!content_type.is_a?(String) || !content_type.start_with?("text/"))
           if last_modified && last_modified > cached_location.mtime
             ohai "Ignoring #{cached_location}",
                  "Cached modified time #{cached_location.mtime.iso8601} is before" \
@@ -663,7 +663,7 @@ class CurlDownloadStrategy < AbstractFileDownloadStrategy
   end
 end
 
-# Strategy for downloading a file using homebrew's curl.
+# Strategy for downloading a file using Homebrew's `curl`.
 #
 # @api public
 class HomebrewCurlDownloadStrategy < CurlDownloadStrategy

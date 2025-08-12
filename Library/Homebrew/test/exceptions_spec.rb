@@ -217,7 +217,7 @@ RSpec.describe "Exception" do
     let(:expected_checksum) { instance_double(Checksum, to_s: "deadbeef") }
     let(:actual_checksum) { instance_double(Checksum, to_s: "deadcafe") }
 
-    it(:to_s) { expect(error.to_s).to match(/SHA256 mismatch/) }
+    it(:to_s) { expect(error.to_s).to match(/SHA-256 mismatch/) }
   end
 
   describe ResourceMissingError do

@@ -19,8 +19,8 @@ Linux distribution without requiring `sudo`.
 
 **cask**
 
-: Homebrew package definition that installs native applications directly from
-  upstream
+: Homebrew package definition that installs pre-compiled binaries built and
+  signed by upstream
 
 **prefix**
 
@@ -741,6 +741,10 @@ Display brief statistics for your Homebrew installation. If a *`formula`* or
 `--cask`
 
 : Treat all named arguments as casks.
+
+`--sizes`
+
+: Show the size of installed formulae and casks.
 
 ### `install` \[*`options`*\] *`formula`*\|*`cask`* \[...\]
 

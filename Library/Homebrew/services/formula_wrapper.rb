@@ -227,7 +227,7 @@ module Homebrew
         hash[:log_path] = service.log_path
         hash[:error_log_path] = service.error_log_path
         hash[:interval] = service.interval
-        hash[:cron] = service.cron
+        hash[:cron] = service.cron.presence
 
         hash
       end

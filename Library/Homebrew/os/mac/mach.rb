@@ -67,7 +67,7 @@ module MachOShim
   private :mach_data
 
   # TODO: See if the `#write!` call can be delayed until
-  # we know we're not making any changes to the rpaths.
+  #       we know we're not making any changes to the rpaths.
   def delete_rpath(rpath, **options)
     candidates = rpaths(resolve_variable_references: false).select do |r|
       resolve_variable_name(r) == resolve_variable_name(rpath)

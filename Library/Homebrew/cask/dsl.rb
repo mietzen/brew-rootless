@@ -561,8 +561,8 @@ module Cask
 
     # Excludes the cask from autobump list.
     #
-    # TODO: limit this method to the official taps only (f.e. raise
-    # an error if `!tap.official?`)
+    # TODO: limit this method to the official taps only
+    #       (e.g. raise an error if `!tap.official?`)
     #
     # @api public
     sig { params(because: T.any(String, Symbol)).void }

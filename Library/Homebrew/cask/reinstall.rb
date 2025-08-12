@@ -30,6 +30,8 @@ module Cask
       end
 
       if download_queue
+        cask_installers.each(&:prelude)
+
         oh1 "Fetching downloads for: #{casks.map { |cask| Formatter.identifier(cask.full_name) }.to_sentence}",
             truncate: false
         cask_installers.each(&:enqueue_downloads)

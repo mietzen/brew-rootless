@@ -370,6 +370,7 @@ _brew_abv() {
       --installed
       --json
       --quiet
+      --sizes
       --variations
       --verbose
       "
@@ -1389,6 +1390,7 @@ _brew_info() {
       --installed
       --json
       --quiet
+      --sizes
       --variations
       --verbose
       "

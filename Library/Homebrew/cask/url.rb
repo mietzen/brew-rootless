@@ -42,32 +42,24 @@ module Cask
       extend Forwardable
       def_delegators :uri, :path, :scheme, :to_s
 
+      # Creates a `url` stanza.
+      #
+      # @api public
       sig {
         params(
           uri:        T.any(URI::Generic, String),
-          # @api public
           verified:   T.nilable(String),
-          # @api public
           using:      T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass),
-          # @api public
           tag:        T.nilable(String),
-          # @api public
           branch:     T.nilable(String),
-          # @api public
           revisions:  T.nilable(T::Hash[T.any(Symbol, String), String]),
-          # @api public
           revision:   T.nilable(String),
-          # @api public
           trust_cert: T.nilable(T::Boolean),
-          # @api public
           cookies:    T.nilable(T::Hash[String, String]),
           referer:    T.nilable(T.any(URI::Generic, String)),
-          # @api public
           header:     T.nilable(T.any(String, T::Array[String])),
           user_agent: T.nilable(T.any(Symbol, String)),
-          # @api public
           data:       T.nilable(T::Hash[String, String]),
-          # @api public
           only_path:  T.nilable(String),
         ).void
       }

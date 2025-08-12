@@ -46,6 +46,7 @@ module Cask
       @verify_download_integrity = verify_download_integrity
       @quiet = quiet
       @download_queue = download_queue
+      @ran_prelude = T.let(false, T::Boolean)
     end
 
     sig { returns(T::Boolean) }
@@ -140,8 +141,7 @@ module Cask
       old_config = @cask.config
       predecessor = @cask if reinstall? && @cask.installed?
 
-      check_deprecate_disable
-      check_conflicts
+      prelude
 
       print caveats
       fetch
@@ -789,6 +789,16 @@ on_request: true)
         forbidden for installation by #{owner} in `#{variable}`.#{owner_contact}
       EOS
       )
+    end
+
+    sig { void }
+    def prelude
+      return if @ran_prelude
+
+      check_deprecate_disable
+      check_conflicts
+
+      @ran_prelude = true
     end
 
     sig { void }

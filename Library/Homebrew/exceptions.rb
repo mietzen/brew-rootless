@@ -735,7 +735,7 @@ class ChecksumMismatchError < RuntimeError
     @expected = expected
 
     super <<~EOS
-      SHA256 mismatch
+      SHA-256 mismatch
       Expected: #{Formatter.success(expected.to_s)}
         Actual: #{Formatter.error(actual.to_s)}
           File: #{path}

@@ -248,16 +248,20 @@ module Homebrew
           fetch_casks = Homebrew::EnvConfig.no_install_upgrade? ? new_casks : casks
 
           if download_queue
-            fetch_casks_sentence = fetch_casks.map { |cask| Formatter.identifier(cask.full_name) }.to_sentence
-            oh1 "Fetching downloads for: #{fetch_casks_sentence}", truncate: false
-
-            fetch_casks.each do |cask|
+            fetch_cask_installers = fetch_casks.map do |cask|
               Cask::Installer.new(cask, binaries: args.binaries?, verbose: args.verbose?,
                                                    force: args.force?, skip_cask_deps: args.skip_cask_deps?,
                                                    require_sha: args.require_sha?, reinstall: true,
                                                    quarantine: args.quarantine?, zap: args.zap?, download_queue:)
-                             .enqueue_downloads
             end
+
+            # Run prelude checks for all casks before enqueueing downloads
+            fetch_cask_installers.each(&:prelude)
+
+            fetch_casks_sentence = fetch_casks.map { |cask| Formatter.identifier(cask.full_name) }.to_sentence
+            oh1 "Fetching downloads for: #{fetch_casks_sentence}", truncate: false
+
+            fetch_cask_installers.each(&:enqueue_downloads)
 
             download_queue.fetch
           end

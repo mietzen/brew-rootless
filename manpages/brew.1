@@ -14,7 +14,7 @@ Homebrew is the easiest and most flexible way to install the UNIX tools Apple di
 Homebrew package definition that builds from upstream sources
 .TP
 \fBcask\fP
-Homebrew package definition that installs native applications directly from upstream
+Homebrew package definition that installs pre\-compiled binaries built and signed by upstream
 .TP
 \fBprefix\fP
 path in which Homebrew is installed, e\.g\. \fB/opt/homebrew\fP or \fB/home/linuxbrew/\.linuxbrew\fP
@@ -463,6 +463,9 @@ Treat all named arguments as formulae\.
 .TP
 \fB\-\-cask\fP
 Treat all named arguments as casks\.
+.TP
+\fB\-\-sizes\fP
+Show the size of installed formulae and casks\.
 .SS "\fBinstall\fP \fR[\fIoptions\fP] \fIformula\fP|\fIcask\fP \fR[\.\.\.]"
 Install a \fIformula\fP or \fIcask\fP\&\. Additional options specific to a \fIformula\fP may be appended to the command\.
 .P

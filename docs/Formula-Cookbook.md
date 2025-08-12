@@ -14,7 +14,7 @@ A *formula* is a package definition written in Ruby. It can be created with `bre
 | term                 | description                                                               | example |
 | -------------------- | ------------------------------------------------------------------------- | ------- |
 | **formula**          | Homebrew package definition that builds from upstream sources             | `/opt/homebrew/Library/Taps/homebrew/homebrew-core/Formula/f/foo.rb` |
-| **cask**             | Homebrew package definition that installs macOS native applications       | `/opt/homebrew/Library/Taps/homebrew/homebrew-cask/Casks/b/bar.rb` |
+| **cask**             | Homebrew package definition that installs pre-compiled binaries built and signed by upstream | `/opt/homebrew/Library/Taps/homebrew/homebrew-cask/Casks/b/bar.rb` |
 | **prefix**           | path in which Homebrew is installed                                       | `/opt/homebrew` |
 | **keg**              | installation destination directory of a given **formula** version         | `/opt/homebrew/Cellar/foo/0.1` |
 | **rack**             | directory containing one or more versioned **kegs**                       | `/opt/homebrew/Cellar/foo` |
@@ -748,37 +748,17 @@ For `url`/`regex` guidelines and additional `livecheck` block examples, refer to
 
 ### Excluding formula from autobumping
 
-By default, all new formulae in the Homebrew/core repository are autobumped. It means that future updates will be handled automatically by Homebrew CI jobs, and contributors do not have to do it manually.
+By default, all new formulae in the `Homebrew/homebrew-core` repository are autobumped. This means that future updates are handled automatically by Homebrew CI jobs, and contributors do not have to submit pull requests.
 
-Sometimes, we want to exclude a formula from this list, for one reason or another. It can be done by adding the `no_autobump!` method in the formula definition, for example:
-
-```ruby
-class Foo < Formula
-  # ...
-  url "https://example.com/foo-1.0.tar.gz"
-
-  livecheck do
-    url "https://example.com/foo/download.html"
-    regex(/href=.*?foo[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
-  no_autobump! because: :bumped_by_upstream
-end
-```
-
-To use this method, a reason must be provided. The preferred way is to use one of the available symbols. These reasons can be found in the [`NO_AUTOBUMP_REASONS_LIST`](https://rubydoc.brew.sh/top-level-namespace.html#NO_AUTOBUMP_REASONS_LIST-constant).
+Sometimes, we want to exclude a formula from this list, for one reason or another. This can be done by adding the `no_autobump!` method in the formula definition; a reason must be provided with the `because:` parameter. It accepts a string or a symbol that corresponds to a preset reason, for example:
 
 ```ruby
-no_autobump! because: :incompatible_version_format
+no_autobump! because: :bumped_by_upstream
 ```
 
-A custom reason can be provided if none of the available symbols fits:
+A complete list of allowed symbols can be found in [`NO_AUTOBUMP_REASONS_LIST`](https://rubydoc.brew.sh/top-level-namespace.html#NO_AUTOBUMP_REASONS_LIST-constant).
 
-```ruby
-no_autobump! because: "some unique reason"
-```
-
-More information about the autobump process can be found on the [Autobump](Autobump.md) page.
+See our [Autobump](Autobump.md) documentation for more information about the autobump process.
 
 ### URL download strategies
 
