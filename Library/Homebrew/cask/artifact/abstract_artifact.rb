@@ -8,6 +8,7 @@ module Cask
     # Abstract superclass for all artifacts.
     class AbstractArtifact
       extend T::Helpers
+
       abstract!
 
       include Comparable

@@ -40,6 +40,7 @@ module Cask
       attr_reader :tag, :branch, :revision, :only_path, :verified
 
       extend Forwardable
+
       def_delegators :uri, :path, :scheme, :to_s
 
       # Creates a `url` stanza.

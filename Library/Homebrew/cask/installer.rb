@@ -125,6 +125,7 @@ module Cask
       Caskroom.ensure_caskroom_exists
 
       extract_primary_container
+      process_rename_operations
       save_caskfile
     rescue => e
       purge_versioned_files
@@ -290,6 +291,19 @@ on_request: true)
       return unless Quarantine.available?
 
       Quarantine.propagate(from: primary_container.path, to:)
+    end
+
+    sig { params(target_dir: T.nilable(Pathname)).void }
+    def process_rename_operations(target_dir: nil)
+      return if @cask.rename.empty?
+
+      working_dir = target_dir || @cask.staged_path
+      odebug "Processing rename operations in #{working_dir}"
+
+      @cask.rename.each do |rename_operation|
+        odebug "Renaming #{rename_operation.from} to #{rename_operation.to}"
+        rename_operation.perform_rename(working_dir)
+      end
     end
 
     sig { params(predecessor: T.nilable(Cask)).void }

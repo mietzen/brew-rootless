@@ -18,6 +18,7 @@ module Cask
 
     module ILoader
       extend T::Helpers
+
       interface!
 
       sig { abstract.params(config: T.nilable(Config)).returns(Cask) }
@@ -28,6 +29,7 @@ module Cask
     class AbstractContentLoader
       include ILoader
       extend T::Helpers
+
       abstract!
 
       sig { returns(String) }
@@ -306,8 +308,8 @@ module Cask
         return if Homebrew::EnvConfig.no_install_from_api?
         return unless ref.is_a?(String)
         return unless (token = ref[HOMEBREW_DEFAULT_TAP_CASK_REGEX, :token])
-        if !Homebrew::API::Cask.all_casks.key?(token) &&
-           !Homebrew::API::Cask.all_renames.key?(token)
+        if Homebrew::API.cask_tokens.exclude?(token) &&
+           !Homebrew::API.cask_renames.key?(token)
           return
         end
 
@@ -336,6 +338,7 @@ module Cask
 
         cask_options = {
           loaded_from_api: true,
+          api_source:      json_cask,
           sourcefile_path: @sourcefile_path,
           source:          JSON.pretty_generate(json_cask),
           config:,

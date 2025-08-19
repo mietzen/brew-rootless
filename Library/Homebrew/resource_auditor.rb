@@ -45,16 +45,16 @@ module Homebrew
 
     def audit_version
       if version.nil?
-        problem "missing version"
+        problem "Missing version"
       elsif owner.is_a?(Formula) && !version.to_s.match?(GitHubPackages::VALID_OCI_TAG_REGEX) &&
             (owner.core_formula? ||
             (owner.bottle_defined? && GitHubPackages::URL_REGEX.match?(owner.bottle_specification.root_url)))
-        problem "version #{version} does not match #{GitHubPackages::VALID_OCI_TAG_REGEX.source}"
+        problem "`version #{version}` does not match #{GitHubPackages::VALID_OCI_TAG_REGEX.source}"
       elsif !version.detected_from_url?
         version_text = version
         version_url = Version.detect(url, **specs)
         if version_url.to_s == version_text.to_s && version.instance_of?(Version)
-          problem "version #{version_text} is redundant with version scanned from URL"
+          problem "`version #{version_text}` is redundant with version scanned from URL"
         end
       end
     end
@@ -137,7 +137,7 @@ module Homebrew
       # TODO: try remove the OS/env conditional
       if Homebrew::SimulateSystem.simulating_or_running_on_macos? && spec_name == :stable &&
          owner.name != "ca-certificates" && curl_dep && !urls.find { |u| u.start_with?("http://") }
-        problem "should always include at least one HTTP mirror"
+        problem "Should always include at least one HTTP mirror"
       end
 
       return unless @online
@@ -179,17 +179,21 @@ module Homebrew
 
     def audit_head_branch
       return unless @online
-      return unless @strict
       return if spec_name != :head
-      return unless Utils::Git.remote_exists?(url)
       return if specs[:tag].present?
       return if specs[:revision].present?
+      # Skip `resource` URLs as they use SHAs instead of branch specifiers.
+      return if name != owner.name
+      return unless url.end_with?(".git")
+      return unless Utils::Git.remote_exists?(url)
 
-      branch = Utils.popen_read("git", "ls-remote", "--symref", url, "HEAD")
-                    .match(%r{ref: refs/heads/(.*?)\s+HEAD})&.to_a&.second
-      return if branch.blank? || branch == specs[:branch]
+      detected_branch = Utils.popen_read("git", "ls-remote", "--symref", url, "HEAD")
+                             .match(%r{ref: refs/heads/(.*?)\s+HEAD})&.to_a&.second
 
-      problem "Specify the default branch as `branch: \"#{branch}\"`"
+      message = "Git `head` URL must specify a branch name"
+      message += " - try `branch: \"#{detected_branch}\"`" if detected_branch.present?
+
+      problem message if specs[:branch].blank? || detected_branch != specs[:branch]
     end
 
     def problem(text)

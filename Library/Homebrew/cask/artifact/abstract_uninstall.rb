@@ -389,7 +389,7 @@ module Cask
       end
 
       def uninstall_pkgutil(*pkgs, command: nil, **_)
-        ohai "Uninstalling packages with sudo; the password may be necessary:"
+        ohai "Uninstalling packages with `sudo` (which may request your password)..."
         pkgs.each do |regex|
           ::Cask::Pkg.all_matching(regex, command).each do |pkg|
             puts pkg.package_id

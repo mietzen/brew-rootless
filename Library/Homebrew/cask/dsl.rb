@@ -19,6 +19,7 @@ require "cask/dsl/container"
 require "cask/dsl/depends_on"
 require "cask/dsl/postflight"
 require "cask/dsl/preflight"
+require "cask/dsl/rename"
 require "cask/dsl/uninstall_postflight"
 require "cask/dsl/uninstall_preflight"
 require "cask/dsl/version"
@@ -81,6 +82,7 @@ module Cask
       :language,
       :name,
       :os,
+      :rename,
       :sha256,
       :staged_path,
       :url,
@@ -162,6 +164,7 @@ module Cask
       @on_system_block_min_os = T.let(nil, T.nilable(MacOSVersion))
       @os = T.let(nil, T.nilable(String))
       @os_set_in_block = T.let(false, T::Boolean)
+      @rename = T.let([], T::Array[DSL::Rename])
       @sha256 = T.let(nil, T.nilable(T.any(Checksum, Symbol)))
       @sha256_set_in_block = T.let(false, T::Boolean)
       @staged_path = T.let(nil, T.nilable(Pathname))
@@ -341,6 +344,28 @@ module Cask
       set_unique_stanza(:container, kwargs.empty?) do
         DSL::Container.new(**kwargs)
       end
+    end
+
+    # Renames files after extraction.
+    #
+    # This is useful when the downloaded file has unpredictable names
+    # that need to be normalized for proper artifact installation.
+    #
+    # ### Example
+    #
+    # ```ruby
+    # rename "RØDECaster App*.pkg", "RØDECaster App.pkg"
+    # ```
+    #
+    # @api public
+    sig {
+      params(from: String,
+             to:   String).returns(T::Array[DSL::Rename])
+    }
+    def rename(from = T.unsafe(nil), to = T.unsafe(nil))
+      return @rename if from.nil?
+
+      @rename << DSL::Rename.new(T.must(from), T.must(to))
     end
 
     # Sets the cask's version.

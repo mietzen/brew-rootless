@@ -19,7 +19,10 @@ require "json/add/exception"
 DEFAULT_TEST_TIMEOUT_SECONDS = 5 * 60
 
 begin
-  ENV.delete("HOMEBREW_FORBID_PACKAGES_FROM_PATHS")
+  # Undocumented opt-out for internal use.
+  # We need to allow formulae from paths here due to how we pass them through.
+  ENV["HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS"] = "1"
+
   args = Homebrew::DevCmd::Test.new.args
   Context.current = args.context
 
@@ -55,8 +58,8 @@ begin
   end
 # Any exceptions during the test run are reported.
 rescue Exception => e # rubocop:disable Lint/RescueException
-  error_pipe.puts e.to_json
-  error_pipe.close
+  error_pipe&.puts e.to_json
+  error_pipe&.close
 ensure
   pid = Process.pid.to_s
   if which("pgrep") && which("pkill") && system("pgrep", "-P", pid, out: File::NULL)

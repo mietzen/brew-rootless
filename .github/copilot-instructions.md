@@ -9,15 +9,19 @@ Please follow these guidelines when contributing:
 ### Required Before Each Commit
 
 - Run `brew typecheck` to verify types are declared correctly using Sorbet.
+  Individual files/directories cannot be checked.
+  `brew typecheck` is fast enough to just be run globally every time.
 - Run `brew style --fix` to lint code formatting using RuboCop.
-  Individual files can be checked/fixed by passing them as arguments.
+  Individual files can be checked/fixed by passing them as arguments e.g. `brew style --fix Library/Homebrew/cmd/reinstall.rb``
 - Run `brew tests --online` to ensure that RSpec unit tests are passing (although some online tests may be flaky so can be ignored if they pass on a rerun).
   Individual test files can be passed with `--only` e.g. to test `Library/Homebrew/cmd/reinstall.rb` with `Library/Homebrew/test/cmd/reinstall_spec.rb` run `brew tests --only=cmd/reinstall`.
 
 ### Development Flow
 
-- Write new code (using Sorbet `sig` type signatures and `typed: strict` files whenever possible)
-- Write new tests (avoid more than one `:integration_test` per file for speed)
+- Write new code (using Sorbet `sig` type signatures and `typed: strict` for new files, but never for RSpec/test/`*_spec.rb` files)
+- Write new tests (avoid more than one `:integration_test` per file for speed).
+  Use only one `expect` assertion per test.
+- Keep comments minimal; prefer self-documenting code through strings, variable names, etc. over more comments.
 
 ## Repository Structure
 
@@ -34,7 +38,10 @@ Please follow these guidelines when contributing:
 
 ## Key Guidelines
 
-1. Follow Ruby best practices and idiomatic patterns
-2. Maintain existing code structure and organisation
-3. Write unit tests for new functionality. Use one assertion per test where possible.
-4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate
+1. Follow Ruby and Bash best practices and idiomatic patterns.
+2. Maintain existing code structure and organisation.
+3. Write unit tests for new functionality.
+4. Document public APIs and complex logic.
+5. Suggest changes to the `docs/` folder when appropriate
+6. Follow software principles such as DRY and YAGNI.
+7. Keep diffs as minimal as possible.

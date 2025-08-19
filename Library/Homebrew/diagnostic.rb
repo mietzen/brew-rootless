@@ -1000,12 +1000,12 @@ module Homebrew
 
         locale_variables = ENV.keys.grep(/^(?:LC_\S+|LANG|LANGUAGE)\Z/).sort
 
-        add_info "Cask Environment Variables:", ((locale_variables + environment_variables).sort.each do |var|
+        add_info "Cask Environment Variables:", (locale_variables + environment_variables).sort.each do |var|
           next unless ENV.key?(var)
 
           var = %Q(#{var}="#{ENV.fetch(var)}")
           user_tilde(var)
-        end)
+        end
       end
 
       def check_cask_xattr
@@ -1037,21 +1037,6 @@ module Homebrew
           "Your Python installation is unable to find `xattr`."
         else
           "unknown xattr error: #{result.stderr.split("\n").last}"
-        end
-      end
-
-      def check_cask_quarantine_support
-        case Cask::Quarantine.check_quarantine_support
-        when :quarantine_available
-          nil
-        when :xattr_broken
-          "No Cask quarantine support available: there's no working version of `xattr` on this system."
-        when :no_swift
-          "No Cask quarantine support available: there's no available version of `swift` on this system."
-        when :linux
-          "No Cask quarantine support available: not available on Linux."
-        else
-          "No Cask quarantine support available: unknown reason."
         end
       end
 

@@ -423,4 +423,94 @@ RSpec.describe Cask::Installer, :cask do
       end.to raise_error(Cask::CaskCannotBeInstalledError, /#{dep_name} formula was forbidden/)
     end
   end
+
+  describe "rename operations" do
+    let(:tmpdir) { mktmpdir }
+    let(:staged_path) { Pathname(tmpdir) }
+
+    after do
+      FileUtils.rm_rf(tmpdir) if tmpdir && File.exist?(tmpdir)
+    end
+
+    it "processes rename operations after extraction" do
+      # Create test files
+      (staged_path / "Original App.app").mkpath
+      (staged_path / "Original App.app" / "Contents").mkpath
+
+      cask = Cask::Cask.new("rename-test-cask") do
+        url "file://#{TEST_FIXTURE_DIR}/cask/caffeine.zip"
+        rename "Original App.app", "Renamed App.app"
+        app "Renamed App.app"
+      end
+
+      # Mock the staged_path to point to our test directory
+      allow(cask).to receive(:staged_path).and_return(staged_path)
+
+      installer = described_class.new(cask)
+      installer.send(:process_rename_operations)
+
+      expect(staged_path / "Renamed App.app").to be_a_directory
+      expect(staged_path / "Original App.app").not_to exist
+    end
+
+    it "handles multiple rename operations in order" do
+      # Create test file
+      (staged_path / "Original.app").mkpath
+
+      cask = Cask::Cask.new("multi-rename-test-cask") do
+        url "file://#{TEST_FIXTURE_DIR}/cask/caffeine.zip"
+        rename "Original.app", "First Rename.app"
+        rename "First Rename.app", "Final Name.app"
+        app "Final Name.app"
+      end
+
+      allow(cask).to receive(:staged_path).and_return(staged_path)
+
+      installer = described_class.new(cask)
+      installer.send(:process_rename_operations)
+
+      expect(staged_path / "Final Name.app").to be_a_directory
+      expect(staged_path / "Original.app").not_to exist
+      expect(staged_path / "First Rename.app").not_to exist
+    end
+
+    it "handles glob patterns in rename operations" do
+      # Create test file with version
+      (staged_path / "Test App v1.2.3.pkg").write("test content")
+
+      cask = Cask::Cask.new("glob-rename-test-cask") do
+        url "file://#{TEST_FIXTURE_DIR}/cask/caffeine.zip"
+        rename "Test App*.pkg", "Test App.pkg"
+        pkg "Test App.pkg"
+      end
+
+      allow(cask).to receive(:staged_path).and_return(staged_path)
+
+      installer = described_class.new(cask)
+      installer.send(:process_rename_operations)
+
+      expect(staged_path / "Test App.pkg").to be_a_file
+      expect((staged_path / "Test App.pkg").read).to eq("test content")
+      expect(staged_path / "Test App v1.2.3.pkg").not_to exist
+    end
+
+    it "does nothing when no files match rename pattern" do
+      # Create a different file
+      (staged_path / "Different.app").mkpath
+
+      cask = Cask::Cask.new("no-match-rename-test-cask") do
+        url "file://#{TEST_FIXTURE_DIR}/cask/caffeine.zip"
+        rename "NonExistent*.app", "Target.app"
+        app "Different.app"
+      end
+
+      allow(cask).to receive(:staged_path).and_return(staged_path)
+
+      installer = described_class.new(cask)
+
+      expect { installer.send(:process_rename_operations) }.not_to raise_error
+      expect(staged_path / "Different.app").to be_a_directory
+      expect(staged_path / "Target.app").not_to exist
+    end
+  end
 end

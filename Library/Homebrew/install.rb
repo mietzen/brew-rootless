@@ -83,10 +83,10 @@ module Homebrew
         skip_link: false,
         overwrite: false
       )
-        # head-only without --HEAD is an error
+        # HEAD-only without --HEAD is an error
         if !head && formula.stable.nil?
           odie <<~EOS
-            #{formula.full_name} is a head-only formula.
+            #{formula.full_name} is a HEAD-only formula.
             To install it, run:
               brew install --HEAD #{formula.full_name}
           EOS

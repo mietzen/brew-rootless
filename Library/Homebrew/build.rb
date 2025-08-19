@@ -227,7 +227,10 @@ class Build
 end
 
 begin
-  ENV.delete("HOMEBREW_FORBID_PACKAGES_FROM_PATHS")
+  # Undocumented opt-out for internal use.
+  # We need to allow formulae from paths here due to how we pass them through.
+  ENV["HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS"] = "1"
+
   args = Homebrew::Cmd::InstallCmd.new.args
   Context.current = args.context
 
@@ -268,7 +271,7 @@ rescue Exception => e # rubocop:disable Lint/RescueException
     error_hash["output"] = e.output
   end
 
-  error_pipe.puts error_hash.to_json
-  error_pipe.close
+  error_pipe&.puts error_hash.to_json
+  error_pipe&.close
   exit! 1
 end

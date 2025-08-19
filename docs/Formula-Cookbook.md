@@ -4,7 +4,7 @@ last_review_date: "1970-01-01"
 
 # Formula Cookbook
 
-A *formula* is a package definition written in Ruby. It can be created with `brew create <URL>` where `<URL>` is a zip or tarball, installed with `brew install <formula>`, and debugged with `brew install --debug --verbose <formula>`. Formulae use the [Formula API](https://rubydoc.brew.sh/Formula) which provides various Homebrew-specific helpers.
+A *formula* is a package definition written in Ruby. It can be created with `brew create <URL>` where `<URL>` is a zip or tarball, installed with `brew install <formula>`, and debugged with `brew install --debug --verbose <formula>`. Formulae use the [`Formula` class API](https://rubydoc.brew.sh/Formula) which provides various Homebrew-specific helpers.
 
 * Table of Contents
 {:toc}
@@ -22,7 +22,7 @@ A *formula* is a package definition written in Ruby. It can be created with `bre
 | **opt prefix**       | a symlink to the active version of a **keg**                              | `/opt/homebrew/opt/foo` |
 | **Cellar**           | directory containing one or more named **racks**                          | `/opt/homebrew/Cellar` |
 | **Caskroom**         | directory containing one or more named **casks**                          | `/opt/homebrew/Caskroom` |
-| **external command** | `brew` subcommand defined outside of the Homebrew/brew GitHub repository  | [`brew alias`](https://github.com/Homebrew/homebrew-aliases) |
+| **external command** | `brew` subcommand defined outside of the Homebrew/brew GitHub repository  | [`brew test-bot`](https://github.com/Homebrew/homebrew-test-bot) |
 | **tap**              | directory (and usually Git repository) of **formulae**, **casks** and/or **external commands**       | `/opt/homebrew/Library/Taps/homebrew/homebrew-core` |
 | **bottle**           | pre-built **keg** poured into a **rack** of the **Cellar** instead of building from upstream sources | `qt--6.5.1.ventura.bottle.tar.gz` |
 | **tab**              | information about a **keg**, e.g. whether it was poured from a **bottle** or built from source       | `/opt/homebrew/Cellar/foo/0.1/INSTALL_RECEIPT.json` |
@@ -305,7 +305,7 @@ We want tests that don't require any user input and test the basic functionality
 
 See the [`cmake`](https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/c/cmake.rb) formula for an example of a good test. It writes a basic `CMakeLists.txt` file into the test directory then calls CMake to generate Makefiles. This test checks that CMake doesn't e.g. segfault during basic operation.
 
-You can check that the output is as expected with `assert_equal` or `assert_match` on the output of the [Formula assertions](https://rubydoc.brew.sh/Homebrew/Assertions) such as in this example from the [`envv`](https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/e/envv.rb) formula:
+You can check that the output is as expected with `assert_equal` or `assert_match` on the output of the formula's [assertions](https://rubydoc.brew.sh/Homebrew/Assertions) such as in this example from the [`envv`](https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/e/envv.rb) formula:
 
 ```ruby
 assert_equal "mylist=A:C; export mylist", shell_output("#{bin}/envv del mylist B").strip
@@ -460,7 +460,7 @@ end
 
 ### Standard arguments
 
-For any formula using certain well-known build systems, there will be arguments that should be passed during compilation so that the build conforms to Homebrew standards. These have been collected into a set of `std_*_args` methods. Detailed information about each of those methods can be found in [Rubydoc](https://rubydoc.brew.sh/Formula).
+For any formula using certain well-known build systems, there will be arguments that should be passed during compilation so that the build conforms to Homebrew standards. These have been collected into a set of `std_*_args` methods. Detailed information about each of those methods can be found in the [`Formula` class API](https://rubydoc.brew.sh/Formula) documentation.
 
 Most of these methods accept parameters to customize their output. For example, to set the install prefix to [**`libexec`**](#variables-for-directory-locations) for `configure` or `cmake`:
 
@@ -592,7 +592,7 @@ Make sure you modify `s`! This block ignores the returned value.
 
 [`inreplace`](https://rubydoc.brew.sh/Utils/Inreplace) should be used instead of patches when patching something that will never be accepted upstream, e.g. making the software’s build system respect Homebrew’s installation hierarchy. If it's something that affects both Homebrew and MacPorts (i.e. macOS specific) it should be turned into an upstream submitted patch instead.
 
-If you need to modify variables in a `Makefile`, rather than using [`change_make_var!`](https://rubydoc.brew.sh/StringInreplaceExtension.html#change_make_var!-instance_method) within an [`inreplace`](https://rubydoc.brew.sh/Utils/Inreplace), try passing them as arguments to `make`:
+If you need to modify variables in a `Makefile`, rather than using [`change_make_var!`](https://rubydoc.brew.sh/StringInreplaceExtension#change_make_var!-instance_method) within an [`inreplace`](https://rubydoc.brew.sh/Utils/Inreplace), try passing them as arguments to `make`:
 
 ```ruby
 system "make", "target", "VAR2=value1", "VAR2=value2", "VAR3=values can have spaces"
@@ -685,7 +685,7 @@ Instead of `git diff | pbcopy`, for some editors `git diff >> path/to/your/formu
 
 ## Advanced formula tricks
 
-See the [Formula API](https://rubydoc.brew.sh/Formula) for the full list of methods available within a formula. If anything isn’t clear, you can usually figure it out by `grep`ping the `$(brew --repository homebrew/core)` directory for examples. Please submit a pull request to amend this document if you think it will help!
+See the [`Formula` class API](https://rubydoc.brew.sh/Formula) documentation for the full list of methods available within a formula. If anything isn’t clear, you can usually figure it out by `grep`ping the `$(brew --repository homebrew/core)` directory for examples. Please submit a pull request to amend this document if you think it will help!
 
 ### Handling different system configurations
 
@@ -744,7 +744,7 @@ livecheck do
 end
 ```
 
-For `url`/`regex` guidelines and additional `livecheck` block examples, refer to the [`brew livecheck` documentation](Brew-Livecheck.md). For more technical information on the methods used in a `livecheck` block, please refer to the [`Livecheck` class documentation](https://rubydoc.brew.sh/Livecheck).
+For `url`/`regex` guidelines and additional `livecheck` block examples, refer to the [`brew livecheck`](Brew-Livecheck.md) documentation. For more technical information on the methods used in a `livecheck` block, please refer to the [`Livecheck` class](https://rubydoc.brew.sh/Livecheck) documentation.
 
 ### Excluding formula from autobumping
 
@@ -756,7 +756,7 @@ Sometimes, we want to exclude a formula from this list, for one reason or anothe
 no_autobump! because: :bumped_by_upstream
 ```
 
-A complete list of allowed symbols can be found in [`NO_AUTOBUMP_REASONS_LIST`](https://rubydoc.brew.sh/top-level-namespace.html#NO_AUTOBUMP_REASONS_LIST-constant).
+A complete list of allowed symbols can be found in [`NO_AUTOBUMP_REASONS_LIST`](https://rubydoc.brew.sh/top-level-namespace#NO_AUTOBUMP_REASONS_LIST-constant).
 
 See our [Autobump](Autobump.md) documentation for more information about the autobump process.
 
@@ -841,7 +841,7 @@ end
 
 Formulae can specify an alternate download for the upstream project's development/cutting-edge source (e.g. `master`/`main`/`trunk`) using [`head`](https://rubydoc.brew.sh/Formula#head-class_method), which can be activated by passing `--HEAD` when installing. Specifying it is done in the same manner as [`url`](https://rubydoc.brew.sh/Formula#url-class_method), with added conventions for fetching from version control repositories:
 
-* Git repositories need `branch:` specified to fetch a branch other than "master". If the repository is very large, specify `only_path` to [limit the checkout to one path](Cask-Cookbook.md#git-urls).
+* Git repositories **must always** specify `branch:`. If the repository is very large, specify `only_path` to [limit the checkout to one path](Cask-Cookbook.md#git-urls).
 
   ```sh
 head "https://github.com/some/package.git", branch: "main"
@@ -975,7 +975,7 @@ Note that in the context of Homebrew, [`libexec`](https://rubydoc.brew.sh/Formul
 
 ### File-level operations
 
-You can use the file utilities provided by Ruby's [`FileUtils`](https://ruby-doc.org/stdlib-2.7.0/libdoc/fileutils/rdoc/FileUtils.html). These are included in the [`Formula`](https://rubydoc.brew.sh/Formula) class, so you do not need the `FileUtils.` prefix to use them.
+You can use the file utilities provided by Ruby's [`FileUtils`](https://ruby-doc.org/current/stdlibs/fileutils/FileUtils.html). These are included in the [`Formula` class](https://rubydoc.brew.sh/Formula), so you do not need the `FileUtils.` prefix to use them.
 
 When creating symlinks, take special care to ensure they are *relative* symlinks. This makes it easier to create a relocatable bottle. For example, to create a symlink in `bin` to an executable in `libexec`, use:
 
@@ -1286,7 +1286,7 @@ There are also `ENV` helper methods available for many common environment variab
 * `ENV.remove` - remove a string from an environment variable value
 * `ENV.delete` - unset an environment variable
 
-The full list can be found in the [SharedEnvExtension](https://rubydoc.brew.sh/SharedEnvExtension.html) and [Superenv](https://rubydoc.brew.sh/Superenv.html) module documentation.
+The full list can be found in the [`SharedEnvExtension` module](https://rubydoc.brew.sh/SharedEnvExtension) and [`Superenv` module](https://rubydoc.brew.sh/Superenv) documentation.
 
 ### Deprecating and disabling a formula
 

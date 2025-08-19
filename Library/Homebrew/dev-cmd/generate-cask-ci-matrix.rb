@@ -57,15 +57,15 @@ module Homebrew
         syntax_only = args.syntax_only?
 
         repository = ENV.fetch("GITHUB_REPOSITORY", nil)
-        raise UsageError, "The GITHUB_REPOSITORY environment variable must be set." if repository.blank?
+        raise UsageError, "The `$GITHUB_REPOSITORY` environment variable must be set." if repository.blank?
 
         tap = T.let(Tap.fetch(repository), Tap)
 
         unless syntax_only
           raise UsageError, "Either `--cask` or `--url` must be specified." if !args.casks? && !args.url?
-          raise UsageError, "Please provide a cask or url argument" if casks.blank? && pr_url.blank?
+          raise UsageError, "Please provide a `--cask` or `--url` argument." if casks.blank? && pr_url.blank?
         end
-        raise UsageError, "Only one url can be specified" if pr_url&.count&.> 1
+        raise UsageError, "Only one `--url` can be specified." if pr_url&.count&.> 1
 
         labels = if pr_url && (first_pr_url = pr_url.first)
           pr = GitHub::API.open_rest(first_pr_url)

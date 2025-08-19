@@ -258,7 +258,7 @@ class Sandbox
     invalid_char = ['"', "'", "(", ")", "\n", "\\"].find do |c|
       path.to_s.include?(c)
     end
-    raise ArgumentError, "Invalid character #{invalid_char} in path: #{path}" if invalid_char
+    raise ArgumentError, "Invalid character '#{invalid_char}' in path: #{path}" if invalid_char
 
     case type
     when :regex   then "regex #\"#{path}\""

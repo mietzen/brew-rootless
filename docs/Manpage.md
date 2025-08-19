@@ -1411,26 +1411,26 @@ If `sudo` is passed, operate on `/Library/LaunchDaemons` or
 `/usr/lib/systemd/system` (started at boot). Otherwise, operate on
 `~/Library/LaunchAgents` or `~/.config/systemd/user` (started at login).
 
-\[`sudo`\] `brew services` \[`list`\] (`--json`) (`--debug`)
+\[`sudo`\] `brew services` \[`list`\] \[`--json`\] \[`--debug`\]
 
 : List information about all managed services for the current user (or root).
   Provides more output from Homebrew and `launchctl`(1) or `systemctl`(1) if run
   with `--debug`.
 
-\[`sudo`\] `brew services info` (*`formula`*\|`--all`\|`--json`)
+\[`sudo`\] `brew services info` (*`formula`*\|`--all`) \[`--json`\]
 
 : List all managed services for the current user (or root).
 
-\[`sudo`\] `brew services run` (*`formula`*\|`--all`\|`--file=`)
+\[`sudo`\] `brew services run` (*`formula`*\|`--all`) \[`--file=`\]
 
 : Run the service *`formula`* without registering to launch at login (or boot).
 
-\[`sudo`\] `brew services start` (*`formula`*\|`--all`\|`--file=`)
+\[`sudo`\] `brew services start` (*`formula`*\|`--all`) \[`--file=`\]
 
 : Start the service *`formula`* immediately and register it to launch at login
   (or boot).
 
-\[`sudo`\] `brew services stop` (`--keep`) (`--no-wait`\|`--max-wait=`) (*`formula`*\|`--all`)
+\[`sudo`\] `brew services stop` \[`--keep`\] \[`--no-wait`\|`--max-wait=`\] (*`formula`*\|`--all`)
 
 : Stop the service *`formula`* immediately and unregister it from launching at
   login (or boot), unless `--keep` is specified.
@@ -1440,7 +1440,7 @@ If `sudo` is passed, operate on `/Library/LaunchDaemons` or
 : Stop the service *`formula`* immediately but keep it registered to launch at
   login (or boot).
 
-\[`sudo`\] `brew services restart` (*`formula`*\|`--all`\|`--file=`)
+\[`sudo`\] `brew services restart` (*`formula`*\|`--all`) \[`--file=`\]
 
 : Stop (if necessary) and start the service *`formula`* immediately and register
   it to launch at login (or boot).
@@ -1462,14 +1462,6 @@ If `sudo` is passed, operate on `/Library/LaunchDaemons` or
 : Wait at most this many seconds for `stop` to finish stopping a service.
   Defaults to 60. Set this to zero (0) seconds to wait indefinitely.
 
-`--all`
-
-: Run *`subcommand`* on all services.
-
-`--json`
-
-: Output as JSON.
-
 `--no-wait`
 
 : Don't wait for `stop` to finish stopping the service.
@@ -1477,6 +1469,14 @@ If `sudo` is passed, operate on `/Library/LaunchDaemons` or
 `--keep`
 
 : When stopped, don't unregister the service from launching at login (or boot).
+
+`--all`
+
+: Run *`subcommand`* on all services.
+
+`--json`
+
+: Output as JSON.
 
 ### `setup-ruby` \[*`command`* ...\]
 
@@ -4127,6 +4127,8 @@ command execution (e.g. `$(cat file)`).
 
 : If set, Homebrew will refuse to read formulae or casks provided from file
   paths, e.g. `brew install ./package.rb`.
+  
+  *Default:* true unless `$HOMEBREW_DEVELOPER` is set.
 
 `HOMEBREW_FORCE_API_AUTO_UPDATE`
 

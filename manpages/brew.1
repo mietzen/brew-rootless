@@ -879,25 +879,25 @@ Manage background services with macOS\[u2019] \fBlaunchctl\fP(1) daemon manager 
 .P
 If \fBsudo\fP is passed, operate on \fB/Library/LaunchDaemons\fP or \fB/usr/lib/systemd/system\fP (started at boot)\. Otherwise, operate on \fB~/Library/LaunchAgents\fP or \fB~/\.config/systemd/user\fP (started at login)\.
 .TP
-[\fBsudo\fP] \fBbrew services\fP [\fBlist\fP] (\fB\-\-json\fP) (\fB\-\-debug\fP)
+[\fBsudo\fP] \fBbrew services\fP [\fBlist\fP] [\fB\-\-json\fP] [\fB\-\-debug\fP]
 List information about all managed services for the current user (or root)\. Provides more output from Homebrew and \fBlaunchctl\fP(1) or \fBsystemctl\fP(1) if run with \fB\-\-debug\fP\&\.
 .TP
-[\fBsudo\fP] \fBbrew services info\fP (\fIformula\fP|\fB\-\-all\fP|\fB\-\-json\fP)
+[\fBsudo\fP] \fBbrew services info\fP (\fIformula\fP|\fB\-\-all\fP) [\fB\-\-json\fP]
 List all managed services for the current user (or root)\.
 .TP
-[\fBsudo\fP] \fBbrew services run\fP (\fIformula\fP|\fB\-\-all\fP|\fB\-\-file=\fP)
+[\fBsudo\fP] \fBbrew services run\fP (\fIformula\fP|\fB\-\-all\fP) [\fB\-\-file=\fP]
 Run the service \fIformula\fP without registering to launch at login (or boot)\.
 .TP
-[\fBsudo\fP] \fBbrew services start\fP (\fIformula\fP|\fB\-\-all\fP|\fB\-\-file=\fP)
+[\fBsudo\fP] \fBbrew services start\fP (\fIformula\fP|\fB\-\-all\fP) [\fB\-\-file=\fP]
 Start the service \fIformula\fP immediately and register it to launch at login (or boot)\.
 .TP
-[\fBsudo\fP] \fBbrew services stop\fP (\fB\-\-keep\fP) (\fB\-\-no\-wait\fP|\fB\-\-max\-wait=\fP) (\fIformula\fP|\fB\-\-all\fP)
+[\fBsudo\fP] \fBbrew services stop\fP [\fB\-\-keep\fP] [\fB\-\-no\-wait\fP|\fB\-\-max\-wait=\fP] (\fIformula\fP|\fB\-\-all\fP)
 Stop the service \fIformula\fP immediately and unregister it from launching at login (or boot), unless \fB\-\-keep\fP is specified\.
 .TP
 [\fBsudo\fP] \fBbrew services kill\fP (\fIformula\fP|\fB\-\-all\fP)
 Stop the service \fIformula\fP immediately but keep it registered to launch at login (or boot)\.
 .TP
-[\fBsudo\fP] \fBbrew services restart\fP (\fIformula\fP|\fB\-\-all\fP|\fB\-\-file=\fP)
+[\fBsudo\fP] \fBbrew services restart\fP (\fIformula\fP|\fB\-\-all\fP) [\fB\-\-file=\fP]
 Stop (if necessary) and start the service \fIformula\fP immediately and register it to launch at login (or boot)\.
 .TP
 [\fBsudo\fP] \fBbrew services cleanup\fP
@@ -912,17 +912,17 @@ When run as root on macOS, run the service(s) as this user\.
 \fB\-\-max\-wait\fP
 Wait at most this many seconds for \fBstop\fP to finish stopping a service\. Defaults to 60\. Set this to zero (0) seconds to wait indefinitely\.
 .TP
-\fB\-\-all\fP
-Run \fIsubcommand\fP on all services\.
-.TP
-\fB\-\-json\fP
-Output as JSON\.
-.TP
 \fB\-\-no\-wait\fP
 Don\[u2019]t wait for \fBstop\fP to finish stopping the service\.
 .TP
 \fB\-\-keep\fP
 When stopped, don\[u2019]t unregister the service from launching at login (or boot)\.
+.TP
+\fB\-\-all\fP
+Run \fIsubcommand\fP on all services\.
+.TP
+\fB\-\-json\fP
+Output as JSON\.
 .SS "\fBsetup\-ruby\fP \fR[\fIcommand\fP \.\.\.]"
 Installs and configures Homebrew\[u2019]s Ruby\. If \fBcommand\fP is passed, it will only run Bundler if necessary for that command\.
 .SS "\fBshellenv\fP \fR[\fIshell\fP \.\.\.]"
@@ -2679,6 +2679,10 @@ If set, Homebrew will refuse to install any casks\.
 .TP
 \fBHOMEBREW_FORBID_PACKAGES_FROM_PATHS\fP
 If set, Homebrew will refuse to read formulae or casks provided from file paths, e\.g\. \fBbrew install \./package\.rb\fP\&\.
+.RS
+.P
+\fIDefault:\fP true unless \fB$HOMEBREW_DEVELOPER\fP is set\.
+.RE
 .TP
 \fBHOMEBREW_FORCE_API_AUTO_UPDATE\fP
 If set, update the Homebrew API formula or cask data even if \fB$HOMEBREW_NO_AUTO_UPDATE\fP is set\.

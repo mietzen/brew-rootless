@@ -17,7 +17,8 @@ RSpec.describe Homebrew::Services::Commands::Info do
     it "fails with empty list" do
       expect do
         described_class.run([], verbose: false, json: false)
-      end.to raise_error UsageError, "Invalid usage: Formula(e) missing, please provide a formula name or use --all"
+      end.to raise_error UsageError,
+                         "Invalid usage: Formula(e) missing, please provide a formula name or use `--all`."
     end
 
     it "succeeds with items" do

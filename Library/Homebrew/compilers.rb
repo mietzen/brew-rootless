@@ -40,7 +40,7 @@ class CompilerFailure
     # Non-Apple compilers are in the format fails_with compiler => version
     if spec.is_a?(Hash)
       compiler, major_version = spec.first
-      raise ArgumentError, "The hash `fails_with` syntax only supports GCC" if compiler != :gcc
+      raise ArgumentError, "The `fails_with` hash syntax only supports GCC" if compiler != :gcc
 
       type = compiler
       # so fails_with :gcc => '7' simply marks all 7 releases incompatible

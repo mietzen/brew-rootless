@@ -11,6 +11,7 @@ module Homebrew
   module Cmd
     class FetchCmd < AbstractCommand
       include Fetch
+
       FETCH_MAX_TRIES = 5
 
       cmd_args do

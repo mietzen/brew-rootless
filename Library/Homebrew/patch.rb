@@ -24,7 +24,7 @@ module Patch
     when nil
       raise ArgumentError, "nil value for strip"
     else
-      raise ArgumentError, "Unexpected value #{strip.inspect} for strip"
+      raise ArgumentError, "Unexpected value for strip: #{strip.inspect}"
     end
   end
 end

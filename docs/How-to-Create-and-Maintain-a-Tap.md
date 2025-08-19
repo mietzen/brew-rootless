@@ -18,7 +18,7 @@ See [homebrew/core](https://github.com/Homebrew/homebrew-core) for an example of
 
 ### Naming your formulae to avoid clashes
 
-If a formula in your tap has the same name as a Homebrew/homebrew-core formula they cannot be installed side-by-side. If you wish to create a different version of a formula that's in Homebrew/homebrew-core (e.g. with `option`s) consider giving it a different name; e.g. `nginx-full` for a more full-featured `nginx` formula. This will allow both `nginx` and `nginx-full` to be installed at the same time (assuming one is [`keg_only`](https://rubydoc.brew.sh/Formula#keg_only-class_method) or the linked files do not clash).
+If a formula in your tap has the same name as a Homebrew/homebrew-core formula they cannot be installed side-by-side. If you wish to create a different version of a formula that's in Homebrew/homebrew-core (e.g. with `option`s) consider giving it a different name; e.g. `nginx-full` for a more full-featured `nginx` formula. This will allow both `nginx` and `nginx-full` to be installed at the same time (assuming one is [keg-only](FAQ.md#what-does-keg-only-mean) or the linked files do not clash).
 
 ## Installing
 
@@ -54,7 +54,7 @@ See [Homebrew/test-bot](https://github.com/Homebrew/homebrew-test-bot) for an ex
 
 ## Upstream taps
 
-Some upstream software providers like to package their software in their own Homebrew tap. When their software is [eligible for Homebrew/homebrew-core](Acceptable-Formulae.md) we prefer to maintain software there for ease of updates, improved discoverability and use of tools such as [formulae.brew.sh](https://formulae.brew.sh).
+Some upstream software providers like to package their software in their own Homebrew tap. When their software is [eligible for Homebrew/homebrew-core](Acceptable-Formulae.md) we prefer to maintain software there for ease of updates, improved discoverability and use of tools such as [formulae.brew.sh](https://formulae.brew.sh/).
 
 We are not willing to remove software packaged in Homebrew/homebrew-core in favour of an upstream tap. We are not willing to instruct users of our formulae to use an upstream tap instead. If upstream projects have issues with how Homebrew packages your software: please file issues (or, ideally, pull requests) to address these problems.
 

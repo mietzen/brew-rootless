@@ -96,6 +96,11 @@ Layout/ArgumentAlignment:
 Layout/CaseIndentation:
   EnforcedStyle: end
 
+# currently bugged and as relevant/urgent in taps:
+# https://github.com/rubocop/rubocop/issues/14443
+Layout/EmptyLinesAfterModuleInclusion:
+  Enabled: false
+
 # significantly less indentation involved; more consistent
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent

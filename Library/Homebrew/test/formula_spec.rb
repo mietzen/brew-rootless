@@ -1364,6 +1364,10 @@ RSpec.describe Formula do
 
     def setup_tab_for_prefix(prefix, options = {})
       prefix.mkpath
+
+      keg = Keg.new(prefix)
+      keg.optlink
+
       tab = Tab.empty
       tab.tabfile = prefix/AbstractTab::FILENAME
       tab.source["path"] = options[:path].to_s if options[:path]
@@ -1393,6 +1397,12 @@ RSpec.describe Formula do
     example "outdated same tap installed" do
       f.instance_variable_set(:@tap, CoreTap.instance)
       setup_tab_for_prefix(outdated_prefix, tap: "homebrew/core")
+      expect(f.outdated_kegs).not_to be_empty
+    end
+
+    example "outdated unlinked tap installed" do
+      setup_tab_for_prefix(same_prefix)
+      Keg.new(same_prefix).remove_opt_record
       expect(f.outdated_kegs).not_to be_empty
     end
 

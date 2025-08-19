@@ -14,7 +14,10 @@ require "cmd/postinstall"
 require "json/add/exception"
 
 begin
-  ENV.delete("HOMEBREW_FORBID_PACKAGES_FROM_PATHS")
+  # Undocumented opt-out for internal use.
+  # We need to allow formulae from paths here due to how we pass them through.
+  ENV["HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS"] = "1"
+
   args = Homebrew::Cmd::Postinstall.new.args
   error_pipe = Utils::UNIXSocketExt.open(ENV.fetch("HOMEBREW_ERROR_PIPE"), &:recv_io)
   error_pipe.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
@@ -29,7 +32,7 @@ begin
   formula.run_post_install
 # Handle all possible exceptions.
 rescue Exception => e # rubocop:disable Lint/RescueException
-  error_pipe.puts e.to_json
-  error_pipe.close
+  error_pipe&.puts e.to_json
+  error_pipe&.close
   exit! 1
 end

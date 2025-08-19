@@ -37,7 +37,7 @@ class Resource
     instance_eval(&block) if block
   end
 
-  sig { params(other: Object).void }
+  sig { override.params(other: T.any(Resource, Downloadable)).void }
   def initialize_dup(other)
     super
     @name = @name.dup

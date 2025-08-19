@@ -8,6 +8,7 @@ require "system_command"
 module UnpackStrategy
   extend T::Helpers
   include SystemCommand::Mixin
+
   abstract!
 
   requires_ancestor { Kernel }
@@ -16,6 +17,7 @@ module UnpackStrategy
 
   module ClassMethods
     extend T::Helpers
+
     abstract!
 
     sig { abstract.returns(T::Array[String]) }

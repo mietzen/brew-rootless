@@ -10,6 +10,7 @@ module Homebrew
   module Cmd
     class Deps < AbstractCommand
       include DependenciesHelpers
+
       cmd_args do
         description <<~EOS
           Show dependencies for <formula>. When given multiple formula arguments,
@@ -87,8 +88,8 @@ module Homebrew
 
       sig { override.void }
       def run
-        raise UsageError, "`brew deps --os=all` is not supported" if args.os == "all"
-        raise UsageError, "`brew deps --arch=all` is not supported" if args.arch == "all"
+        raise UsageError, "`brew deps --os=all` is not supported." if args.os == "all"
+        raise UsageError, "`brew deps --arch=all` is not supported." if args.arch == "all"
 
         os, arch = T.must(args.os_arch_combinations.first)
         eval_all = args.eval_all?

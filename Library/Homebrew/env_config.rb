@@ -238,9 +238,10 @@ module Homebrew
         boolean:     true,
       },
       HOMEBREW_FORBID_PACKAGES_FROM_PATHS:       {
-        description: "If set, Homebrew will refuse to read formulae or casks provided from file paths, " \
-                     "e.g. `brew install ./package.rb`.",
-        boolean:     true,
+        description:  "If set, Homebrew will refuse to read formulae or casks provided from file paths, " \
+                      "e.g. `brew install ./package.rb`.",
+        boolean:      true,
+        default_text: "true unless `$HOMEBREW_DEVELOPER` is set.",
       },
       HOMEBREW_FORCE_API_AUTO_UPDATE:            {
         description: "If set, update the Homebrew API formula or cask data even if " \
@@ -552,6 +553,7 @@ module Homebrew
     CUSTOM_IMPLEMENTATIONS = T.let(Set.new([
       :HOMEBREW_MAKE_JOBS,
       :HOMEBREW_CASK_OPTS,
+      :HOMEBREW_FORBID_PACKAGES_FROM_PATHS,
     ]).freeze, T::Set[Symbol])
 
     ENVS.each do |env, hash|
@@ -629,6 +631,18 @@ module Homebrew
     end
 
     sig { returns(T::Boolean) }
+    def forbid_packages_from_paths?
+      # Undocumented opt-out for internal use.
+      return false if ENV["HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS"].present?
+
+      return true if ENV["HOMEBREW_FORBID_PACKAGES_FROM_PATHS"].present?
+
+      # Provide an opt-out for tests and developers.
+      # Our testing framework installs formulae from file paths all over the place.
+      ENV["HOMEBREW_TESTS"].blank? && ENV["HOMEBREW_DEVELOPER"].blank?
+    end
+
+    sig { returns(T::Boolean) }
     def automatically_set_no_install_from_api?
       ENV["HOMEBREW_AUTOMATICALLY_SET_NO_INSTALL_FROM_API"].present?
     end
@@ -650,6 +664,11 @@ module Homebrew
       end
 
       [concurrency, 1].max
+    end
+
+    sig { returns(T::Boolean) }
+    def use_internal_api?
+      ENV["HOMEBREW_USE_INTERNAL_API"].present?
     end
   end
 end

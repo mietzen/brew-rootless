@@ -267,7 +267,7 @@ module SharedEnvExtension
         ohai "Using a Fortran compiler found at #{gfortran}"
       end
       if gfortran
-        puts "This may be changed by setting the FC environment variable."
+        puts "This may be changed by setting the `$FC` environment variable."
         self["FC"] = self["F77"] = gfortran
         flags = FC_FLAG_VARS
       end

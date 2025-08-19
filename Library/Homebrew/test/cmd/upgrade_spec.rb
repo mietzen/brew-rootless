@@ -5,6 +5,7 @@ require "cmd/upgrade"
 
 RSpec.describe Homebrew::Cmd::UpgradeCmd do
   include FileUtils
+
   it_behaves_like "parseable arguments"
 
   it "upgrades a Formula and cleans up old versions", :integration_test do
@@ -15,6 +16,18 @@ RSpec.describe Homebrew::Cmd::UpgradeCmd do
 
     expect(HOMEBREW_CELLAR/"testball/0.1").to be_a_directory
     expect(HOMEBREW_CELLAR/"testball/0.0.1").not_to exist
+  end
+
+  it "links newer version when upgrade was interrupted", :integration_test do
+    setup_test_formula "testball"
+
+    (HOMEBREW_CELLAR/"testball/0.1/foo").mkpath
+
+    expect { brew "upgrade" }.to be_a_success
+
+    expect(HOMEBREW_CELLAR/"testball/0.1").to be_a_directory
+    expect(HOMEBREW_PREFIX/"opt/testball").to be_a_symlink
+    expect(HOMEBREW_PREFIX/"var/homebrew/linked/testball").to be_a_symlink
   end
 
   it "upgrades with asking for user prompts", :integration_test do

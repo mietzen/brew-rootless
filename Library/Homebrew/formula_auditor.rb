@@ -791,7 +791,7 @@ module Homebrew
       formula_suffix = stable.version.patch.to_i
       throttled_rate = formula.livecheck.throttle
       if throttled_rate && formula_suffix.modulo(throttled_rate).nonzero?
-        problem "should only be updated every #{throttled_rate} releases on multiples of #{throttled_rate}"
+        problem "Should only be updated every #{throttled_rate} releases on multiples of #{throttled_rate}"
       end
 
       case (url = stable.url)

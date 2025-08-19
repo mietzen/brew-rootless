@@ -598,4 +598,29 @@ RSpec.describe Cask::DSL, :cask, :no_api do
       ]
     end
   end
+
+  describe "rename stanza" do
+    it "allows setting single rename operation" do
+      cask = Cask::Cask.new("rename-cask") do
+        rename "Source*.pkg", "Target.pkg"
+      end
+
+      expect(cask.rename.length).to eq(1)
+      expect(cask.rename.first.from).to eq("Source*.pkg")
+      expect(cask.rename.first.to).to eq("Target.pkg")
+    end
+
+    it "allows setting multiple rename operations" do
+      cask = Cask::Cask.new("multi-rename-cask") do
+        rename "App*.pkg", "App.pkg"
+        rename "Doc*.dmg", "Doc.dmg"
+      end
+
+      expect(cask.rename.length).to eq(2)
+      expect(cask.rename.first.from).to eq("App*.pkg")
+      expect(cask.rename.first.to).to eq("App.pkg")
+      expect(cask.rename.last.from).to eq("Doc*.dmg")
+      expect(cask.rename.last.to).to eq("Doc.dmg")
+    end
+  end
 end

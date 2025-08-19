@@ -123,7 +123,7 @@ module GitHub
       end
     end
 
-    # Error when the user has no GitHub API credentials set at all (macOS keychain, GitHub CLI or envvar).
+    # Error when the user has no GitHub API credentials set at all (macOS keychain, GitHub CLI or env var).
     class MissingAuthenticationError < Error
       sig { void }
       def initialize

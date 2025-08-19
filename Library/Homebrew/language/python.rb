@@ -286,7 +286,7 @@ module Language
       def slice_resources!(resources_hash, resource_names)
         resource_names.map do |resource_name|
           resources_hash.delete(resource_name) do
-            raise ArgumentError, "Resource \"#{resource_name}\" is not defined in formula or is already used"
+            raise ArgumentError, "Resource \"#{resource_name}\" is not defined in formula or is already used."
           end
         end
       end

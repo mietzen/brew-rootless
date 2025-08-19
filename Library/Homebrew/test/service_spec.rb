@@ -68,7 +68,7 @@ RSpec.describe Homebrew::Service do
 
       expect do
         f.service.manual_command
-      end.to raise_error TypeError, "Service#keep_alive allows only [:always, :successful_exit, :crashed, :path]"
+      end.to raise_error TypeError, "Service#keep_alive only allows: [:always, :successful_exit, :crashed, :path]"
     end
   end
 

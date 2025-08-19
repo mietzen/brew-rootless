@@ -1909,9 +1909,9 @@ _brew_search() {
 # brew services
 _brew_services() {
   _arguments \
-    '--all[Run subcommand on all services]' \
+    '(--file)--all[Run subcommand on all services]' \
     '--debug[Display any debugging information]' \
-    '--file[Use the service file from this location to `start` the service]' \
+    '(--all)--file[Use the service file from this location to `start` the service]' \
     '--help[Show this message]' \
     '--json[Output as JSON]' \
     '--keep[When stopped, don'\''t unregister the service from launching at login (or boot)]' \

@@ -12,6 +12,7 @@ module Homebrew
   module Cmd
     class GistLogs < AbstractCommand
       include Install
+
       cmd_args do
         description <<~EOS
           Upload logs for a failed build of <formula> to a new Gist. Presents an

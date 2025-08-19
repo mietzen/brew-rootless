@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "os/linux/ld"
@@ -44,7 +44,8 @@ module ELFShim
 
   requires_ancestor { Pathname }
 
-  def initialize(*args)
+  sig { params(path: T.anything).void }
+  def initialize(path)
     @elf = T.let(nil, T.nilable(T::Boolean))
     @arch = T.let(nil, T.nilable(Symbol))
     @elf_type = T.let(nil, T.nilable(Symbol))
@@ -56,10 +57,12 @@ module ELFShim
     super
   end
 
+  sig { params(offset: Integer).returns(Integer) }
   def read_uint8(offset)
     read(1, offset).unpack1("C")
   end
 
+  sig { params(offset: Integer).returns(Integer) }
   def read_uint16(offset)
     read(2, offset).unpack1("v")
   end
@@ -90,6 +93,7 @@ module ELFShim
     end
   end
 
+  sig { params(wanted_arch: Symbol).returns(T::Boolean) }
   def arch_compatible?(wanted_arch)
     return true unless elf?
 
@@ -110,10 +114,12 @@ module ELFShim
     end
   end
 
+  sig { returns(T::Boolean) }
   def dylib?
     elf_type == :dylib
   end
 
+  sig { returns(T::Boolean) }
   def binary_executable?
     elf_type == :executable
   end
@@ -127,6 +133,7 @@ module ELFShim
 
   # An array of runtime search path entries, such as:
   # ["/lib", "/usr/lib", "/usr/local/lib"]
+  sig { returns(T::Array[String]) }
   def rpaths
     Array(rpath&.split(":"))
   end
@@ -136,14 +143,11 @@ module ELFShim
     metadata.interpreter
   end
 
+  sig { params(interpreter: T.nilable(String), rpath: T.nilable(String)).void }
   def patch!(interpreter: nil, rpath: nil)
     return if interpreter.blank? && rpath.blank?
 
     save_using_patchelf_rb interpreter, rpath
-  end
-
-  def elf_parser
-    @elf_parser ||= patchelf_patcher.elf
   end
 
   sig { returns(T::Boolean) }
@@ -186,20 +190,21 @@ module ELFShim
       @path = T.let(path, ELFShim)
       @dylibs = T.let(nil, T.nilable(T::Array[String]))
       @dylib_id = T.let(nil, T.nilable(String))
+      @needed = T.let([], T::Array[String])
 
       dynamic_segment = patcher.elf.segment_by_type(:dynamic)
-      @dynamic_elf = dynamic_segment.present?
+      @dynamic_elf = T.let(dynamic_segment.present?, T::Boolean)
       @dylib_id, @needed = if @dynamic_elf
         [patcher.soname, patcher.needed]
       else
         [nil, []]
       end
 
-      @interpreter = patcher.interpreter
-      @rpath = patcher.runpath || patcher.rpath
-      @section_names = patcher.elf.sections.map(&:name).compact_blank
+      @interpreter = T.let(patcher.interpreter, T.nilable(String))
+      @rpath = T.let(patcher.runpath || patcher.rpath, T.nilable(String))
+      @section_names = T.let(patcher.elf.sections.map(&:name).compact_blank, T::Array[String])
 
-      @dt_flags_1 = dynamic_segment&.tag_by_type(:flags_1)&.value
+      @dt_flags_1 = T.let(dynamic_segment&.tag_by_type(:flags_1)&.value, T.nilable(Integer))
     end
 
     sig { returns(T::Array[String]) }
@@ -209,7 +214,9 @@ module ELFShim
 
     private
 
+    sig { params(basename: String).returns(Pathname) }
     def find_full_lib_path(basename)
+      basename = Pathname(basename)
       local_paths = rpath&.split(":")
 
       # Search for dependencies in the runpath/rpath first
@@ -257,6 +264,7 @@ module ELFShim
   end
   private_constant :Metadata
 
+  sig { params(new_interpreter: T.nilable(String), new_rpath: T.nilable(String)).void }
   def save_using_patchelf_rb(new_interpreter, new_rpath)
     patcher = patchelf_patcher
     patcher.interpreter = new_interpreter if new_interpreter.present?
@@ -267,6 +275,7 @@ module ELFShim
   # Don't cache the patcher; it keeps the ELF file open so long as it is alive.
   # Instead, for read-only access to the ELF file's metadata, fetch it and cache
   # it with {Metadata}.
+  sig { returns(::PatchELF::Patcher) }
   def patchelf_patcher
     require "patchelf"
     ::PatchELF::Patcher.new to_s, on_error: :silent
@@ -278,11 +287,13 @@ module ELFShim
   end
   private :metadata
 
+  sig { returns(T.nilable(String)) }
   def dylib_id
     metadata.dylib_id
   end
 
-  def dynamically_linked_libraries(*)
+  sig { params(except: Symbol, resolve_variable_references: T::Boolean).returns(T::Array[String]) }
+  def dynamically_linked_libraries(except: :none, resolve_variable_references: true)
     metadata.dylibs
   end
 end

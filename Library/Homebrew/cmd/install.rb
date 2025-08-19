@@ -181,7 +181,7 @@ module Homebrew
           # `build.rb`. Instead, `hide_from_man_page` and don't do anything with
           # this argument here.
           # This odisabled should stick around indefinitely.
-          odisabled "brew install --env", "`env :std` in specific formula files"
+          odisabled "`brew install --env`", "`env :std` in specific formula files"
         end
 
         args.named.each do |name|

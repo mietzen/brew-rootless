@@ -382,7 +382,7 @@ class FormulaInstaller
     check_installation_already_attempted
 
     if force_bottle? && !pour_bottle?
-      raise CannotInstallFormulaError, "--force-bottle passed but #{formula.full_name} has no bottle!"
+      raise CannotInstallFormulaError, "`--force-bottle` passed but #{formula.full_name} has no bottle!"
     end
 
     if Homebrew.default_prefix? &&
@@ -477,7 +477,7 @@ class FormulaInstaller
 
     raise CannotInstallFormulaError,
           "You must `brew unpin #{pinned_unsatisfied_deps * " "}` as installing " \
-          "#{formula.full_name} requires the latest version of pinned dependencies"
+          "#{formula.full_name} requires the latest version of pinned dependencies."
   end
 
   sig { params(_formula: Formula).returns(T.nilable(T::Boolean)) }

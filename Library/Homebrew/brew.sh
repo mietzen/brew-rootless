@@ -201,7 +201,7 @@ then
     odie <<EOS
 conflicting Homebrew wrapper configuration!
 HOMEBREW_FORCE_BREW_WRAPPER was set to ${HOMEBREW_FORCE_BREW_WRAPPER}
-but   HOMEBREW_BREW_WRAPPER was unset.
+but HOMEBREW_BREW_WRAPPER   was unset.
 
 $(bold "Ensure you run ${HOMEBREW_FORCE_BREW_WRAPPER} directly (not ${HOMEBREW_BREW_FILE})")!
 
@@ -713,8 +713,8 @@ else
   then
     message="Please update your system curl or set HOMEBREW_CURL_PATH to a newer version.
 Minimum required version: ${HOMEBREW_MINIMUM_CURL_VERSION}
-Your curl version: ${curl_name_and_version##* }
-Your curl executable: $(type -p "${HOMEBREW_CURL}")"
+       Your curl version: ${curl_name_and_version##* }
+    Your curl executable: $(type -p "${HOMEBREW_CURL}")"
 
     if [[ -z ${HOMEBREW_CURL_PATH} ]]
     then
@@ -741,8 +741,8 @@ Your curl executable: $(type -p "${HOMEBREW_CURL}")"
   then
     message="Please update your system Git or set HOMEBREW_GIT_PATH to a newer version.
 Minimum required version: ${HOMEBREW_MINIMUM_GIT_VERSION}
-Your Git version: ${major}.${minor}.${micro}.${build}
-Your Git executable: $(unset git && type -p "${HOMEBREW_GIT}")"
+        Your Git version: ${major}.${minor}.${micro}.${build}
+     Your Git executable: $(unset git && type -p "${HOMEBREW_GIT}")"
     if [[ -z ${HOMEBREW_GIT_PATH} ]]
     then
       HOMEBREW_FORCE_BREWED_GIT="1"
@@ -1101,6 +1101,9 @@ then
   "${SUDO}" --reset-timestamp 2>/dev/null || true
 fi
 unset SUDO
+
+# Remove internal variables
+unset HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS
 
 if [[ -n "${HOMEBREW_BASH_COMMAND}" ]]
 then

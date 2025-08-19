@@ -3,6 +3,8 @@
 
 require "cask/denylist"
 require "cask/download"
+require "cask/installer"
+require "cask/quarantine"
 require "digest"
 require "livecheck/livecheck"
 require "source_location"
@@ -500,6 +502,11 @@ module Cask
       return if !cask.tap.official? && !signing?
       return if cask.deprecated? && cask.deprecation_reason != :unsigned
 
+      unless Quarantine.available?
+        odebug "Quarantine support is not available, skipping signing audit"
+        return
+      end
+
       odebug "Auditing signing"
 
       is_in_skiplist = cask.tap&.audit_exception(:signing_audit_skiplist, cask.token)
@@ -514,6 +521,11 @@ module Cask
 
           path = tmpdir/artifact_path.relative_path_from(cask.staged_path)
 
+          unless Quarantine.detect(path)
+            odebug "#{path} does not have quarantine attributes, skipping signing audit"
+            next false
+          end
+
           result = case artifact
           when Artifact::Pkg
             system_command("spctl", args: ["--assess", "--type", "install", path], print_stderr: false)
@@ -525,8 +537,8 @@ module Cask
             # Shell scripts cannot be signed, so we skip them
             next false if path.text_executable?
 
-            system_command("codesign",  args:         ["--verify", "-R=notarized", "--check-notarization", path],
-                                        print_stderr: false)
+            system_command("codesign", args:         ["--verify", "-R=notarized", "--check-notarization", path],
+                                       print_stderr: false)
           else
             add_error "Unknown artifact type: #{artifact.class}", location: url.location
           end
@@ -630,6 +642,11 @@ module Cask
         UnpackStrategy.detect(@tmpdir/nested_container, merge_xattrs: true)
                       .extract_nestedly(to: @tmpdir, verbose: false)
       end
+
+      # Process rename operations after extraction
+      # Create a temporary installer to process renames in the audit directory
+      temp_installer = Installer.new(@cask)
+      temp_installer.process_rename_operations(target_dir: @tmpdir)
 
       # Set the flag to indicate that extraction has occurred.
       @artifacts_extracted = T.let(true, T.nilable(TrueClass))

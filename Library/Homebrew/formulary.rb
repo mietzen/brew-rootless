@@ -173,9 +173,9 @@ module Formulary
     platform_cache[:path][path] = klass
   end
 
-  sig { params(name: String, flags: T::Array[String]).returns(T.class_of(Formula)) }
-  def self.load_formula_from_api!(name, flags:)
-    namespace = :"FormulaNamespaceAPI#{namespace_key(name)}"
+  sig { params(name: String, json_formula_with_variations: T::Hash[String, T.untyped], flags: T::Array[String]).returns(T.class_of(Formula)) }
+  def self.load_formula_from_json!(name, json_formula_with_variations, flags:)
+    namespace = :"FormulaNamespaceAPI#{namespace_key(json_formula_with_variations.to_json)}"
 
     mod = Module.new
     remove_const(namespace) if const_defined?(namespace)
@@ -184,10 +184,7 @@ module Formulary
     mod.const_set(:BUILD_FLAGS, flags)
 
     class_name = class_s(name)
-    json_formula = Homebrew::API::Formula.all_formulae[name]
-    raise FormulaUnavailableError, name if json_formula.nil?
-
-    json_formula = Homebrew::API.merge_variations(json_formula)
+    json_formula = Homebrew::API.merge_variations(json_formula_with_variations)
 
     uses_from_macos_names = json_formula.fetch("uses_from_macos", []).map do |dep|
       next dep unless dep.is_a? Hash
@@ -273,6 +270,7 @@ module Formulary
     # rubocop:todo Sorbet/BlockMethodDefinition
     klass = Class.new(::Formula) do
       @loaded_from_api = true
+      @api_source = json_formula_with_variations
 
       desc json_formula["desc"]
       homepage json_formula["homepage"]
@@ -618,8 +616,28 @@ module Formulary
 
       return unless path.expand_path.exist?
 
-      return if Homebrew::EnvConfig.forbid_packages_from_paths? &&
-                !path.realpath.to_s.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/")
+      if Homebrew::EnvConfig.forbid_packages_from_paths?
+        path_realpath = path.realpath.to_s
+        path_string = path.to_s
+        if (path_realpath.end_with?(".rb") || path_string.end_with?(".rb")) &&
+           !path_realpath.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/", "#{HOMEBREW_CACHE}/") &&
+           !path_string.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/", "#{HOMEBREW_CACHE}/")
+          if path_string.include?("./") || path_string.end_with?(".rb") || path_string.count("/") != 2
+            raise <<~WARNING
+              Homebrew requires formulae to be in a tap, rejecting:
+                #{path_string} (#{path_realpath})
+
+              To create a tap, run e.g.
+                brew tap-new <user|org>/<repository>
+              To create a formula in a tap run e.g.
+                brew create <url> --tap=<user|org>/<repository>
+            WARNING
+          elsif path_string.count("/") == 2
+            # Looks like a tap, let's quietly return but not error.
+            return
+          end
+        end
+      end
 
       if (tap = Tap.from_path(path))
         # Only treat symlinks in taps as aliases.
@@ -693,7 +711,7 @@ module Formulary
       if ALLOWED_URL_SCHEMES.exclude?(url_scheme)
         raise UnsupportedInstallationMethod,
               "Non-checksummed download of #{name} formula file from an arbitrary URL is unsupported! " \
-              "`brew extract` or `brew create` and `brew tap-new` to create a formula file in a tap " \
+              "Use `brew extract` or `brew create` and `brew tap-new` to create a formula file in a tap " \
               "on GitHub instead."
       end
       HOMEBREW_CACHE_FORMULA.mkpath
@@ -877,9 +895,9 @@ module Formulary
       return if Homebrew::EnvConfig.no_install_from_api?
       return unless ref.is_a?(String)
       return unless (name = ref[HOMEBREW_DEFAULT_TAP_FORMULA_REGEX, :name])
-      if !Homebrew::API::Formula.all_formulae.key?(name) &&
-         !Homebrew::API::Formula.all_aliases.key?(name) &&
-         !Homebrew::API::Formula.all_renames.key?(name)
+      if Homebrew::API.formula_names.exclude?(name) &&
+         !Homebrew::API.formula_aliases.key?(name) &&
+         !Homebrew::API.formula_renames.key?(name)
         return
       end
 
@@ -911,7 +929,10 @@ module Formulary
     private
 
     def load_from_api(flags:)
-      Formulary.load_formula_from_api!(name, flags:)
+      json_formula = Homebrew::API::Formula.all_formulae[name]
+      raise FormulaUnavailableError, name if json_formula.nil?
+
+      Formulary.load_formula_from_json!(name, json_formula, flags:)
     end
   end
 

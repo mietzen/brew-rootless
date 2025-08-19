@@ -245,7 +245,7 @@ module Homebrew
         end
 
         # Use the `stable` version for comparison except for installed
-        # head-only formulae. A formula with `stable` and `head` that's
+        # HEAD-only formulae. A formula with `stable` and `head` that's
         # installed using `--head` will still use the `stable` version for
         # comparison.
         current = if formula
