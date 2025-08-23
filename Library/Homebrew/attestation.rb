@@ -7,10 +7,12 @@ require "utils/popen"
 require "utils/github/api"
 require "exceptions"
 require "system_command"
+require "utils/output"
 
 module Homebrew
   module Attestation
     extend SystemCommand::Mixin
+    extend Utils::Output::Mixin
 
     # @api private
     HOMEBREW_CORE_REPO = "Homebrew/homebrew-core"

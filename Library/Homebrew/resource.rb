@@ -5,6 +5,7 @@ require "downloadable"
 require "mktemp"
 require "livecheck"
 require "on_system"
+require "utils/output"
 
 # Resource is the fundamental representation of an external resource. The
 # primary formula download, along with other declared resources, are instances
@@ -13,6 +14,7 @@ class Resource
   include Downloadable
   include FileUtils
   include OnSystem::MacOSAndLinux
+  include Utils::Output::Mixin
 
   attr_reader :source_modified_time, :patches, :owner
   attr_writer :checksum

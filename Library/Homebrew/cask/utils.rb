@@ -3,10 +3,13 @@
 
 require "utils/user"
 require "open3"
+require "utils/output"
 
 module Cask
   # Helper functions for various cask operations.
   module Utils
+    extend ::Utils::Output::Mixin
+
     BUG_REPORTS_URL = "https://github.com/Homebrew/homebrew-cask#reporting-bugs"
 
     def self.gain_permissions_mkpath(path, command: SystemCommand)

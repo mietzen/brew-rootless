@@ -234,7 +234,7 @@ module FormulaCellarChecks
     keg = Keg.new(prefix)
 
     matches = []
-    keg.each_unique_file_matching(HOMEBREW_SHIMS_PATH) do |f|
+    keg.each_unique_file_matching(HOMEBREW_SHIMS_PATH.to_s) do |f|
       match = f.relative_path_from(keg.to_path)
 
       next if match.to_s.match? %r{^share/doc/.+?/INFO_BIN$}
@@ -371,7 +371,10 @@ module FormulaCellarChecks
     mismatches = mismatches.to_h
 
     universal_binaries_expected = if (formula_tap = formula.tap).present? && formula_tap.core_tap?
-      formula_tap.audit_exception(:universal_binary_allowlist, formula.name)
+      formula_name = formula.name
+      # Apply audit exception to versioned formulae too from the unversioned name.
+      formula_name.gsub!(/@\d+(\.\d+)*$/, "") if formula.versioned_formula?
+      formula_tap.audit_exception(:universal_binary_allowlist, formula_name)
     else
       true
     end

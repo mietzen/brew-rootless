@@ -4,11 +4,13 @@
 require "development_tools"
 require "cask/exceptions"
 require "system_command"
+require "utils/output"
 
 module Cask
   # Helper module for quarantining files.
   module Quarantine
     extend SystemCommand::Mixin
+    extend ::Utils::Output::Mixin
 
     QUARANTINE_ATTRIBUTE = "com.apple.quarantine"
 

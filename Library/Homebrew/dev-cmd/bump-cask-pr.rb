@@ -71,7 +71,16 @@ module Homebrew
         # Use the user's browser, too.
         ENV["BROWSER"] = EnvConfig.browser
 
-        cask = args.named.to_casks.fetch(0)
+        @cask_retried = T.let(false, T.nilable(T::Boolean))
+        cask = begin
+          args.named.to_casks.fetch(0)
+        rescue Cask::CaskUnavailableError
+          raise if @cask_retried
+
+          CoreCaskTap.instance.install(force: true)
+          @cask_retried = true
+          retry
+        end
 
         odie "This cask is not in a tap!" if cask.tap.blank?
         odie "This cask's tap is not a Git repository!" unless cask.tap.git?

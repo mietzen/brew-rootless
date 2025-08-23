@@ -255,6 +255,17 @@ RSpec.describe Cask::Cask, :cask do
     end
   end
 
+  describe "#rename_list" do
+    subject(:cask) { Cask::CaskLoader.load("many-renames") }
+
+    it "returns the correct rename list" do
+      expect(cask.rename_list).to eq([
+        { from: "Foobar.app", to: "Foo.app" },
+        { from: "Foo.app", to: "Bar.app" },
+      ])
+    end
+  end
+
   describe "#uninstall_flight_blocks?" do
     matcher :have_uninstall_flight_blocks do
       match do |actual|

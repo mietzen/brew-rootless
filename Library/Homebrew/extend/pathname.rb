@@ -4,12 +4,14 @@
 require "system_command"
 require "extend/pathname/disk_usage_extension"
 require "extend/pathname/observer_pathname_extension"
+require "utils/output"
 
 # Homebrew extends Ruby's `Pathname` to make our code more readable.
 # @see https://ruby-doc.org/stdlib-2.6.3/libdoc/pathname/rdoc/Pathname.html Ruby's Pathname API
 class Pathname
   include SystemCommand::Mixin
   include DiskUsageExtension
+  include Utils::Output::Mixin
 
   # Moves a file from the original location to the {Pathname}'s.
   #

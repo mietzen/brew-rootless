@@ -2,12 +2,14 @@
 # frozen_string_literal: true
 
 require "system_command"
+require "utils/output"
 
 module Utils
   # Helper functions for interacting with tar files.
   module Tar
     class << self
       include SystemCommand::Mixin
+      include Utils::Output::Mixin
 
       TAR_FILE_EXTENSIONS = %w[.tar .tb2 .tbz .tbz2 .tgz .tlz .txz .tZ].freeze
 

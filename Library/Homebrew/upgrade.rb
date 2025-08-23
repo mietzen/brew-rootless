@@ -7,10 +7,13 @@ require "development_tools"
 require "messages"
 require "cleanup"
 require "utils/topological_hash"
+require "utils/output"
 
 module Homebrew
   # Helper functions for upgrading formulae.
   module Upgrade
+    extend Utils::Output::Mixin
+
     class Dependents < T::Struct
       const :upgradeable, T::Array[Formula]
       const :pinned, T::Array[Formula]

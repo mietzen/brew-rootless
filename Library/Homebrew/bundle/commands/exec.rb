@@ -6,11 +6,14 @@ require "exceptions"
 require "extend/ENV"
 require "utils"
 require "PATH"
+require "utils/output"
 
 module Homebrew
   module Bundle
     module Commands
       module Exec
+        extend Utils::Output::Mixin
+
         PATH_LIKE_ENV_REGEX = /.+#{File::PATH_SEPARATOR}/
 
         sig {

@@ -1,6 +1,8 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "utils/output"
+
 module OS
   module Linux
     module Install
@@ -108,7 +110,7 @@ module OS
               ::Kernel.system HOMEBREW_PREFIX/"opt/glibc/sbin/ldconfig"
             end
           else
-            ::Kernel.odie "#{HOMEBREW_PREFIX}/lib does not exist!" unless (HOMEBREW_PREFIX/"lib").readable?
+            Utils::Output.odie "#{HOMEBREW_PREFIX}/lib does not exist!" unless (HOMEBREW_PREFIX/"lib").readable?
           end
 
           GCC_RUNTIME_LIBS.each do |library|

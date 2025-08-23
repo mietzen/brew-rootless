@@ -88,7 +88,7 @@ module OS
 
         if is_xcode_sdk || MacOS.sdk_root_needed?
           Homebrew::Diagnostic.checks(:fatal_setup_build_environment_checks)
-          self["HOMEBREW_SDKROOT"] = sdk.path if sdk
+          self["HOMEBREW_SDKROOT"] = sdk.path.to_s if sdk
         end
 
         self["HOMEBREW_DEVELOPER_DIR"] = if is_xcode_sdk

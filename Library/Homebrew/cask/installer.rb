@@ -5,6 +5,7 @@ require "formula_installer"
 require "unpack_strategy"
 require "utils/topological_hash"
 require "utils/analytics"
+require "utils/output"
 
 require "cask/config"
 require "cask/download"
@@ -15,6 +16,9 @@ require "cask/tab"
 module Cask
   # Installer for a {Cask}.
   class Installer
+    extend ::Utils::Output::Mixin
+    include ::Utils::Output::Mixin
+
     sig {
       params(
         cask: ::Cask::Cask, command: T::Class[SystemCommand], force: T::Boolean, adopt: T::Boolean,

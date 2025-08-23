@@ -6,10 +6,13 @@ require "api/cask"
 require "api/formula"
 require "api/internal"
 require "base64"
+require "utils/output"
 
 module Homebrew
   # Helper functions for using Homebrew's formulae.brew.sh API.
   module API
+    extend Utils::Output::Mixin
+
     extend Cachable
 
     HOMEBREW_CACHE_API = T.let((HOMEBREW_CACHE/"api").freeze, Pathname)
@@ -152,8 +155,14 @@ module Homebrew
       json.except("variations")
     end
 
-    sig { params(download_queue: T.nilable(DownloadQueue), stale_seconds: Integer).void }
-    def self.fetch_api_files!(download_queue: nil, stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
+    sig { void }
+    def self.fetch_api_files!
+      download_queue = if Homebrew::EnvConfig.download_concurrency > 1
+        require "download_queue"
+        Homebrew::DownloadQueue.new
+      end
+      stale_seconds = 86400 # 1 day
+
       if Homebrew::EnvConfig.use_internal_api?
         Homebrew::API::Internal.fetch_formula_api!(download_queue:, stale_seconds:)
         Homebrew::API::Internal.fetch_cask_api!(download_queue:, stale_seconds:)
@@ -162,6 +171,13 @@ module Homebrew
         Homebrew::API::Formula.fetch_tap_migrations!(download_queue:, stale_seconds:)
         Homebrew::API::Cask.fetch_api!(download_queue:, stale_seconds:)
         Homebrew::API::Cask.fetch_tap_migrations!(download_queue:, stale_seconds:)
+      end
+      return unless download_queue
+
+      begin
+        download_queue.fetch
+      ensure
+        download_queue.shutdown
       end
     end
 

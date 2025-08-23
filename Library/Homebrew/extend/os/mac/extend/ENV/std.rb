@@ -83,10 +83,10 @@ module OS
         return if !MacOS.sdk_root_needed? && sdk&.source != :xcode
 
         Homebrew::Diagnostic.checks(:fatal_setup_build_environment_checks)
-        sdk = sdk.path
+        sdk = T.must(sdk).path
 
         # Extra setup to support Xcode 4.3+ without CLT.
-        self["SDKROOT"] = sdk
+        self["SDKROOT"] = sdk.to_s
         # Tell clang/gcc where system include's are:
         append_path "CPATH", "#{sdk}/usr/include"
         # The -isysroot is needed, too, because of the Frameworks

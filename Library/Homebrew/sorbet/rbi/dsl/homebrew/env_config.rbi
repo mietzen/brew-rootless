@@ -50,9 +50,6 @@ module Homebrew::EnvConfig
     def brew_git_remote; end
 
     sig { returns(T.nilable(::String)) }
-    def brew_wrapper; end
-
-    sig { returns(T.nilable(::String)) }
     def browser; end
 
     sig { returns(T.nilable(::String)) }
@@ -243,9 +240,6 @@ module Homebrew::EnvConfig
 
     sig { returns(T::Boolean) }
     def no_env_hints?; end
-
-    sig { returns(T::Boolean) }
-    def no_force_brew_wrapper?; end
 
     sig { returns(T::Boolean) }
     def no_github_api?; end

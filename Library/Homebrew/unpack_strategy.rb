@@ -3,11 +3,14 @@
 
 require "mktemp"
 require "system_command"
+require "utils/output"
 
 # Module containing all available strategies for unpacking archives.
 module UnpackStrategy
   extend T::Helpers
+  extend Utils::Output::Mixin
   include SystemCommand::Mixin
+  include Utils::Output::Mixin
 
   abstract!
 

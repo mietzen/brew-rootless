@@ -155,7 +155,7 @@ RSpec.describe Homebrew::Cmd::UpdateReport do
     end
 
     it "dumps new casks report" do
-      allow(hub).to receive(:select_formula_or_cask).with(:AC).and_return(["foo/cask1", "foo/cask2", "foo/cask3"])
+      allow(hub).to receive(:select_formula_or_cask).with(:AC).and_return(["cask1", "cask2", "foo/tap/cask3"])
       allow(hub).to receive_messages(cask_installed?: false, all_cask_json: [
         { "token" => "cask1", "desc" => "desc1" },
         { "token" => "cask3", "desc" => "desc3" },
@@ -165,7 +165,7 @@ RSpec.describe Homebrew::Cmd::UpdateReport do
         ==> New Casks
         cask1: desc1
         cask2
-        cask3: desc3
+        cask3
       EOS
     end
 

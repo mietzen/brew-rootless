@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "utils/bottles"
+require "utils/output"
 
 require "formula"
 require "cask/cask_loader"
@@ -9,6 +10,9 @@ require "cask/cask_loader"
 module Homebrew
   # Helper class for cleaning up the Homebrew cache.
   class Cleanup
+    extend Utils::Output::Mixin
+    include Utils::Output::Mixin
+
     CLEANUP_DEFAULT_DAYS = Homebrew::EnvConfig.cleanup_periodic_full_days.to_i.freeze
     GH_ACTIONS_ARTIFACT_CLEANUP_DAYS = 3
     private_constant :CLEANUP_DEFAULT_DAYS, :GH_ACTIONS_ARTIFACT_CLEANUP_DAYS

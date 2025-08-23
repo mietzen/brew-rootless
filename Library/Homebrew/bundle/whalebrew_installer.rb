@@ -1,9 +1,13 @@
 # typed: true # rubocop:todo Sorbet/StrictSigil
 # frozen_string_literal: true
 
+require "utils/output"
+
 module Homebrew
   module Bundle
     module WhalebrewInstaller
+      extend Utils::Output::Mixin
+
       def self.reset!
         @installed_images = nil
       end

@@ -4,11 +4,13 @@
 require "formula"
 require "cask/cask_loader"
 require "system_command"
+require "utils/output"
 
 # Helper module for validating syntax in taps.
 module Readall
   extend Cachable
   extend SystemCommand::Mixin
+  extend Utils::Output::Mixin
 
   # TODO: remove this once the `MacOS` module is undefined on Linux
   MACOS_MODULE_REGEX = /\b(MacOS|OS::Mac)(\.|::)\b/

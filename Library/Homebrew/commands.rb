@@ -1,6 +1,8 @@
 # typed: true # rubocop:todo Sorbet/StrictSigil
 # frozen_string_literal: true
 
+require "utils"
+
 # Helper functions for commands.
 module Commands
   HOMEBREW_CMD_PATH = (HOMEBREW_LIBRARY_PATH/"cmd").freeze
@@ -34,11 +36,11 @@ module Commands
   DESCRIPTION_SPLITTING_PATTERN = /\.(?>\s|$)/
 
   def self.valid_internal_cmd?(cmd)
-    require?(HOMEBREW_CMD_PATH/cmd)
+    Homebrew.require?(HOMEBREW_CMD_PATH/cmd)
   end
 
   def self.valid_internal_dev_cmd?(cmd)
-    require?(HOMEBREW_DEV_CMD_PATH/cmd)
+    Homebrew.require?(HOMEBREW_DEV_CMD_PATH/cmd)
   end
 
   def self.valid_ruby_cmd?(cmd)
@@ -76,7 +78,7 @@ module Commands
   # Ruby commands which can be `require`d without being run.
   def self.external_ruby_v2_cmd_path(cmd)
     path = which("#{cmd}.rb", tap_cmd_directories)
-    path if require?(path)
+    path if Homebrew.require?(path)
   end
 
   # Ruby commands which are run by being `require`d.

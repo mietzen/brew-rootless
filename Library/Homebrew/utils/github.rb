@@ -4,6 +4,7 @@
 require "uri"
 require "utils/github/actions"
 require "utils/github/api"
+require "utils/output"
 
 require "system_command"
 
@@ -12,6 +13,8 @@ require "system_command"
 # @api internal
 module GitHub
   extend SystemCommand::Mixin
+
+  extend Utils::Output::Mixin
 
   def self.check_runs(repo: nil, commit: nil, pull_request: nil)
     if pull_request

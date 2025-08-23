@@ -276,7 +276,7 @@ module Homebrew
         puts
 
         new_major_version, new_minor_version, new_patch_version = new_tag.split(".").map(&:to_i)
-        old_major_version, old_minor_version = old_tag.split(".")[0, 2].map(&:to_i) if old_tag.present?
+        old_major_version, old_minor_version = T.must(old_tag.split(".")[0, 2]).map(&:to_i) if old_tag.present?
         if old_tag.blank? || new_major_version > old_major_version || new_minor_version > old_minor_version
           puts <<~EOS
             The #{new_major_version}.#{new_minor_version}.0 release notes are available on the Homebrew Blog:
@@ -425,6 +425,8 @@ end
 require "extend/os/cmd/update-report"
 
 class Reporter
+  include Utils::Output::Mixin
+
   class ReporterRevisionUnsetError < RuntimeError
     sig { params(var_name: String).void }
     def initialize(var_name)
@@ -782,6 +784,8 @@ class Reporter
 end
 
 class ReporterHub
+  include Utils::Output::Mixin
+
   sig { returns(T::Array[Reporter]) }
   attr_reader :reporters
 
@@ -869,8 +873,13 @@ class ReporterHub
     return if formulae.blank?
 
     ohai "New Formulae"
+    should_display_descriptions = if Homebrew::EnvConfig.no_install_from_api?
+      formulae.size <= 100
+    else
+      true
+    end
     formulae.each do |formula|
-      if (desc = description(formula))
+      if should_display_descriptions && (desc = description(formula))
         puts "#{formula}: #{desc}"
       else
         puts formula
@@ -882,17 +891,21 @@ class ReporterHub
   def dump_new_cask_report
     return unless Cask::Caskroom.any_casks_installed?
 
-    casks = select_formula_or_cask(:AC).sort.filter_map do |name|
-      name.split("/").last unless cask_installed?(name)
-    end
+    casks = select_formula_or_cask(:AC).sort.reject { |name| cask_installed?(name) }
     return if casks.blank?
 
     ohai "New Casks"
+    should_display_descriptions = if Homebrew::EnvConfig.no_install_from_api?
+      casks.size <= 100
+    else
+      true
+    end
     casks.each do |cask|
-      if (desc = cask_description(cask))
-        puts "#{cask}: #{desc}"
+      cask_token = T.must(cask.split("/").last)
+      if should_display_descriptions && (desc = cask_description(cask))
+        puts "#{cask_token}: #{desc}"
       else
-        puts cask
+        puts cask_token
       end
     end
   end
@@ -930,23 +943,9 @@ class ReporterHub
     (HOMEBREW_CELLAR/formula.split("/").last).directory?
   end
 
-  sig { params(formula: String).returns(T::Boolean) }
-  def outdated?(formula)
-    Formula[formula].outdated?
-  rescue FormulaUnavailableError
-    false
-  end
-
   sig { params(cask: String).returns(T::Boolean) }
   def cask_installed?(cask)
     (Cask::Caskroom.path/cask).directory?
-  end
-
-  sig { params(cask: String).returns(T::Boolean) }
-  def cask_outdated?(cask)
-    Cask::CaskLoader.load(cask).outdated?
-  rescue Cask::CaskError
-    false
   end
 
   sig { returns(T::Array[T.untyped]) }
@@ -971,19 +970,29 @@ class ReporterHub
 
   sig { params(formula: String).returns(T.nilable(String)) }
   def description(formula)
-    return if Homebrew::EnvConfig.no_install_from_api?
+    if Homebrew::EnvConfig.no_install_from_api?
+      # Skip non-homebrew/core formulae for security.
+      return if formula.include?("/")
 
-    all_formula_json.find { |f| f["name"] == formula }
-                    &.fetch("desc", nil)
-                    &.presence
+      Formula[formula].desc&.presence
+    else
+      all_formula_json.find { |f| f["name"] == formula }
+                      &.fetch("desc", nil)
+                      &.presence
+    end
   end
 
   sig { params(cask: String).returns(T.nilable(String)) }
   def cask_description(cask)
-    return if Homebrew::EnvConfig.no_install_from_api?
+    if Homebrew::EnvConfig.no_install_from_api?
+      # Skip non-homebrew/cask formulae for security.
+      return if cask.include?("/")
 
-    all_cask_json.find { |f| f["token"] == cask }
-                 &.fetch("desc", nil)
-                 &.presence
+      Cask::CaskLoader.load(cask).desc&.presence
+    else
+      all_cask_json.find { |f| f["token"] == cask }
+                   &.fetch("desc", nil)
+                   &.presence
+    end
   end
 end

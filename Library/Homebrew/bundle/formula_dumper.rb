@@ -3,11 +3,14 @@
 
 require "json"
 require "tsort"
+require "utils/output"
 
 module Homebrew
   module Bundle
     # TODO: refactor into multiple modules
     module FormulaDumper
+      extend Utils::Output::Mixin
+
       def self.reset!
         require "bundle/brew_services"
 

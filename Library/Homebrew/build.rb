@@ -16,9 +16,12 @@ require "fcntl"
 require "utils/socket"
 require "cmd/install"
 require "json/add/exception"
+require "utils/output"
 
 # A formula build.
 class Build
+  include Utils::Output::Mixin
+
   attr_reader :formula, :deps, :reqs, :args
 
   def initialize(formula, options, args:)

@@ -1,11 +1,15 @@
 # typed: true # rubocop:todo Sorbet/StrictSigil
 # frozen_string_literal: true
 
+require "utils/output"
+
 # Wrapper for a formula to handle service-related stuff like parsing and
 # generating the service/plist files.
 module Homebrew
   module Services
     class FormulaWrapper
+      include Utils::Output::Mixin
+
       # Access the `Formula` instance.
       sig { returns(Formula) }
       attr_reader :formula

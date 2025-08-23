@@ -58,12 +58,12 @@ RSpec.describe Homebrew::Bundle::Commands::List do
         verb = (options_list.length == 1 && "is") || "are"
 
         context "when #{opts} #{verb} passed" do
-          let(:formulae) { args_hash[:formulae] }
-          let(:casks) { args_hash[:casks] }
-          let(:taps) { args_hash[:taps] }
-          let(:mas) { args_hash[:mas] }
-          let(:whalebrew) { args_hash[:whalebrew] }
-          let(:vscode) { args_hash[:vscode] }
+          let(:formulae) { args_hash.fetch(:formulae, false) }
+          let(:casks) { args_hash.fetch(:casks, false) }
+          let(:taps) { args_hash.fetch(:taps, false) }
+          let(:mas) { args_hash.fetch(:mas, false) }
+          let(:whalebrew) { args_hash.fetch(:whalebrew, false) }
+          let(:vscode) { args_hash.fetch(:vscode, false) }
 
           it "shows only #{words}" do
             expected = options_list.map { |opt| types_and_deps[opt] }.join("\n")

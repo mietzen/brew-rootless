@@ -1,23 +1,25 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 class Keg
-  PREFIX_PLACEHOLDER = "@@HOMEBREW_PREFIX@@"
-  CELLAR_PLACEHOLDER = "@@HOMEBREW_CELLAR@@"
-  REPOSITORY_PLACEHOLDER = "@@HOMEBREW_REPOSITORY@@"
-  LIBRARY_PLACEHOLDER = "@@HOMEBREW_LIBRARY@@"
-  PERL_PLACEHOLDER = "@@HOMEBREW_PERL@@"
-  JAVA_PLACEHOLDER = "@@HOMEBREW_JAVA@@"
-  NULL_BYTE = "\x00"
-  NULL_BYTE_STRING = "\\x00"
+  PREFIX_PLACEHOLDER = T.let("@@HOMEBREW_PREFIX@@", String)
+  CELLAR_PLACEHOLDER = T.let("@@HOMEBREW_CELLAR@@", String)
+  REPOSITORY_PLACEHOLDER = T.let("@@HOMEBREW_REPOSITORY@@", String)
+  LIBRARY_PLACEHOLDER = T.let("@@HOMEBREW_LIBRARY@@", String)
+  PERL_PLACEHOLDER = T.let("@@HOMEBREW_PERL@@", String)
+  JAVA_PLACEHOLDER = T.let("@@HOMEBREW_JAVA@@", String)
+  NULL_BYTE = T.let("\x00", String)
+  NULL_BYTE_STRING = T.let("\\x00", String)
 
   class Relocation
-    RELOCATABLE_PATH_REGEX_PREFIX = /(?:(?<=-F|-I|-L|-isystem)|(?<![a-zA-Z0-9]))/
+    RELOCATABLE_PATH_REGEX_PREFIX = T.let(/(?:(?<=-F|-I|-L|-isystem)|(?<![a-zA-Z0-9]))/, Regexp)
 
+    sig { void }
     def initialize
       @replacement_map = T.let({}, T::Hash[Symbol, [T.any(String, Regexp), String]])
     end
 
+    sig { returns(Relocation) }
     def freeze
       @replacement_map.freeze
       super
@@ -62,6 +64,7 @@ class Keg
     end
   end
 
+  sig { void }
   def fix_dynamic_linkage
     symlink_files.each do |file|
       link = file.readlink
@@ -78,9 +81,8 @@ class Keg
     end
   end
 
-  def relocate_dynamic_linkage(_relocation, skip_protodesc_cold: false)
-    []
-  end
+  sig { params(_relocation: Relocation, skip_protodesc_cold: T::Boolean).void }
+  def relocate_dynamic_linkage(_relocation, skip_protodesc_cold: false); end
 
   JAVA_REGEX = %r{#{HOMEBREW_PREFIX}/opt/openjdk(@\d+(\.\d+)*)?/libexec(/openjdk\.jdk/Contents/Home)?}
 
@@ -95,13 +97,26 @@ class Keg
         old: "/usr/local/Caskroom",
         new: "#{PREFIX_PLACEHOLDER}/Caskroom",
       },
+      etc_name:     {
+        old: "/usr/local/etc/#{name}",
+        new: "#{PREFIX_PLACEHOLDER}/etc/#{name}",
+      },
       var_homebrew: {
         old: "/usr/local/var/homebrew",
         new: "#{PREFIX_PLACEHOLDER}/var/homebrew",
       },
+      var_name:     {
+        old: "/usr/local/var/#{name}",
+        new: "#{PREFIX_PLACEHOLDER}/var/#{name}",
+      },
+      var_log_name: {
+        old: "/usr/local/var/log/#{name}",
+        new: "#{PREFIX_PLACEHOLDER}/var/log/#{name}",
+      },
     }
   end
 
+  sig { returns(Relocation) }
   def prepare_relocation_to_placeholders
     relocation = Relocation.new
 
@@ -130,12 +145,14 @@ class Keg
     relocation
   end
 
+  sig { returns(T::Array[Pathname]) }
   def replace_locations_with_placeholders
     relocation = prepare_relocation_to_placeholders.freeze
     relocate_dynamic_linkage(relocation, skip_protodesc_cold: true)
     replace_text_in_files(relocation)
   end
 
+  sig { returns(Relocation) }
   def prepare_relocation_to_locations
     relocation = Relocation.new
     relocation.add_replacement_pair(:prefix, PREFIX_PLACEHOLDER, HOMEBREW_PREFIX.to_s)
@@ -150,12 +167,14 @@ class Keg
     relocation
   end
 
+  sig { params(files: T.nilable(T::Array[Pathname]), skip_linkage: T::Boolean).void }
   def replace_placeholders_with_locations(files, skip_linkage: false)
     relocation = prepare_relocation_to_locations.freeze
     relocate_dynamic_linkage(relocation) unless skip_linkage
     replace_text_in_files(relocation, files:)
   end
 
+  sig { returns(T.nilable(String)) }
   def openjdk_dep_name_if_applicable
     deps = runtime_dependencies
     return if deps.blank?
@@ -164,10 +183,11 @@ class Keg
     dep_names.find { |d| d.match? Version.formula_optionally_versioned_regex(:openjdk) }
   end
 
+  sig { params(relocation: Relocation, files: T.nilable(T::Array[Pathname])).returns(T::Array[Pathname]) }
   def replace_text_in_files(relocation, files: nil)
     files ||= text_files | libtool_files
 
-    changed_files = T.let([], Array)
+    changed_files = T.let([], T::Array[Pathname])
     files.map { path.join(_1) }.group_by { |f| f.stat.ino }.each_value do |first, *rest|
       s = first.open("rb", &:read)
 
@@ -188,6 +208,7 @@ class Keg
     changed_files
   end
 
+  sig { params(keg: Keg, old_prefix: T.any(String, Pathname), new_prefix: T.any(String, Pathname)).void }
   def relocate_build_prefix(keg, old_prefix, new_prefix)
     each_unique_file_matching(old_prefix) do |file|
       # Skip files which are not binary, as they do not need null padding.
@@ -202,12 +223,12 @@ class Keg
         binary = File.binread file
         odebug "Replacing build prefix in: #{file}"
         binary_strings = binary.split(/#{NULL_BYTE}/o, -1)
-        match_indices = binary_strings.each_index.select { |i| binary_strings.fetch(i).include?(old_prefix) }
+        match_indices = binary_strings.each_index.select { |i| binary_strings.fetch(i).include?(old_prefix.to_s) }
 
         # Only perform substitution on strings which match prefix regex.
         match_indices.each do |i|
           s = binary_strings.fetch(i)
-          binary_strings[i] = s.gsub(old_prefix, new_prefix)
+          binary_strings[i] = s.gsub(old_prefix.to_s, new_prefix.to_s)
                                .ljust(s.size, NULL_BYTE)
         end
 
@@ -227,15 +248,18 @@ class Keg
     end
   end
 
+  sig { params(_options: T::Hash[Symbol, T::Boolean]).returns(T::Array[Symbol]) }
   def detect_cxx_stdlibs(_options = {})
     []
   end
 
+  sig { returns(String) }
   def recursive_fgrep_args
     # for GNU grep; overridden for BSD grep on OS X
     "-lr"
   end
 
+  sig { returns([String, T::Array[String]]) }
   def egrep_args
     grep_bin = "grep"
     grep_args = [
@@ -247,7 +271,8 @@ class Keg
     [grep_bin, grep_args]
   end
 
-  def each_unique_file_matching(string)
+  sig { params(string: T.any(String, Pathname), _block: T.proc.params(arg0: Pathname).void).void }
+  def each_unique_file_matching(string, &_block)
     Utils.popen_read("fgrep", recursive_fgrep_args, string, to_s) do |io|
       hardlinks = Set.new
 
@@ -263,6 +288,7 @@ class Keg
     end
   end
 
+  sig { params(file: Pathname).returns(T::Boolean) }
   def binary_file?(file)
     grep_bin, grep_args = egrep_args
 
@@ -272,14 +298,17 @@ class Keg
     Utils.popen_read(grep_bin, *grep_args, NULL_BYTE_STRING, file).present?
   end
 
+  sig { returns(Pathname) }
   def lib
     path/"lib"
   end
 
+  sig { returns(Pathname) }
   def libexec
     path/"libexec"
   end
 
+  sig { returns(T::Array[Pathname]) }
   def text_files
     text_files = []
     return text_files if !which("file") || !which("xargs")
@@ -327,6 +356,7 @@ class Keg
     text_files
   end
 
+  sig { returns(T::Array[Pathname]) }
   def libtool_files
     libtool_files = []
 
@@ -338,6 +368,7 @@ class Keg
     libtool_files
   end
 
+  sig { returns(T::Array[Pathname]) }
   def symlink_files
     symlink_files = []
     path.find do |pn|
@@ -347,6 +378,10 @@ class Keg
     symlink_files
   end
 
+  sig {
+    params(file: Pathname, string: String, ignores: T::Array[Regexp], linked_libraries: T::Array[Pathname],
+           formula_and_runtime_deps_names: T.nilable(T::Array[String])).returns(T::Array[[String, String]])
+  }
   def self.text_matches_in_file(file, string, ignores, linked_libraries, formula_and_runtime_deps_names)
     text_matches = []
     path_regex = Relocation.path_to_regex(string)
@@ -386,6 +421,7 @@ class Keg
     text_matches
   end
 
+  sig { params(_file: Pathname, _string: String).returns(T::Array[Pathname]) }
   def self.file_linked_libraries(_file, _string)
     []
   end

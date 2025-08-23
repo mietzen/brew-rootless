@@ -1,10 +1,13 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "utils/output"
+
 module Homebrew
   # Helper functions available in formula `test` blocks.
   module Assertions
     include Context
+    include ::Utils::Output::Mixin
     extend T::Helpers
 
     requires_ancestor { Kernel }

@@ -4,10 +4,13 @@
 require "digest"
 require "erb"
 require "utils/github"
+require "utils/output"
 
 module Homebrew
   # Class for generating a formula from a template.
   class FormulaCreator
+    include Utils::Output::Mixin
+
     sig { returns(String) }
     attr_accessor :name
 

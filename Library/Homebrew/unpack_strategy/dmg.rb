@@ -3,6 +3,7 @@
 
 require "tempfile"
 require "system_command"
+require "utils/output"
 
 module UnpackStrategy
   # Strategy for unpacking disk images.
@@ -12,6 +13,7 @@ module UnpackStrategy
 
     # Helper module for listing the contents of a volume mounted from a disk image.
     module Bom
+      extend Utils::Output::Mixin
       extend SystemCommand::Mixin
 
       DMG_METADATA = T.let(Set.new([

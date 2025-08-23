@@ -1,9 +1,13 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "utils/output"
+
 module Utils
   # Helper functions for creating gzip files.
   module Gzip
+    extend ::Utils::Output::Mixin
+
     # Apple's gzip also uses zlib so use the same buffer size here.
     # https://github.com/apple-oss-distributions/file_cmds/blob/file_cmds-400/gzip/gzip.c#L147
     GZIP_BUFFER_SIZE = T.let(64 * 1024, Integer)

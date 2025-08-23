@@ -2,12 +2,15 @@
 # frozen_string_literal: true
 
 require "utils/inreplace"
+require "utils/output"
 
 # Helper functions for updating CPAN resources.
 module CPAN
   METACPAN_URL_PREFIX = "https://cpan.metacpan.org/authors/id/"
   CPAN_ARCHIVE_REGEX = /^(.+)-([0-9.v]+)\.(?:tar\.gz|tgz)$/
   private_constant :METACPAN_URL_PREFIX, :CPAN_ARCHIVE_REGEX
+
+  extend Utils::Output::Mixin
 
   # Represents a Perl package from an existing resource.
   class Package

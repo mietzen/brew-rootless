@@ -6,9 +6,12 @@ require "concurrent/promises"
 require "concurrent/executors"
 require "retryable_download"
 require "resource"
+require "utils/output"
 
 module Homebrew
   class DownloadQueue
+    include Utils::Output::Mixin
+
     sig { params(retries: Integer, force: T::Boolean, pour: T::Boolean).void }
     def initialize(retries: 1, force: false, pour: false)
       @concurrency = T.let(EnvConfig.download_concurrency, Integer)

@@ -142,7 +142,7 @@ RSpec.describe Cask::Installer, :cask do
     end
 
     it "allows already-installed Casks to be installed if force is provided" do
-      transmission = Cask::CaskLoader.load(cask_path("local-transmission"))
+      transmission = Cask::CaskLoader.load(cask_path("local-transmission-zip"))
 
       expect(transmission).not_to be_installed
 
@@ -151,6 +151,16 @@ RSpec.describe Cask::Installer, :cask do
       expect do
         described_class.new(transmission, force: true).install
       end.not_to raise_error
+    end
+
+    it "installs a cask from a dmg file" do
+      transmission = Cask::CaskLoader.load(cask_path("local-transmission"))
+
+      expect(transmission).not_to be_installed
+
+      described_class.new(transmission).install
+
+      expect(transmission).to be_installed
     end
 
     it "works naked-pkg-based Casks" do

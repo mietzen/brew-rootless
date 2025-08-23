@@ -2,16 +2,19 @@
 # frozen_string_literal: true
 
 require "extend/object/deep_dup"
+require "utils/output"
 
 module Cask
   module Artifact
     # Abstract superclass for all artifacts.
     class AbstractArtifact
       extend T::Helpers
+      extend ::Utils::Output::Mixin
 
       abstract!
 
       include Comparable
+      include ::Utils::Output::Mixin
 
       def self.english_name
         @english_name ||= T.must(name).sub(/^.*:/, "").gsub(/(.)([A-Z])/, '\1 \2')

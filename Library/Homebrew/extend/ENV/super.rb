@@ -3,6 +3,7 @@
 
 require "extend/ENV/shared"
 require "development_tools"
+require "utils/output"
 
 # ### Why `superenv`?
 #
@@ -16,6 +17,7 @@ require "development_tools"
 # 8. Build-system agnostic configuration of the toolchain
 module Superenv
   include SharedEnvExtension
+  include Utils::Output::Mixin
 
   attr_accessor :keg_only_deps, :deps, :run_time_deps
 

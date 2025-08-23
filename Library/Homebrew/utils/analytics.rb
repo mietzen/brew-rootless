@@ -5,6 +5,7 @@ require "context"
 require "erb"
 require "settings"
 require "cachable"
+require "utils/output"
 
 module Utils
   # Helper module for fetching and reporting analytics data.
@@ -14,6 +15,7 @@ module Utils
     INFLUX_HOST = "https://eu-central-1-1.aws.cloud2.influxdata.com"
     INFLUX_ORG = "d81a3e6d582d485f"
 
+    extend Utils::Output::Mixin
     extend Cachable
 
     class << self

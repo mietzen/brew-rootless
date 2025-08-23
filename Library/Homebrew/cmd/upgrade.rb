@@ -196,10 +196,13 @@ module Homebrew
         end
 
         if pinned.any?
-          Kernel.public_send(
-            formulae.any? ? :ofail : :opoo, # only fail when pinned formulae are named explicitly
-            "Not upgrading #{pinned.count} pinned #{Utils.pluralize("package", pinned.count)}:",
-          )
+          message = "Not upgrading #{pinned.count} pinned #{Utils.pluralize("package", pinned.count)}:"
+          # only fail when pinned formulae are named explicitly
+          if formulae.any?
+            ofail message
+          else
+            opoo message
+          end
           puts pinned.map { |f| "#{f.full_specified_name} #{f.pkg_version}" } * ", "
         end
 

@@ -2,9 +2,12 @@
 # frozen_string_literal: true
 
 require "utils/inreplace"
+require "utils/output"
 
 # Helper functions for updating PyPI resources.
 module PyPI
+  extend Utils::Output::Mixin
+
   PYTHONHOSTED_URL_PREFIX = "https://files.pythonhosted.org/packages/"
   private_constant :PYTHONHOSTED_URL_PREFIX
 
@@ -12,6 +15,8 @@ module PyPI
   # This package can be a PyPI package (either by name/version or PyPI distribution URL),
   # or it can be a non-PyPI URL.
   class Package
+    include Utils::Output::Mixin
+
     sig { params(package_string: String, is_url: T::Boolean, python_name: String).void }
     def initialize(package_string, is_url: false, python_name: "python")
       @pypi_info = T.let(nil, T.nilable(T::Array[String]))

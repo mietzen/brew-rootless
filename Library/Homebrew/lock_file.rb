@@ -2,9 +2,12 @@
 # frozen_string_literal: true
 
 require "fcntl"
+require "utils/output"
 
 # A lock file to prevent multiple Homebrew processes from modifying the same path.
 class LockFile
+  include Utils::Output::Mixin
+
   class OpenFileChangedOnDisk < RuntimeError; end
   private_constant :OpenFileChangedOnDisk
 

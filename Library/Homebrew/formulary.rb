@@ -6,6 +6,7 @@ require "cachable"
 require "tab"
 require "utils"
 require "utils/bottles"
+require "utils/output"
 require "service"
 require "utils/curl"
 require "deprecate_disable"
@@ -18,6 +19,8 @@ require "tap"
 module Formulary
   extend Context
   extend Cachable
+  extend Utils::Output::Mixin
+  include Utils::Output::Mixin
 
   ALLOWED_URL_SCHEMES = %w[file].freeze
   private_constant :ALLOWED_URL_SCHEMES
@@ -50,12 +53,22 @@ module Formulary
     platform_cache.key?(:api) && platform_cache[:api].key?(name)
   end
 
+  sig { params(name: String).returns(T::Boolean) }
+  def self.formula_class_defined_from_stub?(name)
+    platform_cache.key?(:stub) && platform_cache.fetch(:stub).key?(name)
+  end
+
   def self.formula_class_get_from_path(path)
     platform_cache[:path].fetch(path)
   end
 
   def self.formula_class_get_from_api(name)
     platform_cache[:api].fetch(name)
+  end
+
+  sig { params(name: String).returns(T.class_of(Formula)) }
+  def self.formula_class_get_from_stub(name)
+    platform_cache.fetch(:stub).fetch(name)
   end
 
   def self.clear_cache
@@ -445,17 +458,59 @@ module Formulary
     platform_cache[:api][name] = klass
   end
 
+  sig { params(name: String, formula_stub: Homebrew::FormulaStub, flags: T::Array[String]).returns(T.class_of(Formula)) }
+  def self.load_formula_from_stub!(name, formula_stub, flags:)
+    namespace = :"FormulaNamespaceStub#{namespace_key(formula_stub.to_json)}"
+
+    mod = Module.new
+    remove_const(namespace) if const_defined?(namespace)
+    const_set(namespace, mod)
+
+    mod.const_set(:BUILD_FLAGS, flags)
+
+    class_name = class_s(name)
+
+    klass = Class.new(::Formula) do
+      @loaded_from_api = true
+      @loaded_from_stub = true
+
+      url "formula-stub://#{name}/#{formula_stub.pkg_version}"
+      version formula_stub.version.to_s
+      revision formula_stub.revision
+
+      bottle do
+        if Homebrew::EnvConfig.bottle_domain == HOMEBREW_BOTTLE_DEFAULT_DOMAIN
+          root_url HOMEBREW_BOTTLE_DEFAULT_DOMAIN
+        else
+          root_url Homebrew::EnvConfig.bottle_domain
+        end
+        rebuild formula_stub.rebuild
+        sha256 Utils::Bottles.tag.to_sym => formula_stub.sha256
+      end
+
+      define_method :install do
+        raise NotImplementedError, "Cannot build from source from abstract stubbed formula."
+      end
+    end
+
+    mod.const_set(class_name, klass)
+
+    platform_cache[:stub] ||= {}
+    platform_cache[:stub][name] = klass
+  end
+
   sig {
-    params(name: String, spec: T.nilable(Symbol), force_bottle: T::Boolean, flags: T::Array[String]).returns(Formula)
+    params(name: String, spec: T.nilable(Symbol), force_bottle: T::Boolean, flags: T::Array[String], prefer_stub: T::Boolean).returns(Formula)
   }
   def self.resolve(
     name,
     spec: nil,
     force_bottle: false,
-    flags: []
+    flags: [],
+    prefer_stub: false
   )
     if name.include?("/") || File.exist?(name)
-      f = factory(name, *spec, force_bottle:, flags:)
+      f = factory(name, *spec, force_bottle:, flags:, prefer_stub:)
       if f.any_version_installed?
         tab = Tab.for_formula(f)
         resolved_spec = spec || tab.spec
@@ -468,7 +523,7 @@ module Formulary
       end
     else
       rack = to_rack(name)
-      alias_path = factory(name, force_bottle:, flags:).alias_path
+      alias_path = factory(name, force_bottle:, flags:, prefer_stub:).alias_path
       f = from_rack(rack, *spec, alias_path:, force_bottle:, flags:)
     end
 
@@ -507,6 +562,7 @@ module Formulary
   # Subclasses implement loaders for particular sources of formulae.
   class FormulaLoader
     include Context
+    include Utils::Output::Mixin
 
     # The formula's name.
     sig { returns(String) }
@@ -557,6 +613,8 @@ module Formulary
 
   # Loads a formula from a bottle.
   class FromBottleLoader < FormulaLoader
+    include Utils::Output::Mixin
+
     sig {
       params(ref: T.any(String, Pathname, URI::Generic), from: T.nilable(Symbol), warn: T::Boolean)
         .returns(T.nilable(T.attached_class))
@@ -620,8 +678,8 @@ module Formulary
         path_realpath = path.realpath.to_s
         path_string = path.to_s
         if (path_realpath.end_with?(".rb") || path_string.end_with?(".rb")) &&
-           !path_realpath.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/", "#{HOMEBREW_CACHE}/") &&
-           !path_string.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/", "#{HOMEBREW_CACHE}/")
+           !path_realpath.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/") &&
+           !path_string.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/")
           if path_string.include?("./") || path_string.end_with?(".rb") || path_string.count("/") != 2
             raise <<~WARNING
               Homebrew requires formulae to be in a tap, rejecting:
@@ -936,6 +994,46 @@ module Formulary
     end
   end
 
+  # Load formulae directly from their JSON contents.
+  class FormulaJSONContentsLoader < FromAPILoader
+    def initialize(name, contents, tap: nil, alias_name: nil)
+      @contents = contents
+      super(name, tap: tap, alias_name: alias_name)
+    end
+
+    private
+
+    def load_from_api(flags:)
+      Formulary.load_formula_from_json!(name, @contents, flags:)
+    end
+  end
+
+  # Load a formula stub from the internal API.
+  class FormulaStubLoader < FromAPILoader
+    sig {
+      params(ref: T.any(String, Pathname, URI::Generic), from: T.nilable(Symbol), warn: T::Boolean)
+        .returns(T.nilable(T.attached_class))
+    }
+    def self.try_new(ref, from: nil, warn: false)
+      return unless Homebrew::EnvConfig.use_internal_api?
+
+      super
+    end
+
+    def klass(flags:, ignore_errors:)
+      load_from_api(flags:) unless Formulary.formula_class_defined_from_stub?(name)
+      Formulary.formula_class_get_from_stub(name)
+    end
+
+    private
+
+    def load_from_api(flags:)
+      formula_stub = Homebrew::API::Internal.formula_stub(name)
+
+      Formulary.load_formula_from_stub!(name, formula_stub, flags:)
+    end
+  end
+
   # Return a {Formula} instance for the given reference.
   # `ref` is a string containing:
   #
@@ -955,6 +1053,7 @@ module Formulary
       force_bottle:  T::Boolean,
       flags:         T::Array[String],
       ignore_errors: T::Boolean,
+      prefer_stub:   T::Boolean,
     ).returns(Formula)
   }
   def self.factory(
@@ -965,15 +1064,17 @@ module Formulary
     warn: false,
     force_bottle: false,
     flags: [],
-    ignore_errors: false
+    ignore_errors: false,
+    prefer_stub: false
   )
-    cache_key = "#{ref}-#{spec}-#{alias_path}-#{from}"
+    cache_key = "#{ref}-#{spec}-#{alias_path}-#{from}-#{prefer_stub}"
     if factory_cached? && platform_cache[:formulary_factory]&.key?(cache_key)
       return platform_cache[:formulary_factory][cache_key]
     end
 
-    formula = loader_for(ref, from:, warn:)
-              .get_formula(spec, alias_path:, force_bottle:, flags:, ignore_errors:)
+    loader = FormulaStubLoader.try_new(ref, from:, warn:) if prefer_stub
+    loader ||= loader_for(ref, from:, warn:)
+    formula = loader.get_formula(spec, alias_path:, force_bottle:, flags:, ignore_errors:)
 
     if factory_cached?
       platform_cache[:formulary_factory] ||= {}
@@ -1096,6 +1197,31 @@ module Formulary
   )
     FormulaContentsLoader.new(name, path, contents)
                          .get_formula(spec, alias_path:, force_bottle:, flags:, ignore_errors:)
+  end
+
+  # Return a {Formula} instance directly from JSON contents.
+  sig {
+    params(
+      name:          String,
+      contents:      T::Hash[String, T.untyped],
+      spec:          Symbol,
+      alias_path:    T.nilable(Pathname),
+      force_bottle:  T::Boolean,
+      flags:         T::Array[String],
+      ignore_errors: T::Boolean,
+    ).returns(Formula)
+  }
+  def self.from_json_contents(
+    name,
+    contents,
+    spec = :stable,
+    alias_path: nil,
+    force_bottle: false,
+    flags: [],
+    ignore_errors: false
+  )
+    FormulaJSONContentsLoader.new(name, contents)
+                             .get_formula(spec, alias_path:, force_bottle:, flags:, ignore_errors:)
   end
 
   def self.to_rack(ref)

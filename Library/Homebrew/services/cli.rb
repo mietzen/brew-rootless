@@ -3,11 +3,13 @@
 
 require "services/formula_wrapper"
 require "fileutils"
+require "utils/output"
 
 module Homebrew
   module Services
     module Cli
       extend FileUtils
+      extend Utils::Output::Mixin
 
       sig { returns(T.nilable(String)) }
       def self.sudo_service_user

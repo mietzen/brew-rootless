@@ -5,6 +5,7 @@ require "autobump_constants"
 require "locale"
 require "lazy_object"
 require "livecheck"
+require "utils/output"
 
 require "cask/artifact"
 require "cask/artifact_set"
@@ -32,6 +33,8 @@ require "on_system"
 module Cask
   # Class representing the domain-specific language used for casks.
   class DSL
+    include ::Utils::Output::Mixin
+
     ORDINARY_ARTIFACT_CLASSES = [
       Artifact::Installer,
       Artifact::App,
@@ -625,6 +628,9 @@ module Cask
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
+      # odeprecate: remove this remapping when the :unsigned reason is removed
+      because = :fails_gatekeeper_check if because == :unsigned
+
       if replacement
         odeprecated(
           "deprecate!(:replacement)",
@@ -650,6 +656,9 @@ module Cask
       if [replacement, replacement_formula, replacement_cask].filter_map(&:presence).length > 1
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
+
+      # odeprecate: remove this remapping when the :unsigned reason is removed
+      because = :fails_gatekeeper_check if because == :unsigned
 
       if replacement
         odeprecated(

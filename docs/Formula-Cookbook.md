@@ -563,7 +563,7 @@ prefix
 
 ### `bin.install "foo"`
 
-You’ll see stuff like this in some formulae. This moves the file `foo` into the formula’s `bin` directory (`/opt/homebrew/Cellar/pkg/0.1/bin`) and makes it executable (`chmod 0555 foo`).
+You’ll see stuff like this in some formulae. This moves the file `foo` into the formula’s `bin` directory (`/opt/homebrew/Cellar/pkg/0.1/bin`) and makes it executable (`chmod 0555 foo`). Variables for the most common [directory locations](#variables-for-directory-locations) are available.
 
 You can also rename the file during the installation process. This can be useful for adding a prefix to binaries that would otherwise cause conflicts with another formula, or for removing a file extension. For example, to install `foo.py` into the formula's `bin` directory (`/opt/homebrew/Cellar/pkg/0.1/bin`) as just `foo` instead of `foo.py`:
 
@@ -927,33 +927,43 @@ Generally we'd rather you were specific about which files or directories need to
 
 | name                  | default path                                   | example |
 | --------------------- | ---------------------------------------------- | ------- |
-| **`HOMEBREW_PREFIX`** | output of `$(brew --prefix)`                   | `/opt/homebrew` |
-| **`prefix`**          | `#{HOMEBREW_PREFIX}/Cellar/#{name}/#{version}` | `/opt/homebrew/Cellar/foo/0.1` |
-| **`opt_prefix`**      | `#{HOMEBREW_PREFIX}/opt/#{name}`               | `/opt/homebrew/opt/foo` |
-| **`bin`**             | `#{prefix}/bin`                                | `/opt/homebrew/Cellar/foo/0.1/bin` |
-| **`doc`**             | `#{prefix}/share/doc/#{name}`                  | `/opt/homebrew/Cellar/foo/0.1/share/doc/foo` |
-| **`include`**         | `#{prefix}/include`                            | `/opt/homebrew/Cellar/foo/0.1/include` |
-| **`info`**            | `#{prefix}/share/info`                         | `/opt/homebrew/Cellar/foo/0.1/share/info` |
-| **`lib`**             | `#{prefix}/lib`                                | `/opt/homebrew/Cellar/foo/0.1/lib` |
-| **`libexec`**         | `#{prefix}/libexec`                            | `/opt/homebrew/Cellar/foo/0.1/libexec` |
-| **`man`**             | `#{prefix}/share/man`                          | `/opt/homebrew/Cellar/foo/0.1/share/man` |
-| **`man[1-8]`**        | `#{prefix}/share/man/man[1-8]`                 | `/opt/homebrew/Cellar/foo/0.1/share/man/man[1-8]` |
-| **`sbin`**            | `#{prefix}/sbin`                               | `/opt/homebrew/Cellar/foo/0.1/sbin` |
-| **`share`**           | `#{prefix}/share`                              | `/opt/homebrew/Cellar/foo/0.1/share` |
-| **`pkgshare`**        | `#{prefix}/share/#{name}`                      | `/opt/homebrew/Cellar/foo/0.1/share/foo` |
-| **`elisp`**           | `#{prefix}/share/emacs/site-lisp/#{name}`      | `/opt/homebrew/Cellar/foo/0.1/share/emacs/site-lisp/foo` |
-| **`frameworks`**      | `#{prefix}/Frameworks`                         | `/opt/homebrew/Cellar/foo/0.1/Frameworks` |
-| **`kext_prefix`**     | `#{prefix}/Library/Extensions`                 | `/opt/homebrew/Cellar/foo/0.1/Library/Extensions` |
-| **`zsh_function`**    | `#{prefix}/share/zsh/site-functions`           | `/opt/homebrew/Cellar/foo/0.1/share/zsh/site-functions` |
-| **`fish_function`**   | `#{prefix}/share/fish/vendor_functions`        | `/opt/homebrew/Cellar/foo/0.1/share/fish/vendor_functions` |
-| **`bash_completion`** | `#{prefix}/etc/bash_completion.d`              | `/opt/homebrew/Cellar/foo/0.1/etc/bash_completion.d` |
-| **`zsh_completion`**  | `#{prefix}/share/zsh/site-functions`           | `/opt/homebrew/Cellar/foo/0.1/share/zsh/site-functions` |
-| **`fish_completion`** | `#{prefix}/share/fish/vendor_completions.d`    | `/opt/homebrew/Cellar/foo/0.1/share/fish/vendor_completions.d` |
-| **`pwsh_completion`** | `#{prefix}/share/pwsh/completions`             | `/opt/homebrew/Cellar/foo/0.1/share/pwsh/completions` |
+| **`HOMEBREW_PREFIX`** | same as output of `$(brew --prefix)`           | `/opt/homebrew` |
 | **`etc`**             | `#{HOMEBREW_PREFIX}/etc`                       | `/opt/homebrew/etc` |
 | **`pkgetc`**          | `#{HOMEBREW_PREFIX}/etc/#{name}`               | `/opt/homebrew/etc/foo` |
 | **`var`**             | `#{HOMEBREW_PREFIX}/var`                       | `/opt/homebrew/var` |
-| **`buildpath`**       | temporary directory somewhere on your system | `/private/tmp/[formula-name]-0q2b/[formula-name]` |
+| **`prefix`**          | `#{HOMEBREW_PREFIX}/Cellar/#{name}/#{version}` | `/opt/homebrew/Cellar/foo/0.1` |
+| **`opt_prefix`**      | `#{HOMEBREW_PREFIX}/opt/#{name}`               | `/opt/homebrew/opt/foo` |
+| **`bin`**             | `#{prefix}/bin`                                | `/opt/homebrew/Cellar/foo/0.1/bin` |
+| **`opt_bin`**         | `#{opt_prefix}/bin`                            | `/opt/homebrew/opt/foo/bin` |
+| **`doc`**             | `#{prefix}/share/doc/#{name}`                  | `/opt/homebrew/Cellar/foo/0.1/share/doc/foo` |
+| **`include`**         | `#{prefix}/include`                            | `/opt/homebrew/Cellar/foo/0.1/include` |
+| **`opt_include`**     | `#{opt_prefix}/include`                        | `/opt/homebrew/opt/foo/include` |
+| **`info`**            | `#{prefix}/share/info`                         | `/opt/homebrew/Cellar/foo/0.1/share/info` |
+| **`lib`**             | `#{prefix}/lib`                                | `/opt/homebrew/Cellar/foo/0.1/lib` |
+| **`opt_lib`**         | `#{opt_prefix}/lib`                            | `/opt/homebrew/opt/foo/lib` |
+| **`libexec`**         | `#{prefix}/libexec`                            | `/opt/homebrew/Cellar/foo/0.1/libexec` |
+| **`opt_libexec`**     | `#{opt_prefix}/libexec`                        | `/opt/homebrew/opt/foo/libexec` |
+| **`man`**             | `#{prefix}/share/man`                          | `/opt/homebrew/Cellar/foo/0.1/share/man` |
+| **`man[1-8]`**        | `#{prefix}/share/man/man[1-8]`                 | `/opt/homebrew/Cellar/foo/0.1/share/man/man[1-8]` |
+| **`sbin`**            | `#{prefix}/sbin`                               | `/opt/homebrew/Cellar/foo/0.1/sbin` |
+| **`opt_sbin`**        | `#{opt_prefix}/sbin`                           | `/opt/homebrew/opt/foo/sbin` |
+| **`share`**           | `#{prefix}/share`                              | `/opt/homebrew/Cellar/foo/0.1/share` |
+| **`opt_share`**       | `#{opt_prefix}/share`                          | `/opt/homebrew/opt/foo/share` |
+| **`pkgshare`**        | `#{prefix}/share/#{name}`                      | `/opt/homebrew/Cellar/foo/0.1/share/foo` |
+| **`opt_pkgshare`**    | `#{opt_prefix}/share/#{name}`                  | `/opt/homebrew/opt/foo/share/foo` |
+| **`elisp`**           | `#{prefix}/share/emacs/site-lisp/#{name}`      | `/opt/homebrew/Cellar/foo/0.1/share/emacs/site-lisp/foo` |
+| **`opt_elisp`**       | `#{opt_prefix}/share/emacs/site-lisp/#{name}`  | `/opt/homebrew/opt/foo/share/emacs/site-lisp/foo` |
+| **`frameworks`**      | `#{prefix}/Frameworks`                         | `/opt/homebrew/Cellar/foo/0.1/Frameworks` |
+| **`opt_frameworks`**  | `#{opt_prefix}/Frameworks`                     | `/opt/homebrew/opt/foo/Frameworks` |
+| **`kext_prefix`**     | `#{prefix}/Library/Extensions`                 | `/opt/homebrew/Cellar/foo/0.1/Library/Extensions` |
+| **`bash_completion`** | `#{prefix}/etc/bash_completion.d`              | `/opt/homebrew/Cellar/foo/0.1/etc/bash_completion.d` |
+| **`fish_completion`** | `#{prefix}/share/fish/vendor_completions.d`    | `/opt/homebrew/Cellar/foo/0.1/share/fish/vendor_completions.d` |
+| **`fish_function`**   | `#{prefix}/share/fish/vendor_functions.d`      | `/opt/homebrew/Cellar/foo/0.1/share/fish/vendor_functions.d` |
+| **`zsh_completion`**  | `#{prefix}/share/zsh/site-functions`           | `/opt/homebrew/Cellar/foo/0.1/share/zsh/site-functions` |
+| **`zsh_function`**    | `#{prefix}/share/zsh/site-functions`           | `/opt/homebrew/Cellar/foo/0.1/share/zsh/site-functions` |
+| **`pwsh_completion`** | `#{prefix}/share/pwsh/completions`             | `/opt/homebrew/Cellar/foo/0.1/share/pwsh/completions` |
+| **`buildpath`**       | temporary working directory during builds      | `/private/tmp/foo-20250205-69197-po5981/foo-0.1` |
+| **`testpath`**        | temporary working directory during tests       | `/private/tmp/foo-test-20250205-84567-4hfs9m` |
 
 These can be used, for instance, in code such as:
 
@@ -970,6 +980,12 @@ man.mkpath
 to create the directory structure for the manual page location.
 
 To install man pages into specific locations, use `man1.install "foo.1", "bar.1"`, `man2.install "foo.2"`, etc.
+
+The `opt_` variants generate paths that are stable between updates, which can be useful for e.g. replacing versioned paths in files:
+
+```ruby
+inreplace lib/"pkgconfig/zlib.pc", prefix, opt_prefix
+```
 
 Note that in the context of Homebrew, [`libexec`](https://rubydoc.brew.sh/Formula#libexec-instance_method) is reserved for private use by the formula and therefore is not symlinked into `HOMEBREW_PREFIX`.
 

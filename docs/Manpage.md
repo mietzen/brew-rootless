@@ -4152,7 +4152,7 @@ command execution (e.g. `$(cat file)`).
 
 `HOMEBREW_FORCE_BREW_WRAPPER`
 
-: If set, require `$HOMEBREW_BREW_WRAPPER` to be set to the same value as
+: If set, require `brew` to be invoked by the value of
   `$HOMEBREW_FORCE_BREW_WRAPPER` for non-trivial `brew` commands.
 
 `HOMEBREW_FORCE_VENDOR_RUBY`

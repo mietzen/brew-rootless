@@ -2,9 +2,12 @@
 # frozen_string_literal: true
 
 require "aliases/alias"
+require "utils/output"
 
 module Homebrew
   module Aliases
+    extend Utils::Output::Mixin
+
     RESERVED = T.let((
         Commands.internal_commands +
         Commands.internal_developer_commands +

@@ -4,6 +4,7 @@
 require "api"
 require "commands"
 require "settings"
+require "utils/output"
 
 # A {Tap} is used to encapsulate Homebrew formulae, casks and custom commands.
 # Usually, it's synced with a remote Git repository. And it's likely
@@ -13,6 +14,8 @@ require "settings"
 # repository name without the leading `homebrew-`.
 class Tap
   extend Cachable
+  extend Utils::Output::Mixin
+  include Utils::Output::Mixin
 
   HOMEBREW_TAP_CASK_RENAMES_FILE = "cask_renames.json"
   private_constant :HOMEBREW_TAP_CASK_RENAMES_FILE
@@ -1038,7 +1041,7 @@ class Tap
 
     @autobump ||= T.let(autobump_packages.select do |_, p|
       next if p["disabled"]
-      next if p["deprecated"] && p["deprecation_reason"] != "unsigned"
+      next if p["deprecated"] && p["deprecation_reason"] != "fails_gatekeeper_check"
       next if p["skip_livecheck"]
 
       p["autobump"] == true

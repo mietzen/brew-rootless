@@ -337,18 +337,6 @@ Example: [macFUSE](https://github.com/Homebrew/homebrew-cask/blob/aa461148bbb511
 conflicts_with cask: "macfuse-dev"
 ```
 
-#### `conflicts_with` *formula*
-
-**Note:** `conflicts_with formula:` is a stub and is not yet functional.
-
-The value should be another formula name.
-
-Example: [MacVim](https://github.com/Homebrew/homebrew-cask/blob/aa461148bbb5119af26b82cccf5003e2b4e50d95/Casks/m/macvim.rb#L16), which conflicts with the `macvim` formula.
-
-```ruby
-conflicts_with formula: "macvim"
-```
-
 ### Stanza: `depends_on`
 
 `depends_on` is used to declare dependencies and requirements for a cask. `depends_on` is not consulted until `install` is attempted.

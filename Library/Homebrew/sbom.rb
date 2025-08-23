@@ -6,9 +6,12 @@ require "json"
 require "development_tools"
 require "cachable"
 require "utils/curl"
+require "utils/output"
 
 # Rather than calling `new` directly, use one of the class methods like {SBOM.create}.
 class SBOM
+  include Utils::Output::Mixin
+
   FILENAME = "sbom.spdx.json"
   SCHEMA_FILE = (HOMEBREW_LIBRARY_PATH/"data/schemas/sbom.json").freeze
 
@@ -87,7 +90,7 @@ class SBOM
 
   sig { params(bottling: T::Boolean).returns(T::Array[T::Hash[String, T.untyped]]) }
   def schema_validation_errors(bottling: false)
-    unless require? "json_schemer"
+    unless Homebrew.require? "json_schemer"
       error_message = "Need json_schemer to validate SBOM, run `brew install-bundler-gems --add-groups=bottle`!"
       odie error_message if ENV["HOMEBREW_ENFORCE_SBOM"]
       return []

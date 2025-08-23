@@ -22,9 +22,7 @@ RSpec.describe Cask::DSL, :cask, :no_api do
     it "prints an error that it has encountered an unexpected method" do
       expected = Regexp.compile(<<~EOS.lines.map(&:chomp).join)
         (?m)
-        Error:
-        .*
-        Unexpected method 'future_feature' called on Cask unexpected-method-cask\\.
+        Error: Unexpected method 'future_feature' called on Cask unexpected-method-cask\\.
         .*
         https://github.com/Homebrew/homebrew-cask#reporting-bugs
       EOS
@@ -499,6 +497,14 @@ RSpec.describe Cask::DSL, :cask, :no_api do
 
       it "refuses to load invalid conflicts_with key" do
         expect { cask }.to raise_error(Cask::CaskInvalidError)
+      end
+    end
+
+    context "with deprecated conflicts_with key" do
+      let(:token) { "conflicts-with-deprecated-key" }
+
+      it "loads but shows deprecation warning for deprecated key" do
+        expect { cask.conflicts_with }.to raise_error(Cask::CaskInvalidError, /is deprecated/)
       end
     end
   end

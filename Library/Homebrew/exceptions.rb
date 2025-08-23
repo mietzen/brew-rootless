@@ -1,6 +1,8 @@
 # typed: true # rubocop:todo Sorbet/StrictSigil
 # frozen_string_literal: true
 
+require "utils/output"
+
 # Raised when a command is used wrong.
 #
 # @api internal
@@ -463,6 +465,8 @@ end
 
 # Raised when an error occurs during a formula build.
 class BuildError < RuntimeError
+  include Utils::Output::Mixin
+
   attr_reader :cmd, :args, :env
   attr_accessor :formula, :options
 

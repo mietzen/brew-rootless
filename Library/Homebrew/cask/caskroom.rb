@@ -2,12 +2,15 @@
 # frozen_string_literal: true
 
 require "utils/user"
+require "utils/output"
 
 module Cask
   # Helper functions for interacting with the `Caskroom` directory.
   #
   # @api internal
   module Caskroom
+    extend ::Utils::Output::Mixin
+
     sig { returns(Pathname) }
     def self.path
       @path ||= T.let(HOMEBREW_PREFIX/"Caskroom", T.nilable(Pathname))

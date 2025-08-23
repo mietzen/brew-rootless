@@ -4,9 +4,11 @@
 require "url"
 require "checksum"
 require "download_strategy"
+require "utils/output"
 
 module Downloadable
   include Context
+  include Utils::Output::Mixin
   extend T::Helpers
 
   abstract!

@@ -3,6 +3,7 @@
 
 require "development_tools"
 require "messages"
+require "utils/output"
 
 # Needed to handle circular require dependency.
 # rubocop:disable Lint/EmptyClass
@@ -11,6 +12,8 @@ class FormulaInstaller; end
 
 module Homebrew
   module Reinstall
+    extend Utils::Output::Mixin
+
     class InstallationContext < T::Struct
       const :formula_installer, ::FormulaInstaller
       const :keg, T.nilable(Keg)

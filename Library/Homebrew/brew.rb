@@ -16,6 +16,7 @@ end
 std_trap = trap("INT") { exit! 130 } # no backtrace thanks
 
 require_relative "global"
+require "utils/output"
 
 begin
   trap("INT", std_trap) # restore default CTRL-C handler
@@ -89,18 +90,8 @@ begin
     Homebrew.running_command = cmd
     if cmd_class
       if !Homebrew::EnvConfig.no_install_from_api? && Homebrew::EnvConfig.download_concurrency > 1
-        require "download_queue"
         require "api"
-        require "api/formula"
-        require "api/cask"
-        download_queue = Homebrew::DownloadQueue.new
-        stale_seconds = 86400 # 1 day
-        Homebrew::API.fetch_api_files!(download_queue:, stale_seconds:)
-        begin
-          download_queue.fetch
-        ensure
-          download_queue.shutdown
-        end
+        Homebrew::API.fetch_api_files!
       end
 
       command_instance = cmd_class.new
@@ -115,14 +106,14 @@ begin
         converted_cmd = cmd.downcase.tr("-", "_")
         case_error = "undefined method `#{converted_cmd}' for module Homebrew"
         private_method_error = "private method `#{converted_cmd}' called for module Homebrew"
-        odie "Unknown command: brew #{cmd}" if [case_error, private_method_error].include?(e.message)
+        Utils::Output.odie "Unknown command: brew #{cmd}" if [case_error, private_method_error].include?(e.message)
 
         raise
       end
     end
   elsif (path = Commands.external_ruby_cmd_path(cmd))
     Homebrew.running_command = cmd
-    require?(path)
+    Homebrew.require?(path)
     exit Homebrew.failed? ? 1 : 0
   elsif Commands.external_cmd_path(cmd)
     %w[CACHE LIBRARY_PATH].each do |env|
@@ -139,14 +130,16 @@ begin
        possible_tap.installed? ||
        (blocked_tap = Tap.untapped_official_taps.include?(possible_tap.name))
       if blocked_tap
-        onoe <<~EOS
+        Utils::Output.onoe <<~EOS
           `brew #{cmd}` is unavailable because #{possible_tap.name} was manually untapped.
           Run `brew tap #{possible_tap.name}` to reenable `brew #{cmd}`.
         EOS
       end
       # Check for cask explicitly because it's very common in old guides
-      odie "`brew cask` is no longer a `brew` command. Use `brew <command> --cask` instead." if cmd == "cask"
-      odie "Unknown command: brew #{cmd}"
+      if cmd == "cask"
+        Utils::Output.odie "`brew cask` is no longer a `brew` command. Use `brew <command> --cask` instead."
+      end
+      Utils::Output.odie "Unknown command: brew #{cmd}"
     end
 
     # Unset HOMEBREW_HELP to avoid confusing the tap
@@ -171,7 +164,7 @@ rescue UsageError => e
   require "help"
   Homebrew::Help.help cmd, remaining_args: args&.remaining || [], usage_error: e.message
 rescue SystemExit => e
-  onoe "Kernel.exit" if args&.debug? && !e.success?
+  Utils::Output.onoe "Kernel.exit" if args&.debug? && !e.success?
   if args&.debug? || ARGV.include?("--debug")
     require "utils/backtrace"
     $stderr.puts Utils::Backtrace.clean(e)
@@ -209,7 +202,7 @@ rescue BuildError => e
 rescue RuntimeError, SystemCallError => e
   raise if e.message.empty?
 
-  onoe e
+  Utils::Output.onoe e
   if args&.debug? || ARGV.include?("--debug")
     require "utils/backtrace"
     $stderr.puts Utils::Backtrace.clean(e)
@@ -218,7 +211,7 @@ rescue RuntimeError, SystemCallError => e
   exit 1
 # Catch any other types of exceptions.
 rescue Exception => e # rubocop:disable Lint/RescueException
-  onoe e
+  Utils::Output.onoe e
 
   method_deprecated_error = e.is_a?(MethodDeprecatedError)
   require "utils/backtrace"

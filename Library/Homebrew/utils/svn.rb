@@ -2,12 +2,14 @@
 # frozen_string_literal: true
 
 require "system_command"
+require "utils/output"
 
 module Utils
   # Helper functions for querying SVN information.
   module Svn
     class << self
       include SystemCommand::Mixin
+      include Utils::Output::Mixin
 
       sig { returns(T::Boolean) }
       def available?

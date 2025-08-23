@@ -60,7 +60,7 @@ module Homebrew
       def self.source_download_formula(formula)
         download = source_download(formula)
 
-        with_env(HOMEBREW_FORBID_PACKAGES_FROM_PATHS: nil) do
+        with_env(HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS: "1") do
           Formulary.factory(download.symlink_location,
                             formula.active_spec_sym,
                             alias_path: formula.alias_path,

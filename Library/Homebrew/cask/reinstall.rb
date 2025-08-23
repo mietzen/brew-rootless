@@ -1,8 +1,12 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "utils/output"
+
 module Cask
   class Reinstall
+    extend ::Utils::Output::Mixin
+
     sig {
       params(
         casks: ::Cask::Cask, verbose: T::Boolean, force: T::Boolean, skip_cask_deps: T::Boolean, binaries: T::Boolean,

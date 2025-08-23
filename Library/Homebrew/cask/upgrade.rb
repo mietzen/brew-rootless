@@ -3,9 +3,12 @@
 
 require "env_config"
 require "cask/config"
+require "utils/output"
 
 module Cask
   class Upgrade
+    extend ::Utils::Output::Mixin
+
     sig {
       params(
         casks:               Cask,

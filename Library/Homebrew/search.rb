@@ -2,10 +2,13 @@
 # frozen_string_literal: true
 
 require "description_cache_store"
+require "utils/output"
 
 module Homebrew
   # Helper module for searching formulae or casks.
   module Search
+    extend Utils::Output::Mixin
+
     def self.query_regexp(query)
       if (m = query.match(%r{^/(.*)/$}))
         Regexp.new(m[1])

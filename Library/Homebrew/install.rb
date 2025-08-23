@@ -7,10 +7,13 @@ require "hardware"
 require "development_tools"
 require "upgrade"
 require "download_queue"
+require "utils/output"
 
 module Homebrew
   # Helper module for performing (pre-)install checks.
   module Install
+    extend Utils::Output::Mixin
+
     class << self
       sig { params(all_fatal: T::Boolean).void }
       def perform_preinstall_checks_once(all_fatal: false)

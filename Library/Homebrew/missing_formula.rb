@@ -2,10 +2,13 @@
 # frozen_string_literal: true
 
 require "formulary"
+require "utils/output"
 
 module Homebrew
   # Helper module for checking if there is a reason a formula is missing.
   module MissingFormula
+    extend Utils::Output::Mixin
+
     class << self
       sig { params(name: String, silent: T::Boolean, show_info: T::Boolean).returns(T.nilable(String)) }
       def reason(name, silent: false, show_info: false)

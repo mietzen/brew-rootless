@@ -6,6 +6,24 @@ require "context"
 module Homebrew
   extend Context
 
+  sig { params(path: T.nilable(T.any(String, Pathname))).returns(T::Boolean) }
+  def self.require?(path)
+    return false if path.nil?
+
+    if defined?(Warnings)
+      # Work around require warning when done repeatedly:
+      # https://bugs.ruby-lang.org/issues/21091
+      Warnings.ignore(/already initialized constant/, /previous definition of/) do
+        require path.to_s
+      end
+    else
+      require path.to_s
+    end
+    true
+  rescue LoadError
+    false
+  end
+
   # Need to keep this naming as-is for backwards compatibility.
   # rubocop:disable Naming/PredicateMethod
   def self._system(cmd, *args, **options)

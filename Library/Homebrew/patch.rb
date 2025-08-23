@@ -3,6 +3,7 @@
 
 require "resource"
 require "erb"
+require "utils/output"
 
 # Helper module for creating patches.
 module Patch
@@ -96,6 +97,8 @@ end
 
 # A file containing a patch.
 class ExternalPatch
+  include Utils::Output::Mixin
+
   extend Forwardable
 
   attr_reader :resource, :strip

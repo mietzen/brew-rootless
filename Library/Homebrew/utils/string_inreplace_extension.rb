@@ -1,8 +1,12 @@
 # typed: strong
 # frozen_string_literal: true
 
+require "utils/output"
+
 # Used by the {Utils::Inreplace.inreplace} function.
 class StringInreplaceExtension
+  include Utils::Output::Mixin
+
   sig { returns(T::Array[String]) }
   attr_accessor :errors
 

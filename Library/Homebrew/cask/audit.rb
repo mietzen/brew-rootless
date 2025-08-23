@@ -14,12 +14,14 @@ require "formula_name_cask_token_auditor"
 require "utils/curl"
 require "utils/git"
 require "utils/shared_audits"
+require "utils/output"
 
 module Cask
   # Audit a cask for various problems.
   class Audit
     include SystemCommand::Mixin
     include ::Utils::Curl
+    include ::Utils::Output::Mixin
 
     Error = T.type_alias do
       {
@@ -500,7 +502,7 @@ module Cask
       return if url.nil?
 
       return if !cask.tap.official? && !signing?
-      return if cask.deprecated? && cask.deprecation_reason != :unsigned
+      return if cask.deprecated? && cask.deprecation_reason != :fails_gatekeeper_check
 
       unless Quarantine.available?
         odebug "Quarantine support is not available, skipping signing audit"
@@ -544,7 +546,7 @@ module Cask
           end
 
           next false if result.success?
-          next true if cask.deprecated? && cask.deprecation_reason == :unsigned
+          next true if cask.deprecated? && cask.deprecation_reason == :fails_gatekeeper_check
           next true if is_in_skiplist
 
           add_error <<~EOS, location: url.location
@@ -562,10 +564,10 @@ module Cask
         add_error "Cask is in the signing audit skiplist, but does not need to be skipped!" if is_in_skiplist
 
         return unless cask.deprecated?
-        return if cask.deprecation_reason != :unsigned
+        return if cask.deprecation_reason != :fails_gatekeeper_check
 
         add_error <<~EOS
-          Cask is deprecated as unsigned but all artifacts are signed!
+          Cask is deprecated because it failed Gatekeeper checks but all artifacts now pass!
           Remove the deprecate/disable stanza or update the deprecate/disable reason.
         EOS
       end
@@ -672,10 +674,17 @@ module Cask
         mentions_rosetta = cask.caveats.include?("requires Rosetta 2")
         requires_intel = cask.depends_on.arch&.any? { |arch| arch[:type] == :intel }
 
-        any_requires_rosetta = artifacts.any? do |artifact|
+        artifacts_to_test = artifacts.filter do |artifact|
           next false if !artifact.is_a?(Artifact::App) && !artifact.is_a?(Artifact::Binary)
           next false if artifact.is_a?(Artifact::Binary) && is_container
 
+          true
+        end
+
+        next if artifacts_to_test.blank?
+
+        any_requires_rosetta = artifacts_to_test.any? do |artifact|
+          artifact = T.cast(artifact, T.any(Artifact::App, Artifact::Binary))
           path = tmpdir/artifact.source.relative_path_from(cask.staged_path)
 
           result = case artifact
@@ -929,6 +938,20 @@ module Cask
     end
 
     sig { void }
+    def audit_forgejo_prerelease_version
+      return if (url = cask.url).nil?
+
+      odebug "Auditing Forgejo prerelease"
+      user, repo = get_repo_data(%r{https?://codeberg\.org/([^/]+)/([^/]+)/?.*}) if online?
+      return if user.nil? || repo.nil?
+
+      tag = SharedAudits.forgejo_tag_from_url(url.to_s)
+      tag ||= cask.version
+      error = SharedAudits.forgejo_release(user, repo, tag, cask:)
+      add_error error, location: url.location if error
+    end
+
+    sig { void }
     def audit_github_repository_archived
       # Deprecated/disabled casks may have an archived repository.
       return if cask.deprecated? || cask.disabled?
@@ -958,6 +981,23 @@ module Cask
       return if metadata.nil?
 
       add_error "GitLab repo is archived", location: url.location if metadata["archived"]
+    end
+
+    sig { void }
+    def audit_forgejo_repository_archived
+      return if cask.deprecated? || cask.disabled?
+      return if (url = cask.url).nil?
+
+      user, repo = get_repo_data(%r{https?://codeberg\.org/([^/]+)/([^/]+)/?.*}) if online?
+      return if user.nil? || repo.nil?
+
+      metadata = SharedAudits.forgejo_repo_data(user, repo)
+      return if metadata.nil?
+
+      return unless metadata["archived"]
+
+      add_error "Forgejo repository is archived since #{metadata["archived_at"]}",
+                location: url.location
     end
 
     sig { void }
@@ -999,6 +1039,20 @@ module Cask
       odebug "Auditing Bitbucket repo"
 
       error = SharedAudits.bitbucket(user, repo)
+      add_error error, location: url.location if error
+    end
+
+    sig { void }
+    def audit_forgejo_repository
+      return unless new_cask?
+      return if (url = cask.url).nil?
+
+      user, repo = get_repo_data(%r{https?://codeberg\.org/([^/]+)/([^/]+)/?.*})
+      return if user.nil? || repo.nil?
+
+      odebug "Auditing Forgejo repo"
+
+      error = SharedAudits.forgejo(user, repo)
       add_error error, location: url.location if error
     end
 

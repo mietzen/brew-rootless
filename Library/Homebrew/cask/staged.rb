@@ -2,10 +2,12 @@
 # frozen_string_literal: true
 
 require "utils/user"
+require "utils/output"
 
 module Cask
   # Helper functions for staged casks.
   module Staged
+    include ::Utils::Output::Mixin
     extend T::Helpers
 
     requires_ancestor { ::Cask::DSL::Base }

@@ -8,6 +8,7 @@ require "cask/dsl"
 require "cask/metadata"
 require "cask/tab"
 require "utils/bottles"
+require "utils/output"
 require "api_hashable"
 
 module Cask
@@ -15,6 +16,7 @@ module Cask
   class Cask
     extend Forwardable
     extend APIHashable
+    extend ::Utils::Output::Mixin
     include Metadata
 
     # The token of this {Cask}.
@@ -390,6 +392,7 @@ module Cask
         "depends_on"                      => depends_on,
         "conflicts_with"                  => conflicts_with,
         "container"                       => container&.pairs,
+        "rename"                          => rename_list,
         "auto_updates"                    => auto_updates,
         "deprecated"                      => deprecated?,
         "deprecation_date"                => deprecation_date,
@@ -466,6 +469,12 @@ module Cask
 
           { artifact.class.dsl_key => artifact.to_args }
         end
+      end
+    end
+
+    def rename_list(uninstall_only: false)
+      rename.filter_map do |rename|
+        { from: rename.from, to: rename.to }
       end
     end
 

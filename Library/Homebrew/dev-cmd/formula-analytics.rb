@@ -365,22 +365,18 @@ module Homebrew
       def format_os_version_dimension(dimension)
         return if dimension.blank?
 
+        require "macos_version"
+
         dimension = dimension.gsub(/^Intel ?/, "")
                              .gsub(/^macOS ?/, "")
                              .gsub(/ \(.+\)$/, "")
+
+        if (macos_pretty_name = ::MacOSVersion.analytics_pretty_name(dimension))
+          return macos_pretty_name
+        end
+
         case dimension
-        when "10.11", /^10\.11\.?/ then "OS X El Capitan (10.11)"
-        when "10.12", /^10\.12\.?/ then "macOS Sierra (10.12)"
-        when "10.13", /^10\.13\.?/ then "macOS High Sierra (10.13)"
-        when "10.14", /^10\.14\.?/ then "macOS Mojave (10.14)"
-        when "10.15", /^10\.15\.?/ then "macOS Catalina (10.15)"
-        when "10.16", /^11\.?/ then "macOS Big Sur (11)"
-        when /^12\.?/ then "macOS Monterey (12)"
-        when /^13\.?/ then "macOS Ventura (13)"
-        when /^14\.?/ then "macOS Sonoma (14)"
-        when /^15\.?/ then "macOS Sequoia (15)"
-        when /^26\.?/ then "macOS Tahoe (26)"
-        when /Ubuntu(-Server)? (14|16|18|20|22)\.04/ then "Ubuntu #{Regexp.last_match(2)}.04 LTS"
+        when /Ubuntu(-Server)? (14|16|18|20|22|24)\.04/ then "Ubuntu #{Regexp.last_match(2)}.04 LTS"
         when /Ubuntu(-Server)? (\d+\.\d+).\d ?(LTS)?/
           "Ubuntu #{Regexp.last_match(2)} #{Regexp.last_match(3)}".strip
         when %r{Debian GNU/Linux (\d+)\.\d+} then "Debian #{Regexp.last_match(1)} #{Regexp.last_match(2)}"
@@ -388,6 +384,10 @@ module Homebrew
         when /Fedora Linux (\d+)[.\d]*/ then "Fedora Linux #{Regexp.last_match(1)}"
         when /KDE neon .*?([\d.]+)/ then "KDE neon #{Regexp.last_match(1)}"
         when /Amazon Linux (\d+)\.[.\d]*/ then "Amazon Linux #{Regexp.last_match(1)}"
+        when /Fedora Linux Rawhide[.\dn]*/ then "Fedora Linux Rawhide"
+        when /Red Hat Enterprise Linux CoreOS (\d+\.\d+)[-.\d]*/
+          "Red Hat Enterprise Linux CoreOS #{Regexp.last_match(1)}"
+        when /([A-Za-z ]+)\s+(\d+)\.\d{8}[.\d]*/ then "#{Regexp.last_match(1)} #{Regexp.last_match(2)}"
         else dimension
         end
       end

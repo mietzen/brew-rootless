@@ -2,12 +2,14 @@
 # frozen_string_literal: true
 
 require "formula"
+require "utils/output"
 
 # Helper class for traversing a formula's previous versions.
 #
 # @api internal
 class FormulaVersions
   include Context
+  include Utils::Output::Mixin
 
   IGNORED_EXCEPTIONS = [
     ArgumentError, NameError, SyntaxError, TypeError,
@@ -60,6 +62,7 @@ class FormulaVersions
     # We rescue these so that we can skip bad versions and
     # continue walking the history
     odebug "#{e} in #{name} at revision #{revision}", Utils::Backtrace.clean(e)
+    nil
   rescue FormulaUnavailableError
     nil
   ensure

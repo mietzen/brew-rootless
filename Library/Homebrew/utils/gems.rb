@@ -58,7 +58,7 @@ module Homebrew
 
   def self.ohai_if_defined(message)
     if defined?(ohai)
-      $stderr.ohai message
+      ohai message
     else
       $stderr.puts "==> #{message}"
     end
@@ -66,7 +66,7 @@ module Homebrew
 
   def self.opoo_if_defined(message)
     if defined?(opoo)
-      $stderr.opoo message
+      opoo message
     else
       $stderr.puts "Warning: #{message}"
     end

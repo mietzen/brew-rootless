@@ -590,7 +590,7 @@ module Homebrew
           ensure
             ignore_interrupts do
               original_tab&.write
-              keg.replace_placeholders_with_locations changed_files unless args.skip_relocation?
+              keg.replace_placeholders_with_locations(changed_files) if changed_files && !args.skip_relocation?
             end
           end
         end

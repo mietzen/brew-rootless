@@ -5,9 +5,12 @@ require "keg"
 require "formula"
 require "linkage_cache_store"
 require "fiddle"
+require "utils/output"
 
 # Check for broken/missing linkage in a formula's keg.
 class LinkageChecker
+  include Utils::Output::Mixin
+
   attr_reader :undeclared_deps, :keg, :formula, :store
 
   def initialize(keg, formula = nil, cache_db:, rebuild_cache: false)

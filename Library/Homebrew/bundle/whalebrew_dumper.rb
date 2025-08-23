@@ -1,9 +1,13 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "utils/output"
+
 module Homebrew
   module Bundle
     module WhalebrewDumper
+      extend Utils::Output::Mixin
+
       sig { void }
       def self.reset!
         @images = T.let(nil, T.nilable(T::Array[String]))

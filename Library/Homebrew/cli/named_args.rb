@@ -2,11 +2,13 @@
 # frozen_string_literal: true
 
 require "cli/args"
+require "utils/output"
 
 module Homebrew
   module CLI
     # Helper class for loading formulae/casks from named arguments.
     class NamedArgs < Array
+      include Utils::Output::Mixin
       extend T::Generic
 
       Elem = type_member(:out) { { fixed: String } }

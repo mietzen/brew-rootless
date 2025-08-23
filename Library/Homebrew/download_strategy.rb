@@ -7,6 +7,7 @@ require "unpack_strategy"
 require "lazy_object"
 require "lock_file"
 require "system_command"
+require "utils/output"
 
 # Need to define this before requiring Mechanize to avoid:
 #   uninitialized constant Mechanize
@@ -27,6 +28,7 @@ class AbstractDownloadStrategy
   include FileUtils
   include Context
   include SystemCommand::Mixin
+  include Utils::Output::Mixin
 
   abstract!
 
@@ -148,15 +150,15 @@ class AbstractDownloadStrategy
     cached_location.basename
   end
 
+  sig { override.params(title: T.any(String, Exception), sput: T.anything).void }
+  def ohai(title, *sput)
+    super unless quiet?
+  end
+
   private
 
   sig { params(args: T.anything).void }
   def puts(*args)
-    super unless quiet?
-  end
-
-  sig { params(args: T.anything).void }
-  def ohai(*args)
     super unless quiet?
   end
 

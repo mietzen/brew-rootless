@@ -4,10 +4,13 @@
 require "lock_file"
 require "keg"
 require "tab"
+require "utils/output"
 
 # Helper class for migrating a formula from an old to a new name.
 class Migrator
+  extend Utils::Output::Mixin
   include Context
+  include Utils::Output::Mixin
 
   # Error for when a migration is necessary.
   class MigrationNeededError < RuntimeError

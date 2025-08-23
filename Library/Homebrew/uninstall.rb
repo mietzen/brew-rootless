@@ -2,10 +2,13 @@
 # frozen_string_literal: true
 
 require "installed_dependents"
+require "utils/output"
 
 module Homebrew
   # Helper module for uninstalling kegs.
   module Uninstall
+    extend ::Utils::Output::Mixin
+
     def self.uninstall_kegs(kegs_by_rack, casks: [], force: false, ignore_dependencies: false, named_args: [])
       handle_unsatisfied_dependents(kegs_by_rack,
                                     casks:,
@@ -122,6 +125,8 @@ module Homebrew
     end
 
     class DependentsMessage
+      include ::Utils::Output::Mixin
+
       attr_reader :reqs, :deps, :named_args
 
       def initialize(requireds, dependents, named_args: [])

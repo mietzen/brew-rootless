@@ -5,10 +5,12 @@ require "keg_relocate"
 require "language/python"
 require "lock_file"
 require "cachable"
+require "utils/output"
 
 # Installation prefix of a formula.
 class Keg
   extend Cachable
+  include Utils::Output::Mixin
 
   # Error for when a keg is already linked.
   class AlreadyLinkedError < RuntimeError

@@ -2,10 +2,13 @@
 # frozen_string_literal: true
 
 require_relative "system/systemctl"
+require "utils/output"
 
 module Homebrew
   module Services
     module System
+      extend Utils::Output::Mixin
+
       LAUNCHCTL_DOMAIN_ACTION_NOT_SUPPORTED = T.let(125, Integer)
 
       # Path to launchctl binary.

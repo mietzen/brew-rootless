@@ -3,9 +3,12 @@
 
 require "json"
 require "cmd/info"
+require "utils/output"
 
 module Cask
   class Info
+    extend ::Utils::Output::Mixin
+
     sig { params(cask: Cask).returns(String) }
     def self.get_info(cask)
       require "cask/installer"

@@ -47,50 +47,50 @@ class RuboCop::CLI
 
   private
 
-  # source://rubocop//lib/rubocop/cli.rb#157
+  # source://rubocop//lib/rubocop/cli.rb#162
   def act_on_options; end
 
-  # source://rubocop//lib/rubocop/cli.rb#205
+  # source://rubocop//lib/rubocop/cli.rb#210
   def apply_default_formatter; end
 
-  # source://rubocop//lib/rubocop/cli.rb#126
+  # source://rubocop//lib/rubocop/cli.rb#131
   def execute_runners; end
 
-  # source://rubocop//lib/rubocop/cli.rb#189
+  # source://rubocop//lib/rubocop/cli.rb#194
   def handle_editor_mode; end
 
   # @raise [Finished]
   #
-  # source://rubocop//lib/rubocop/cli.rb#194
+  # source://rubocop//lib/rubocop/cli.rb#199
   def handle_exiting_options; end
 
-  # source://rubocop//lib/rubocop/cli.rb#145
+  # source://rubocop//lib/rubocop/cli.rb#150
   def parallel_by_default!; end
 
-  # source://rubocop//lib/rubocop/cli.rb#81
+  # source://rubocop//lib/rubocop/cli.rb#86
   def profile_if_needed; end
 
-  # source://rubocop//lib/rubocop/cli.rb#219
+  # source://rubocop//lib/rubocop/cli.rb#224
   def report_pending_cops; end
 
-  # source://rubocop//lib/rubocop/cli.rb#114
+  # source://rubocop//lib/rubocop/cli.rb#119
   def require_gem(name); end
 
-  # source://rubocop//lib/rubocop/cli.rb#122
+  # source://rubocop//lib/rubocop/cli.rb#127
   def run_command(name); end
 
-  # source://rubocop//lib/rubocop/cli.rb#176
+  # source://rubocop//lib/rubocop/cli.rb#181
   def set_options_to_config_loader; end
 
-  # source://rubocop//lib/rubocop/cli.rb#184
+  # source://rubocop//lib/rubocop/cli.rb#189
   def set_options_to_pending_cops_reporter; end
 
-  # source://rubocop//lib/rubocop/cli.rb#134
+  # source://rubocop//lib/rubocop/cli.rb#139
   def suggest_extensions; end
 
   # @raise [OptionArgumentError]
   #
-  # source://rubocop//lib/rubocop/cli.rb#138
+  # source://rubocop//lib/rubocop/cli.rb#143
   def validate_options_vs_config; end
 end
 
@@ -3361,8 +3361,6 @@ RuboCop::Cop::Lint::DuplicateMethods::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Ar
 
 RuboCop::Cop::Lint::DuplicateRegexpCharacterClassElement::MSG_REPEATED_ELEMENT = T.let(T.unsafe(nil), String)
 
-RuboCop::Cop::Lint::DuplicateRegexpCharacterClassElement::OCTAL_DIGITS_AFTER_ESCAPE = T.let(T.unsafe(nil), Integer)
-
 RuboCop::Cop::Lint::DuplicateRequire::MSG = T.let(T.unsafe(nil), String)
 
 RuboCop::Cop::Lint::DuplicateRequire::REQUIRE_METHODS = T.let(T.unsafe(nil), Set)
@@ -4666,6 +4664,8 @@ RuboCop::Cop::Style::ArrayFirstLast::MSG = T.let(T.unsafe(nil), String)
 RuboCop::Cop::Style::ArrayFirstLast::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
 
 RuboCop::Cop::Style::ArrayIntersect::ACTIVE_SUPPORT_PREDICATES = T.let(T.unsafe(nil), Set)
+
+RuboCop::Cop::Style::ArrayIntersect::ARRAY_SIZE_METHODS = T.let(T.unsafe(nil), Set)
 
 RuboCop::Cop::Style::ArrayIntersect::MSG = T.let(T.unsafe(nil), String)
 
@@ -6530,6 +6530,8 @@ end
 
 RuboCop::Formatter::ClangStyleFormatter::ELLIPSES = T.let(T.unsafe(nil), String)
 
+RuboCop::Formatter::DisabledConfigFormatter::EXCLUDED_CONFIG_KEYS = T.let(T.unsafe(nil), Array)
+
 RuboCop::Formatter::DisabledConfigFormatter::HEADING = T.let(T.unsafe(nil), String)
 
 RuboCop::Formatter::FormatterSet::BUILTIN_FORMATTERS_FOR_KEYS = T.let(T.unsafe(nil), Hash)
@@ -7288,7 +7290,7 @@ class RuboCop::TargetFinder
   #
   # @api private
   #
-  # source://rubocop//lib/rubocop/target_finder.rb#62
+  # source://rubocop//lib/rubocop/target_finder.rb#60
   def find_files(base_dir, flags); end
 
   # @api private
@@ -7346,6 +7348,12 @@ class RuboCop::TargetFinder
   #
   # source://rubocop//lib/rubocop/target_finder.rb#205
   def force_exclusion?; end
+
+  # @api private
+  # @return [Boolean]
+  #
+  # source://rubocop//lib/rubocop/target_finder.rb#82
+  def hidden_path?(path); end
 
   # @api private
   # @return [Boolean]
@@ -7417,8 +7425,8 @@ class RuboCop::TargetFinder
   # @api private
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/target_finder.rb#77
-  def to_inspect?(file, hidden_files, base_dir_config); end
+  # source://rubocop//lib/rubocop/target_finder.rb#75
+  def to_inspect?(file, base_dir_config); end
 
   # @api private
   #

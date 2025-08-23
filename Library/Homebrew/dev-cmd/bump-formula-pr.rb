@@ -105,14 +105,28 @@ module Homebrew
         # Use the user's browser, too.
         ENV["BROWSER"] = Homebrew::EnvConfig.browser
 
-        formula = args.named.to_formulae.first
-        raise FormulaUnspecifiedError if formula.blank?
+        @tap_retried = T.let(false, T.nilable(T::Boolean))
+        begin
+          formula = args.named.to_formulae.first
+          raise FormulaUnspecifiedError if formula.blank?
 
-        odie "This formula is disabled!" if formula.disabled?
-        odie "This formula is deprecated and does not build!" if formula.deprecation_reason == :does_not_build
-        tap = formula.tap
-        odie "This formula is not in a tap!" if tap.blank?
-        odie "This formula's tap is not a Git repository!" unless tap.git?
+          raise ArgumentError, "This formula is disabled!" if formula.disabled?
+          if formula.deprecation_reason == :does_not_build
+            raise ArgumentError, "This formula is deprecated and does not build!"
+          end
+
+          tap = formula.tap
+          raise ArgumentError, "This formula is not in a tap!" if tap.blank?
+          raise ArgumentError, "This formula's tap is not a Git repository!" unless tap.git?
+
+          formula
+        rescue ArgumentError => e
+          odie e.message if @tap_retried
+
+          CoreTap.instance.install(force: true)
+          @tap_retried = true
+          retry
+        end
 
         odie <<~EOS unless tap.allow_bump?(formula.name)
           Whoops, the #{formula.name} formula has its version update
@@ -585,7 +599,7 @@ module Homebrew
             end\s
           /x
 
-          leading_spaces = T.must(formula.path.read.match(/^([ ]+)resource "#{resource.name}"/)).captures.first
+          leading_spaces = T.must(formula.path.read.match(/^( +)resource "#{resource.name}"/)).captures.first
           new_resource_block = <<~EOS
             #{leading_spaces}resource "#{resource.name}" do
             #{leading_spaces}  url "#{new_url}"#{new_mirrors.map { |m| "\n#{leading_spaces}  mirror \"#{m}\"" }.join}

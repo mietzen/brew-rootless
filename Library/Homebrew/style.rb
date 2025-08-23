@@ -4,10 +4,12 @@
 require "shellwords"
 require "source_location"
 require "system_command"
+require "utils/output"
 
 module Homebrew
   # Helper module for running RuboCop.
   module Style
+    extend Utils::Output::Mixin
     extend SystemCommand::Mixin
 
     # Checks style for a list of files, printing simple RuboCop output.

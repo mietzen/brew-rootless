@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "bundle/dsl"
@@ -6,6 +6,13 @@ require "bundle/dsl"
 module Homebrew
   module Bundle
     module Brewfile
+      sig {
+        params(
+          dash_writes_to_stdout: T::Boolean,
+          global:                T::Boolean,
+          file:                  T.nilable(String),
+        ).returns(Pathname)
+      }
       def self.path(dash_writes_to_stdout: false, global: false, file: nil)
         env_bundle_file_global = ENV.fetch("HOMEBREW_BUNDLE_FILE_GLOBAL", nil)
         env_bundle_file = ENV.fetch("HOMEBREW_BUNDLE_FILE", nil)
@@ -36,12 +43,19 @@ module Homebrew
         Pathname.new(filename).expand_path(Dir.pwd)
       end
 
+      sig { params(global: T::Boolean, file: T.nilable(String)).returns(Dsl) }
       def self.read(global: false, file: nil)
         Homebrew::Bundle::Dsl.new(Brewfile.path(global:, file:))
       rescue Errno::ENOENT
         raise "No Brewfile found"
       end
 
+      sig {
+        params(
+          filename:              String,
+          dash_writes_to_stdout: T::Boolean,
+        ).returns(String)
+      }
       private_class_method def self.handle_file_value(filename, dash_writes_to_stdout)
         if filename != "-"
           filename

@@ -3,10 +3,12 @@
 
 require "bottle"
 require "api/json_download"
+require "utils/output"
 
 module Homebrew
   class RetryableDownload
     include Downloadable
+    include Utils::Output::Mixin
 
     sig { override.returns(T.any(NilClass, String, URL)) }
     def url = downloadable.url

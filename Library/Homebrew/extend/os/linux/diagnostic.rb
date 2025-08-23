@@ -1,4 +1,4 @@
-# typed: true # rubocop:disable Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "tempfile"
@@ -16,6 +16,7 @@ module OS
 
         requires_ancestor { Homebrew::Diagnostic::Checks }
 
+        sig { returns(T::Array[String]) }
         def fatal_preinstall_checks
           %w[
             check_access_directories
@@ -24,15 +25,16 @@ module OS
           ].freeze
         end
 
+        sig { returns(T::Array[String]) }
         def supported_configuration_checks
           %w[
             check_glibc_minimum_version
             check_kernel_minimum_version
             check_supported_architecture
-            check_for_symlinked_home
           ].freeze
         end
 
+        sig { returns(T.nilable(String)) }
         def check_tmpdir_sticky_bit
           message = super
           return if message.nil?
@@ -46,6 +48,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_tmpdir_executable
           f = Tempfile.new(%w[homebrew_check_tmpdir_executable .sh], HOMEBREW_TEMP)
           f.write "#!/bin/sh\n"
@@ -64,6 +67,7 @@ module OS
           f&.unlink
         end
 
+        sig { returns(T.nilable(String)) }
         def check_umask_not_zero
           return unless File.umask.zero?
 
@@ -75,6 +79,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_supported_architecture
           return if ::Hardware::CPU.intel?
           return if Homebrew::EnvConfig.developer? && ENV["HOMEBREW_ARM64_TESTING"].present? && ::Hardware::CPU.arm?
@@ -87,6 +92,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_glibc_minimum_version
           return unless OS::Linux::Glibc.below_minimum_version?
 
@@ -102,6 +108,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_glibc_version
           return unless OS::Linux::Glibc.below_ci_version?
 
@@ -120,6 +127,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_kernel_minimum_version
           return unless OS::Linux::Kernel.below_minimum_version?
 
@@ -136,6 +144,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_linuxbrew_core
           return unless Homebrew::EnvConfig.no_install_from_api?
           return unless CoreTap.instance.linuxbrew_core?
@@ -146,6 +155,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_linuxbrew_bottle_domain
           return unless Homebrew::EnvConfig.bottle_domain.include?("linuxbrew")
 
@@ -156,6 +166,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_for_symlinked_home
           return unless File.symlink?("/home")
 
@@ -177,6 +188,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_gcc_dependent_linkage
           gcc_dependents = ::Formula.installed.select do |formula|
             next false unless formula.tap&.core_tap?
@@ -213,6 +225,7 @@ module OS
           EOS
         end
 
+        sig { returns(T.nilable(String)) }
         def check_cask_software_versions
           super
           add_info "Linux", OS::Linux.os_version

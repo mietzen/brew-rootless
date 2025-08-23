@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "system_command"
+require "utils/output"
 
 module GitHub
   sig { params(scopes: T::Array[String]).returns(String) }
@@ -39,9 +40,12 @@ module GitHub
   # @api internal
   module API
     extend SystemCommand::Mixin
+    extend Utils::Output::Mixin
 
     # Generic API error.
     class Error < RuntimeError
+      include Utils::Output::Mixin
+
       sig { returns(T.nilable(String)) }
       attr_reader :github_message
 

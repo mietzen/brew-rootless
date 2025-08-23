@@ -8,6 +8,7 @@ require "uri"
 require "context"
 require "readline_nonblock"
 require "utils/timer"
+require "utils/output"
 
 # Class for running sub-processes and capturing their output and exit status.
 #
@@ -380,6 +381,7 @@ class SystemCommand
   # Result containing the output and exit status of a finished sub-process.
   class Result
     include Context
+    include Utils::Output::Mixin
 
     attr_accessor :command, :status, :exit_status
 

@@ -6,9 +6,12 @@ require "io/console"
 require "pty"
 require "tempfile"
 require "utils/fork"
+require "utils/output"
 
 # Helper class for running a sub-process inside of a sandboxed environment.
 class Sandbox
+  include Utils::Output::Mixin
+
   SANDBOX_EXEC = "/usr/bin/sandbox-exec"
 
   # This is defined in the macOS SDK but Ruby unfortunately does not expose it.

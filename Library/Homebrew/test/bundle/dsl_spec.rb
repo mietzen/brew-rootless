@@ -103,7 +103,6 @@ RSpec.describe Homebrew::Bundle::Dsl do
   end
 
   it ".sanitize_cask_name" do
-    allow_any_instance_of(Object).to receive(:opoo)
     expect(described_class.send(:sanitize_cask_name, "homebrew/cask-versions/adoptopenjdk8")).to eql("adoptopenjdk8")
     expect(described_class.send(:sanitize_cask_name, "adoptopenjdk8")).to eql("adoptopenjdk8")
   end

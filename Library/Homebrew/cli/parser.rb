@@ -10,10 +10,13 @@ require "commands"
 require "optparse"
 require "utils/tty"
 require "utils/formatter"
+require "utils/output"
 
 module Homebrew
   module CLI
     class Parser
+      include Utils::Output::Mixin
+
       ArgType = T.type_alias { T.any(NilClass, Symbol, T::Array[String], T::Array[Symbol]) }
       HIDDEN_DESC_PLACEHOLDER = "@@HIDDEN@@"
       SYMBOL_TO_USAGE_MAPPING = T.let({
@@ -40,7 +43,7 @@ module Homebrew
         cmd_name = cmd_args_method_name.to_s.delete_suffix("_args").tr("_", "-")
 
         begin
-          if require?(cmd_path)
+          if Homebrew.require?(cmd_path)
             cmd = Homebrew::AbstractCommand.command(cmd_name)
             if cmd
               cmd.parser
@@ -231,7 +234,8 @@ module Homebrew
         end
 
         env_value = value_for_env(env)
-        set_switch(*names, value: env_value, from: :env) unless env_value.nil?
+        value = env_value&.present?
+        set_switch(*names, value:, from: :env) unless value.nil?
       end
       alias switch_option switch
 

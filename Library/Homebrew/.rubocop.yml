@@ -74,6 +74,7 @@ Style/Documentation:
     - resource.rb
     - startup/config.rb
     - utils/inreplace.rb
+    - utils/output.rb
     - utils/shebang.rb
     - utils/string_inreplace_extension.rb
     - version.rb

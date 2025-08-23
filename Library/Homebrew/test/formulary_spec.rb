@@ -141,18 +141,25 @@ RSpec.describe Formulary do
         end.to raise_error(FormulaUnavailableError)
       end
 
-      it "allows cache paths even when paths are disabled" do
-        ENV["HOMEBREW_FORBID_PACKAGES_FROM_PATHS"] = "1"
-        cache_dir = HOMEBREW_CACHE/"test_formula_cache"
-        cache_dir.mkpath
-        cache_formula_path = cache_dir/formula_path.basename
-        FileUtils.cp formula_path, cache_formula_path
-        begin
-          formula = described_class.factory(cache_formula_path)
-          expect(formula).to be_a(Formula)
-        ensure
+      context "when given a cache path" do
+        let(:cache_dir) { HOMEBREW_CACHE/"test_formula_cache" }
+        let(:cache_formula_path) { cache_dir/formula_path.basename }
+
+        before do
+          cache_dir.mkpath
+          FileUtils.cp formula_path, cache_formula_path
+        end
+
+        after do
           cache_formula_path.unlink if cache_formula_path.exist?
           cache_dir.rmdir if cache_dir.exist?
+        end
+
+        it "disallows cache paths when paths are explicitly disabled" do
+          ENV["HOMEBREW_FORBID_PACKAGES_FROM_PATHS"] = "1"
+          expect do
+            described_class.factory(cache_formula_path)
+          end.to raise_error(/requires formulae to be in a tap/)
         end
       end
 
