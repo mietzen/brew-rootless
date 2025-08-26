@@ -1070,46 +1070,7 @@ If these formats are not available, and the application is macOS-exclusive (othe
 
 Some hosting providers actively block command-line HTTP clients. Such URLs cannot be used in casks.
 
-Other providers may use URLs that change periodically, or even on each visit (example: FossHub). While some cases [could be circumvented](#using-a-block-to-defer-code-execution), they tend to occur when the vendor is actively trying to prevent automated downloads, so we prefer to not add those casks to the main repository.
-
-#### Using a block to defer code execution
-
-Some applications—notably nightlies—have versioned download URLs that are updated so often that they become impractical to keep current with the usual process. For those, we want to dynamically determine `url`.
-
-**Note:** Casks with a dynamically-determined `url` are not allowed in Homebrew/homebrew-cask as they interfere with API generation.
-
-##### The Problem
-
-In theory, one can write arbitrary Ruby code right in the cask definition to fetch and construct a disposable URL.
-
-However, this typically involves an HTTP round trip to a landing site, which may take a long time. Because of the way Homebrew Cask loads and parses casks, it is not acceptable that such expensive operations be performed directly in the body of a cask definition.
-
-##### Writing the block
-
-Similar to the `preflight`, `postflight`, `uninstall_preflight` and `uninstall_postflight` blocks, the `url` stanza offers an optional *block syntax*:
-
-```ruby
-url "https://handbrake.fr/nightly.php" do |page|
-  file_path = page[/href=["']?([^"' >]*Handbrake[._-][^"' >]+\.dmg)["' >]/i, 1]
-  file_path ? URI.join(page.url, file_path) : nil
-end
-```
-
-You can also nest `url do` blocks inside `url do` blocks to follow a chain of URLs.
-
-The block is only evaluated when needed, for example at download time or when auditing a cask. Inside a block, you may safely do things such as HTTP(S) requests that may take a long time to execute. You may also refer to the `@cask` instance variable, and invoke [any method available on `@cask`](https://rubydoc.brew.sh/Cask/Cask).
-
-The block will be called immediately before downloading; its resulting value is assumed to be a `String` (or a pair of a `String` and `Hash` containing parameters) and subsequently used as a download URL.
-
-You can use the `url` stanza with either a direct argument or a block but not with both.
-
-Historical example of using block syntax: [vlc@nightly.rb](https://github.com/Homebrew/homebrew-cask/blob/0b2b76ad8c3fbf4e1ee2f5e758640c4963ad6aaf/Casks/v/vlc%40nightly.rb#L7-L12)
-
-##### Mixing additional URL parameters with block syntax
-
-In rare cases, you might need to set URL parameters like `cookies` or `referer` while also using block syntax.
-
-This is possible by returning a two-element array as a block result. The first element of the array must be the download URL; the second element must be a `Hash` containing the parameters.
+Other providers may use URLs that change periodically, or even on each visit (example: FossHub). These cases tend to occur when the vendor is actively trying to prevent automated downloads, so we prefer to not add those casks to the main repository.
 
 ### Stanza: `version`
 

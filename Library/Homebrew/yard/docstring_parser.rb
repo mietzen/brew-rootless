@@ -1,5 +1,8 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
+
+require "sorbet-runtime"
+require_relative "../extend/module"
 
 # from https://github.com/lsegal/yard/issues/484#issuecomment-442586899
 module Homebrew
@@ -18,6 +21,7 @@ module Homebrew
         private_constant :SELF_EXPLANATORY_METHODS
       end
 
+      sig { params(content: T.nilable(String)).returns(String) }
       def parse_content(content)
         # Convert plain text to tags.
         content = content&.gsub(/^\s*(TODO|FIXME):\s*/i, "@todo ")

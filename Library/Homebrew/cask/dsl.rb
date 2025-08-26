@@ -314,15 +314,11 @@ module Cask
     # ```
     #
     # @api public
-    def url(*args, **options, &block)
+    def url(*args, **options)
       caller_location = T.must(caller_locations).fetch(0)
 
-      set_unique_stanza(:url, args.empty? && options.empty? && !block) do
-        if block
-          URL.new(*args, **options, caller_location:, dsl: self, &block)
-        else
-          URL.new(*args, **options, caller_location:)
-        end
+      set_unique_stanza(:url, args.empty? && options.empty?) do
+        URL.new(*args, **options, caller_location:)
       end
     end
 

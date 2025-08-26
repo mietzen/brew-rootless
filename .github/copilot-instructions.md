@@ -11,10 +11,11 @@ Please follow these guidelines when contributing:
 - Run `brew typecheck` to verify types are declared correctly using Sorbet.
   Individual files/directories cannot be checked.
   `brew typecheck` is fast enough to just be run globally every time.
-- Run `brew style --fix` to lint code formatting using RuboCop.
+- Run `brew style --fix --changed` to lint code formatting using RuboCop.
   Individual files can be checked/fixed by passing them as arguments e.g. `brew style --fix Library/Homebrew/cmd/reinstall.rb``
-- Run `brew tests --online` to ensure that RSpec unit tests are passing (although some online tests may be flaky so can be ignored if they pass on a rerun).
+- Run `brew tests --online  --changed` to ensure that RSpec unit tests are passing (although some online tests may be flaky so can be ignored if they pass on a rerun).
   Individual test files can be passed with `--only` e.g. to test `Library/Homebrew/cmd/reinstall.rb` with `Library/Homebrew/test/cmd/reinstall_spec.rb` run `brew tests --only=cmd/reinstall`.
+- All of the above can be run with the `brew-mcp-server`
 
 ### Development Flow
 

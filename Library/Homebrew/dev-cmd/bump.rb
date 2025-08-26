@@ -536,7 +536,8 @@ module Homebrew
           bump_pr_args << "--bump-synced=#{outdated_synced_formulae.join(",")}"
         end
 
-        safe_system HOMEBREW_BREW_FILE, *bump_pr_args
+        result = system HOMEBREW_BREW_FILE, *bump_pr_args
+        Homebrew.failed = true unless result
       end
 
       sig {

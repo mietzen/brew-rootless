@@ -1,11 +1,15 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "utils/output"
+
 module Language
   # Helper functions for Python formulae.
   #
   # @api public
   module Python
+    extend ::Utils::Output::Mixin
+
     sig { params(python: T.any(String, Pathname)).returns(T.nilable(Version)) }
     def self.major_minor_version(python)
       version = `#{python} --version 2>&1`.chomp[/(\d\.\d+)/, 1]
@@ -84,6 +88,7 @@ module Language
 
     sig { params(prefix: Pathname, python: T.any(String, Pathname)).returns(T::Array[String]) }
     def self.setup_install_args(prefix, python = "python3")
+      # odeprecated "Language::Python.setup_install_args", "pip and `std_pip_args`"
       shim = <<~PYTHON
         import setuptools, tokenize
         __file__ = 'setup.py'

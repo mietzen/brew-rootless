@@ -1245,15 +1245,17 @@ module Cask
       url.sub(%r{^[^:/]+://(www\.)?}, "")
     end
 
-    sig { returns(String) }
+    sig { returns(T.nilable(String)) }
     def url_from_verified
-      strip_url_scheme(T.must(cask.url).verified)
+      return unless (verified_url = T.must(cask.url).verified)
+
+      strip_url_scheme(verified_url)
     end
 
     sig { returns(T::Boolean) }
     def verified_matches_url?
       url_domain, url_path = strip_url_scheme(cask.url.to_s).split("/", 2)
-      verified_domain, verified_path = url_from_verified.split("/", 2)
+      verified_domain, verified_path = url_from_verified&.split("/", 2)
 
       domains_match = (url_domain == verified_domain) ||
                       (verified_domain && url_domain&.end_with?(".#{verified_domain}"))

@@ -11,6 +11,7 @@ module Homebrew
   module Cmd
     class SearchCmd < AbstractCommand
       PACKAGE_MANAGERS = T.let({
+        alpine:    ->(query) { "https://pkgs.alpinelinux.org/packages?name=#{query}" },
         repology:  ->(query) { "https://repology.org/projects/?search=#{query}" },
         macports:  ->(query) { "https://ports.macports.org/search/?q=#{query}" },
         fink:      ->(query) { "https://pdb.finkproject.org/pdb/browse.php?summary=#{query}" },

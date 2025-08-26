@@ -271,6 +271,7 @@ __fish_brew_complete_arg '--version' -l verbose -d 'Make some output more verbos
 
 
 __fish_brew_complete_cmd '-S' 'Perform a substring search of cask tokens and formula names for text'
+__fish_brew_complete_arg '-S' -l alpine -d 'Search for text in the given database'
 __fish_brew_complete_arg '-S' -l archlinux -d 'Search for text in the given database'
 __fish_brew_complete_arg '-S' -l cask -d 'Search for casks'
 __fish_brew_complete_arg '-S' -l closed -d 'Search for only closed GitHub pull requests'
@@ -1529,6 +1530,7 @@ __fish_brew_complete_arg 'rubydoc' -l verbose -d 'Make some output more verbose'
 
 
 __fish_brew_complete_cmd 'search' 'Perform a substring search of cask tokens and formula names for text'
+__fish_brew_complete_arg 'search' -l alpine -d 'Search for text in the given database'
 __fish_brew_complete_arg 'search' -l archlinux -d 'Search for text in the given database'
 __fish_brew_complete_arg 'search' -l cask -d 'Search for casks'
 __fish_brew_complete_arg 'search' -l closed -d 'Search for only closed GitHub pull requests'
@@ -1598,6 +1600,7 @@ __fish_brew_complete_arg 'shellenv' -l verbose -d 'Make some output more verbose
 
 __fish_brew_complete_cmd 'style' 'Check formulae or files for conformance to Homebrew style guidelines'
 __fish_brew_complete_arg 'style' -l cask -d 'Treat all named arguments as casks'
+__fish_brew_complete_arg 'style' -l changed -d 'Check files that were changed from the `main` branch'
 __fish_brew_complete_arg 'style' -l debug -d 'Display any debugging information'
 __fish_brew_complete_arg 'style' -l except-cops -d 'Specify a comma-separated cops list to skip checking for violations of the listed RuboCop cops'
 __fish_brew_complete_arg 'style' -l fix -d 'Fix style violations automatically using RuboCop\'s auto-correct feature'

@@ -1370,6 +1370,10 @@ Perform a substring search of cask tokens and formula names for *`text`*. If
 
 : Search for only closed GitHub pull requests.
 
+`--alpine`
+
+: Search for *`text`* in the given database.
+
 `--repology`
 
 : Search for *`text`* in the given database.
@@ -3120,6 +3124,10 @@ core code and all formulae.
 `--reset-cache`
 
 : Reset the RuboCop cache.
+
+`--changed`
+
+: Check files that were changed from the `main` branch.
 
 `--formula`
 

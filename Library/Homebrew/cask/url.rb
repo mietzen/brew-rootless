@@ -6,94 +6,47 @@ require "utils/curl"
 
 module Cask
   # Class corresponding to the `url` stanza.
-  class URL < SimpleDelegator
-    # Methods for the `url` stanza.
-    class DSL
-      sig { returns(T.any(URI::Generic, String)) }
-      attr_reader :uri
+  class URL
+    sig { returns(URI::Generic) }
+    attr_reader :uri
 
-      sig { returns(T.nilable(T::Hash[T.any(Symbol, String), String])) }
-      attr_reader :revisions
+    sig { returns(T.nilable(T::Hash[T.any(Symbol, String), String])) }
+    attr_reader :revisions
 
-      sig { returns(T.nilable(T::Boolean)) }
-      attr_reader :trust_cert
+    sig { returns(T.nilable(T::Boolean)) }
+    attr_reader :trust_cert
 
-      sig { returns(T.nilable(T::Hash[String, String])) }
-      attr_reader :cookies, :data
+    sig { returns(T.nilable(T::Hash[String, String])) }
+    attr_reader :cookies, :data
 
-      sig { returns(T.nilable(T.any(String, T::Array[String]))) }
-      attr_reader :header
+    sig { returns(T.nilable(T.any(String, T::Array[String]))) }
+    attr_reader :header
 
-      sig { returns(T.nilable(T.any(URI::Generic, String))) }
-      attr_reader :referer
+    sig { returns(T.nilable(T.any(URI::Generic, String))) }
+    attr_reader :referer
 
-      sig { returns(T::Hash[Symbol, T.untyped]) }
-      attr_reader :specs
+    sig { returns(T::Hash[Symbol, T.untyped]) }
+    attr_reader :specs
 
-      sig { returns(T.nilable(T.any(Symbol, String))) }
-      attr_reader :user_agent
+    sig { returns(T.nilable(T.any(Symbol, String))) }
+    attr_reader :user_agent
 
-      sig { returns(T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass)) }
-      attr_reader :using
+    sig { returns(T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass)) }
+    attr_reader :using
 
-      sig { returns(T.nilable(String)) }
-      attr_reader :tag, :branch, :revision, :only_path, :verified
+    sig { returns(T.nilable(String)) }
+    attr_reader :tag, :branch, :revision, :only_path, :verified
 
-      extend Forwardable
+    extend Forwardable
 
-      def_delegators :uri, :path, :scheme, :to_s
+    def_delegators :uri, :path, :scheme, :to_s
 
-      # Creates a `url` stanza.
-      #
-      # @api public
-      sig {
-        params(
-          uri:        T.any(URI::Generic, String),
-          verified:   T.nilable(String),
-          using:      T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass),
-          tag:        T.nilable(String),
-          branch:     T.nilable(String),
-          revisions:  T.nilable(T::Hash[T.any(Symbol, String), String]),
-          revision:   T.nilable(String),
-          trust_cert: T.nilable(T::Boolean),
-          cookies:    T.nilable(T::Hash[String, String]),
-          referer:    T.nilable(T.any(URI::Generic, String)),
-          header:     T.nilable(T.any(String, T::Array[String])),
-          user_agent: T.nilable(T.any(Symbol, String)),
-          data:       T.nilable(T::Hash[String, String]),
-          only_path:  T.nilable(String),
-        ).void
-      }
-      def initialize(
-        uri, verified: nil, using: nil, tag: nil, branch: nil, revisions: nil, revision: nil, trust_cert: nil,
-        cookies: nil, referer: nil, header: nil, user_agent: nil, data: nil, only_path: nil
-      )
-        @uri = T.let(URI(uri), T.any(URI::Generic, String))
-
-        header = Array(header) unless header.nil?
-
-        specs = {}
-        specs[:verified]   = @verified   = T.let(verified, T.nilable(String))
-        specs[:using]      = @using      = T.let(using, T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass))
-        specs[:tag]        = @tag        = T.let(tag, T.nilable(String))
-        specs[:branch]     = @branch     = T.let(branch, T.nilable(String))
-        specs[:revisions]  = @revisions  = T.let(revisions, T.nilable(T::Hash[T.any(Symbol, String), String]))
-        specs[:revision]   = @revision   = T.let(revision, T.nilable(String))
-        specs[:trust_cert] = @trust_cert = T.let(trust_cert, T.nilable(T::Boolean))
-        specs[:cookies]    = @cookies    = T.let(cookies, T.nilable(T::Hash[String, String]))
-        specs[:referer]    = @referer    = T.let(referer, T.nilable(T.any(URI::Generic, String)))
-        specs[:headers]    = @header     = T.let(header, T.nilable(T.any(String, T::Array[String])))
-        specs[:user_agent] = @user_agent = T.let(user_agent || :default, T.nilable(T.any(Symbol, String)))
-        specs[:data]       = @data       = T.let(data, T.nilable(T::Hash[String, String]))
-        specs[:only_path]  = @only_path  = T.let(only_path, T.nilable(String))
-
-        @specs = T.let(specs.compact, T::Hash[Symbol, T.untyped])
-      end
-    end
-
+    # Creates a `url` stanza.
+    #
+    # @api public
     sig {
       params(
-        uri:             T.nilable(T.any(URI::Generic, String)),
+        uri:             T.any(URI::Generic, String),
         verified:        T.nilable(String),
         using:           T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass),
         tag:             T.nilable(String),
@@ -108,19 +61,33 @@ module Cask
         data:            T.nilable(T::Hash[String, String]),
         only_path:       T.nilable(String),
         caller_location: Thread::Backtrace::Location,
-        dsl:             T.nilable(::Cask::DSL),
       ).void
     }
     def initialize(
-      uri = nil, verified: nil, using: nil, tag: nil, branch: nil, revisions: nil, revision: nil, trust_cert: nil,
+      uri, verified: nil, using: nil, tag: nil, branch: nil, revisions: nil, revision: nil, trust_cert: nil,
       cookies: nil, referer: nil, header: nil, user_agent: nil, data: nil, only_path: nil,
-      caller_location: caller_locations.fetch(0), dsl: nil
+      caller_location: caller_locations.fetch(0)
     )
-      super(
-        DSL.new(T.must(uri), verified:, using:, tag:, branch:, revisions:, revision:, trust_cert:, cookies:,
-        referer:, header:, user_agent:, data:, only_path:)
-      )
+      @uri = T.let(URI(uri), URI::Generic)
 
+      header = Array(header) unless header.nil?
+
+      specs = {}
+      specs[:verified]   = @verified   = T.let(verified, T.nilable(String))
+      specs[:using]      = @using      = T.let(using, T.any(T::Class[AbstractDownloadStrategy], Symbol, NilClass))
+      specs[:tag]        = @tag        = T.let(tag, T.nilable(String))
+      specs[:branch]     = @branch     = T.let(branch, T.nilable(String))
+      specs[:revisions]  = @revisions  = T.let(revisions, T.nilable(T::Hash[T.any(Symbol, String), String]))
+      specs[:revision]   = @revision   = T.let(revision, T.nilable(String))
+      specs[:trust_cert] = @trust_cert = T.let(trust_cert, T.nilable(T::Boolean))
+      specs[:cookies]    = @cookies    = T.let(cookies, T.nilable(T::Hash[String, String]))
+      specs[:referer]    = @referer    = T.let(referer, T.nilable(T.any(URI::Generic, String)))
+      specs[:headers]    = @header     = T.let(header, T.nilable(T.any(String, T::Array[String])))
+      specs[:user_agent] = @user_agent = T.let(user_agent || :default, T.nilable(T.any(Symbol, String)))
+      specs[:data]       = @data       = T.let(data, T.nilable(T::Hash[String, String]))
+      specs[:only_path]  = @only_path  = T.let(only_path, T.nilable(String))
+
+      @specs = T.let(specs.compact, T::Hash[Symbol, T.untyped])
       @caller_location = T.let(caller_location, Thread::Backtrace::Location)
     end
 

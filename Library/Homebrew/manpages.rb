@@ -46,7 +46,7 @@ module Homebrew
       File.write(TARGET_MAN_PATH/"brew.1", roff)
     end
 
-    sig { params(quiet: T::Boolean).void }
+    sig { params(quiet: T::Boolean).returns(String) }
     def self.build_man_page(quiet:)
       template = (SOURCE_PATH/"brew.1.md.erb").read
       readme = HOMEBREW_REPOSITORY/"README.md"
