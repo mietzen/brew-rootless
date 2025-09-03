@@ -1,31 +1,34 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
-
-# Used to track formulae that cannot be installed at the same time.
-FormulaConflict = Struct.new(:name, :reason)
 
 # Used to annotate formulae that duplicate macOS-provided software
 # or cause conflicts when linked in.
 class KegOnlyReason
+  sig { returns(T.any(Symbol, String)) }
   attr_reader :reason
 
+  sig { params(reason: T.any(Symbol, String), explanation: String).void }
   def initialize(reason, explanation)
     @reason = reason
     @explanation = explanation
   end
 
+  sig { returns(T::Boolean) }
   def versioned_formula?
     @reason == :versioned_formula
   end
 
+  sig { returns(T::Boolean) }
   def provided_by_macos?
     @reason == :provided_by_macos
   end
 
+  sig { returns(T::Boolean) }
   def shadowed_by_macos?
     @reason == :shadowed_by_macos
   end
 
+  sig { returns(T::Boolean) }
   def by_macos?
     provided_by_macos? || shadowed_by_macos?
   end
@@ -33,7 +36,7 @@ class KegOnlyReason
   sig { returns(T::Boolean) }
   def applicable?
     # macOS reasons aren't applicable on other OSs
-    # (see extend/os/mac/formula_support for override on macOS)
+    # (see extend/os/mac/keg_only_reason for override on macOS)
     !by_macos?
   end
 
@@ -56,10 +59,11 @@ class KegOnlyReason
         parallel can cause all kinds of trouble
       EOS
     else
-      @reason
+      @reason.to_s
     end.strip
   end
 
+  sig { returns(T::Hash[String, String]) }
   def to_hash
     reason_string = if @reason.is_a?(Symbol)
       @reason.inspect
@@ -74,4 +78,4 @@ class KegOnlyReason
   end
 end
 
-require "extend/os/formula_support"
+require "extend/os/keg_only_reason"

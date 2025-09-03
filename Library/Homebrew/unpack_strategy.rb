@@ -92,7 +92,7 @@ module UnpackStrategy
 
     strategies&.sort_by { |s| s.extensions.map(&:length).max || 0 }
               &.reverse
-              &.find { |s| s.extensions.any? { |ext| extension.end_with?(ext) } }
+              &.find { |s| extension.end_with?(*s.extensions) }
   end
 
   sig { params(path: Pathname).returns(T.nilable(UnpackStrategyType)) }

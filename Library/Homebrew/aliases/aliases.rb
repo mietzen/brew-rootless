@@ -43,7 +43,7 @@ module Homebrew
         next if !only.empty? && only.exclude?(name)
 
         lines.reject! { |line| line.start_with?("#") || line =~ /^\s*$/ }
-        first_line = T.must(lines.first)
+        first_line = lines.fetch(0)
         command = first_line.chomp
         command.sub!(/ \$\*$/, "")
 

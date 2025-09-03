@@ -137,7 +137,7 @@ module Homebrew
       def reset!
         @mas_installed = T.let(nil, T.nilable(T::Boolean))
         @vscode_installed = T.let(nil, T.nilable(T::Boolean))
-        @which_vscode = T.let(nil, T.nilable(String))
+        @which_vscode = T.let(nil, T.nilable(Pathname))
         @whalebrew_installed = T.let(nil, T.nilable(T::Boolean))
         @cask_installed = T.let(nil, T.nilable(T::Boolean))
         @formula_versions_from_env = T.let(nil, T.nilable(T::Hash[String, String]))

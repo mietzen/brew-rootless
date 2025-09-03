@@ -2884,7 +2884,7 @@ the repository.
 
 `--branch`
 
-: Branch to use the workflow from (default: `master`).
+: Branch to use the workflow from (default: `main`).
 
 `--message`
 
@@ -3304,10 +3304,10 @@ Show the unbottled dependents of formulae.
 : Evaluate all available formulae and casks, whether installed or not, to check
   them. Enabled by default if `$HOMEBREW_EVAL_ALL` is set.
 
-### `unpack` \[*`options`*\] *`formula`* \[...\]
+### `unpack` \[*`options`*\] *`formula`*\|*`cask`* \[...\]
 
-Unpack the source files for *`formula`* into subdirectories of the current
-working directory.
+Unpack the files for the *`formula`* or *`cask`* into subdirectories of the
+current working directory.
 
 `--destdir`
 
@@ -3325,6 +3325,14 @@ working directory.
 `-f`, `--force`
 
 : Overwrite the destination directory if it already exists.
+
+`--formula`
+
+: Treat all named arguments as formulae.
+
+`--cask`
+
+: Treat all named arguments as casks.
 
 ### `update-license-data`
 
@@ -3755,7 +3763,7 @@ and Linux workers.
 
 : Use these tested formulae from formulae steps for a formulae dependents step.
 
-### `which-formula` \[`--explain`\] *`command`* \[...\]
+### `which-formula` \[`--explain`\] \[`--skip-update`\] *`command`* \[...\]
 
 Show which formula(e) provides the given command.
 
@@ -3763,6 +3771,11 @@ Show which formula(e) provides the given command.
 
 : Output explanation of how to get *`command`* by installing one of the
   providing formulae.
+
+`--skip-update`
+
+: Skip updating the executables database if any version exists on disk, no
+  matter how old.
 
 ### `which-update` \[*`options`*\] \[*`database`*\]
 

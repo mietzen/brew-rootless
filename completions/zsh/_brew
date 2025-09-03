@@ -229,7 +229,7 @@ __brew_internal_commands() {
     'unbottled:Show the unbottled dependents of formulae'
     'uninstall:Uninstall a formula or cask'
     'unlink:Remove symlinks for formula from Homebrew'\''s prefix'
-    'unpack:Unpack the source files for formula into subdirectories of the current working directory'
+    'unpack:Unpack the files for the formula or cask into subdirectories of the current working directory'
     'unpin:Unpin formula, allowing them to be upgraded by `brew upgrade` formula'
     'untap:Remove a tapped formula repository'
     'update:Fetch the newest version of Homebrew and all formulae from GitHub using `git`(1) and perform any necessary migrations'
@@ -1651,7 +1651,7 @@ _brew_pr_automerge() {
 _brew_pr_publish() {
   _arguments \
     '--autosquash[If supported on the target tap, automatically reformat and reword commits to our preferred format]' \
-    '--branch[Branch to use the workflow from (default: `master`)]' \
+    '--branch[Branch to use the workflow from (default: `main`)]' \
     '--debug[Display any debugging information]' \
     '--help[Show this message]' \
     '--large-runner[Run the upload job on a large runner]' \
@@ -2193,13 +2193,17 @@ _brew_unpack() {
     '--debug[Display any debugging information]' \
     '--destdir[Create subdirectories in the directory named by path instead]' \
     '--force[Overwrite the destination directory if it already exists]' \
-    '(--patch)--git[Initialise a Git repository in the unpacked source. This is useful for creating patches for the software]' \
+    '(--patch --cask)--git[Initialise a Git repository in the unpacked source. This is useful for creating patches for the software]' \
     '--help[Show this message]' \
-    '(--git)--patch[Patches for formula will be applied to the unpacked source]' \
+    '(--git --cask)--patch[Patches for formula will be applied to the unpacked source]' \
     '--quiet[Make some output more quiet]' \
     '--verbose[Make some output more verbose]' \
     - formula \
-    '*:formula:__brew_formulae'
+    '(--cask)--formula[Treat all named arguments as formulae]' \
+    '*:formula:__brew_formulae' \
+    - cask \
+    '(--formula --patch --git)--cask[Treat all named arguments as casks]' \
+    '*:cask:__brew_casks'
 }
 
 # brew unpin

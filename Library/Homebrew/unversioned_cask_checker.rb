@@ -118,6 +118,7 @@ module Homebrew
         dir = Pathname(dir)
 
         installer.extract_primary_container(to: dir)
+        installer.process_rename_operations(target_dir: dir)
 
         info_plist_paths = [
           *apps,

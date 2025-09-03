@@ -464,7 +464,7 @@ module Homebrew
           odie "`brew audit` failed for #{commit[:formula_name]}!"
         end
 
-        new_formula_version = T.must(commits.first)[:new_version]
+        new_formula_version = commits.fetch(0)[:new_version]
 
         pr_title = if args.bump_synced.nil?
           "#{formula.name} #{new_formula_version}"

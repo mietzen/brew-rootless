@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "context"
@@ -26,12 +26,25 @@ module Homebrew
 
   # Need to keep this naming as-is for backwards compatibility.
   # rubocop:disable Naming/PredicateMethod
-  def self._system(cmd, *args, **options)
+  sig {
+    params(
+      cmd:     T.any(NilClass, Pathname, String, [String, String], T::Hash[String, T.nilable(String)]),
+      argv0:   T.any(NilClass, Pathname, String, [String, String]),
+      args:    T.any(Pathname, String),
+      options: T.untyped,
+      _block:  T.nilable(T.proc.void),
+    ).returns(T::Boolean)
+  }
+  def self._system(cmd, argv0 = nil, *args, **options, &_block)
     pid = fork do
       yield if block_given?
       args.map!(&:to_s)
       begin
-        exec(cmd, *args, **options)
+        if argv0
+          exec(cmd, argv0, *args, **options)
+        else
+          exec(cmd, *args, **options)
+        end
       rescue
         nil
       end
@@ -44,13 +57,21 @@ module Homebrew
   # private_class_method :_system
   # rubocop:enable Naming/PredicateMethod
 
-  def self.system(cmd, *args, **options)
+  sig {
+    params(
+      cmd:     T.any(Pathname, String, [String, String], T::Hash[String, T.nilable(String)]),
+      argv0:   T.any(NilClass, Pathname, String, [String, String]),
+      args:    T.any(Pathname, String),
+      options: T.untyped,
+    ).returns(T::Boolean)
+  }
+  def self.system(cmd, argv0 = nil, *args, **options)
     if verbose?
       out = (options[:out] == :err) ? $stderr : $stdout
       out.puts "#{cmd} #{args * " "}".gsub(RUBY_PATH, "ruby")
                                      .gsub($LOAD_PATH.join(File::PATH_SEPARATOR).to_s, "$LOAD_PATH")
     end
-    _system(cmd, *args, **options)
+    _system(cmd, argv0, *args, **options)
   end
 
   # `Module` and `Regexp` are global variables used as types here so they don't need to be imported

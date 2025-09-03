@@ -196,6 +196,7 @@ module Homebrew
     def self.write_names_file!(names, type, regenerate:)
       names_path = HOMEBREW_CACHE_API/"#{type}_names.txt"
       if !names_path.exist? || regenerate
+        names_path.unlink if names_path.exist?
         names_path.write(names.join("\n"))
         return true
       end
@@ -210,6 +211,7 @@ module Homebrew
         aliases_text = aliases.map do |alias_name, real_name|
           "#{alias_name}|#{real_name}"
         end
+        aliases_path.unlink if aliases_path.exist?
         aliases_path.write(aliases_text.join("\n"))
         return true
       end

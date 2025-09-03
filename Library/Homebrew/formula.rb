@@ -4,7 +4,7 @@
 require "autobump_constants"
 require "cache_store"
 require "did_you_mean"
-require "formula_support"
+require "keg_only_reason"
 require "lock_file"
 require "formula_pin"
 require "hardware"
@@ -87,6 +87,9 @@ class Formula
   extend Utils::Output::Mixin
 
   abstract!
+
+  # Used to track formulae that cannot be installed at the same time.
+  FormulaConflict = Struct.new(:name, :reason)
 
   SUPPORTED_NETWORK_ACCESS_PHASES = [:build, :test, :postinstall].freeze
   private_constant :SUPPORTED_NETWORK_ACCESS_PHASES

@@ -7083,7 +7083,7 @@ class RuboCop::Runner
   # source://rubocop//lib/rubocop/runner.rb#177
   def file_offense_cache(file); end
 
-  # source://rubocop//lib/rubocop/runner.rb#485
+  # source://rubocop//lib/rubocop/runner.rb#487
   def get_processed_source(*args); end
 
   # source://rubocop//lib/rubocop/runner.rb#67
@@ -7110,7 +7110,7 @@ class RuboCop::Runner
   # Check whether a run created source identical to a previous run, which
   # means that we definitely have an infinite loop.
   #
-  # source://rubocop//lib/rubocop/runner.rb#331
+  # source://rubocop//lib/rubocop/runner.rb#333
   def check_for_infinite_loop(processed_source, offenses_by_iteration); end
 
   # @return [Boolean]
@@ -7120,10 +7120,10 @@ class RuboCop::Runner
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/runner.rb#433
+  # source://rubocop//lib/rubocop/runner.rb#435
   def considered_failure?(offense); end
 
-  # source://rubocop//lib/rubocop/runner.rb#470
+  # source://rubocop//lib/rubocop/runner.rb#472
   def default_config(cop_name); end
 
   # source://rubocop//lib/rubocop/runner.rb#275
@@ -7137,7 +7137,7 @@ class RuboCop::Runner
   # source://rubocop//lib/rubocop/runner.rb#239
   def except_redundant_cop_disable_directive?; end
 
-  # source://rubocop//lib/rubocop/runner.rb#360
+  # source://rubocop//lib/rubocop/runner.rb#362
   def extract_ruby_sources(processed_source); end
 
   # source://rubocop//lib/rubocop/runner.rb#165
@@ -7146,22 +7146,22 @@ class RuboCop::Runner
   # source://rubocop//lib/rubocop/runner.rb#243
   def file_started(file); end
 
-  # source://rubocop//lib/rubocop/runner.rb#413
+  # source://rubocop//lib/rubocop/runner.rb#415
   def filter_cop_classes(cop_classes, config); end
 
   # source://rubocop//lib/rubocop/runner.rb#104
   def find_target_files(paths); end
 
-  # source://rubocop//lib/rubocop/runner.rb#424
+  # source://rubocop//lib/rubocop/runner.rb#426
   def formatter_set; end
 
-  # source://rubocop//lib/rubocop/runner.rb#345
+  # source://rubocop//lib/rubocop/runner.rb#347
   def inspect_file(processed_source, team = T.unsafe(nil)); end
 
   # source://rubocop//lib/rubocop/runner.rb#115
   def inspect_files(files); end
 
-  # source://rubocop//lib/rubocop/runner.rb#306
+  # source://rubocop//lib/rubocop/runner.rb#308
   def iterate_until_no_changes(source, offenses_by_iteration); end
 
   # source://rubocop//lib/rubocop/runner.rb#148
@@ -7169,30 +7169,30 @@ class RuboCop::Runner
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/runner.rb#466
+  # source://rubocop//lib/rubocop/runner.rb#468
   def mark_as_safe_by_config?(config); end
 
-  # source://rubocop//lib/rubocop/runner.rb#474
+  # source://rubocop//lib/rubocop/runner.rb#476
   def minimum_severity_to_fail; end
 
-  # source://rubocop//lib/rubocop/runner.rb#374
+  # source://rubocop//lib/rubocop/runner.rb#376
   def mobilize_team(processed_source); end
 
-  # source://rubocop//lib/rubocop/runner.rb#379
+  # source://rubocop//lib/rubocop/runner.rb#381
   def mobilized_cop_classes(config); end
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/runner.rb#442
+  # source://rubocop//lib/rubocop/runner.rb#444
   def offense_displayed?(offense); end
 
-  # source://rubocop//lib/rubocop/runner.rb#454
+  # source://rubocop//lib/rubocop/runner.rb#456
   def offenses_to_report(offenses); end
 
   # source://rubocop//lib/rubocop/runner.rb#152
   def process_file(file); end
 
-  # source://rubocop//lib/rubocop/runner.rb#403
+  # source://rubocop//lib/rubocop/runner.rb#405
   def qualify_option_cop_names; end
 
   # @yield [cop]
@@ -7208,17 +7208,17 @@ class RuboCop::Runner
   # otherwise dormant team that can be used for config- and option-
   # level caching in ResultCache.
   #
-  # source://rubocop//lib/rubocop/runner.rb#517
+  # source://rubocop//lib/rubocop/runner.rb#519
   def standby_team(config); end
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/runner.rb#420
+  # source://rubocop//lib/rubocop/runner.rb#422
   def style_guide_cops_only?(config); end
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/runner.rb#458
+  # source://rubocop//lib/rubocop/runner.rb#460
   def supports_safe_autocorrect?(offense); end
 
   # @yield [team]

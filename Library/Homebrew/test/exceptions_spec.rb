@@ -176,7 +176,7 @@ RSpec.describe "Exception" do
     subject(:error) { described_class.new(formula, [conflict]) }
 
     let(:formula) { instance_double(Formula, full_name: "foo/qux") }
-    let(:conflict) { instance_double(FormulaConflict, name: "bar", reason: "I decided to") }
+    let(:conflict) { instance_double(Formula::FormulaConflict, name: "bar", reason: "I decided to") }
 
     it(:to_s) { expect(error.to_s).to match(/Please `brew unlink bar` before continuing\./) }
   end

@@ -12,6 +12,13 @@ module Homebrew
   class DownloadQueue
     include Utils::Output::Mixin
 
+    sig { params(retries: Integer, force: T::Boolean, pour: T::Boolean).returns(T.nilable(DownloadQueue)) }
+    def self.new_if_concurrency_enabled(retries: 1, force: false, pour: false)
+      return if Homebrew::EnvConfig.download_concurrency <= 1
+
+      new(retries:, force:, pour:)
+    end
+
     sig { params(retries: Integer, force: T::Boolean, pour: T::Boolean).void }
     def initialize(retries: 1, force: false, pour: false)
       @concurrency = T.let(EnvConfig.download_concurrency, Integer)

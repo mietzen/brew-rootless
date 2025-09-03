@@ -59,6 +59,8 @@ RSpec.describe Homebrew::API::Internal do
           pkg_version: PkgVersion.parse(pkg_version),
           rebuild:     rebuild,
           sha256:      sha256,
+          aliases:     formulae_aliases.select { |_, new_name| new_name == name }.keys,
+          oldnames:    formulae_renames.select { |_, new_name| new_name == name }.keys,
         )
         [name, stub]
       end

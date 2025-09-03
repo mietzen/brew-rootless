@@ -91,7 +91,7 @@ module Homebrew
         raise UsageError, "`brew deps --os=all` is not supported." if args.os == "all"
         raise UsageError, "`brew deps --arch=all` is not supported." if args.arch == "all"
 
-        os, arch = T.must(args.os_arch_combinations.first)
+        os, arch = args.os_arch_combinations.fetch(0)
         eval_all = args.eval_all?
 
         Formulary.enable_factory_cache!

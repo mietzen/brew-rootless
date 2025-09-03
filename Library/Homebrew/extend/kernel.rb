@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "utils/output"
@@ -32,32 +32,53 @@ module Kernel
     raise $CHILD_STATUS.inspect
   end
 
+  sig { type_parameters(:U).params(block: T.proc.returns(T.type_parameter(:U))).returns(T.type_parameter(:U)) }
   def with_homebrew_path(&block)
     with_env(PATH: PATH.new(ORIGINAL_PATHS), &block)
   end
 
+  sig {
+    type_parameters(:U)
+      .params(locale: String, block: T.proc.returns(T.type_parameter(:U)))
+      .returns(T.type_parameter(:U))
+  }
   def with_custom_locale(locale, &block)
     with_env(LC_ALL: locale, &block)
   end
 
   # Kernel.system but with exceptions.
-  def safe_system(cmd, *args, **options)
+  sig {
+    params(
+      cmd:     T.any(NilClass, Pathname, String, [String, String], T::Hash[String, T.nilable(String)]),
+      argv0:   T.any(NilClass, Pathname, String, [String, String]),
+      args:    T.any(NilClass, Pathname, String),
+      options: T.untyped,
+    ).void
+  }
+  def safe_system(cmd, argv0 = nil, *args, **options)
     # TODO: migrate to utils.rb Homebrew.safe_system
     require "utils"
 
-    return if Homebrew.system(cmd, *args, **options)
+    return if Homebrew.system(cmd, argv0, *args, **options)
 
-    raise ErrorDuringExecution.new([cmd, *args], status: $CHILD_STATUS)
+    raise ErrorDuringExecution.new([cmd, argv0, *args], status: $CHILD_STATUS)
   end
 
   # Run a system command without any output.
   #
   # @api internal
-  def quiet_system(cmd, *args)
+  sig {
+    params(
+      cmd:   T.any(NilClass, Pathname, String, [String, String], T::Hash[String, T.nilable(String)]),
+      argv0: T.any(NilClass, String, [String, String]),
+      args:  T.any(Pathname, String),
+    ).returns(T::Boolean)
+  }
+  def quiet_system(cmd, argv0 = nil, *args)
     # TODO: migrate to utils.rb Homebrew.quiet_system
     require "utils"
 
-    Homebrew._system(cmd, *args) do
+    Homebrew._system(cmd, argv0, *args) do
       # Redirect output streams to `/dev/null` instead of closing as some programs
       # will fail to execute if they can't write to an open stream.
       $stdout.reopen(File::NULL)
@@ -68,6 +89,7 @@ module Kernel
   # Find a command.
   #
   # @api public
+  sig { params(cmd: String, path: PATH::Elements).returns(T.nilable(Pathname)) }
   def which(cmd, path = ENV.fetch("PATH"))
     PATH.new(path).each do |p|
       begin
@@ -82,6 +104,7 @@ module Kernel
     nil
   end
 
+  sig { params(silent: T::Boolean).returns(String) }
   def which_editor(silent: false)
     editor = Homebrew::EnvConfig.editor
     return editor if editor
@@ -124,7 +147,8 @@ module Kernel
 
   IGNORE_INTERRUPTS_MUTEX = T.let(Thread::Mutex.new.freeze, Thread::Mutex)
 
-  def ignore_interrupts
+  sig { type_parameters(:U).params(_block: T.proc.returns(T.type_parameter(:U))).returns(T.type_parameter(:U)) }
+  def ignore_interrupts(&_block)
     IGNORE_INTERRUPTS_MUTEX.synchronize do
       interrupted = T.let(false, T::Boolean)
       old_sigint_handler = trap(:INT) do
@@ -144,7 +168,12 @@ module Kernel
     end
   end
 
-  def redirect_stdout(file)
+  sig {
+    type_parameters(:U)
+      .params(file: T.any(IO, Pathname, String), _block: T.proc.returns(T.type_parameter(:U)))
+      .returns(T.type_parameter(:U))
+  }
+  def redirect_stdout(file, &_block)
     out = $stdout.dup
     $stdout.reopen(file)
     yield
@@ -196,9 +225,10 @@ module Kernel
     end
   end
 
+  sig { params(number: Integer).returns(String) }
   def number_readable(number)
     numstr = number.to_i.to_s
-    (numstr.size - 3).step(1, -3) { |i| numstr.insert(i, ",") }
+    (numstr.size - 3).step(1, -3) { |i| numstr.insert(i.to_i, ",") }
     numstr
   end
 
@@ -251,7 +281,12 @@ module Kernel
   # ```
   #
   # @api public
-  def with_env(hash)
+  sig {
+    type_parameters(:U)
+      .params(hash: T::Hash[Object, String], _block: T.proc.returns(T.type_parameter(:U)))
+      .returns(T.type_parameter(:U))
+  }
+  def with_env(hash, &_block)
     old_values = {}
     begin
       hash.each do |key, value|
@@ -260,7 +295,7 @@ module Kernel
         ENV[key] = value
       end
 
-      yield if block_given?
+      yield
     ensure
       ENV.update(old_values)
     end

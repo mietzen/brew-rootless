@@ -252,7 +252,7 @@ module Language
           raise FormulaUnknownPythonError, self if wanted.empty?
           raise FormulaAmbiguousPythonError, self if wanted.size > 1
 
-          python = T.must(wanted.first)
+          python = wanted.fetch(0)
           python = "python3" if python == "python"
         end
 

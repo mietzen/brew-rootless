@@ -313,7 +313,7 @@ module Utils
           )
           next if last_thirty_days_match.blank?
 
-          last_thirty_days_downloads = T.must(last_thirty_days_match.captures.first).tr(",", "")
+          last_thirty_days_downloads = last_thirty_days_match.captures.fetch(0).tr(",", "")
           thirty_day_download_count += if (millions_match = last_thirty_days_downloads.match(/(\d+\.\d+)M/).presence)
             (millions_match.captures.first.to_f * 1_000_000).to_i
           else

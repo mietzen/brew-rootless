@@ -17,6 +17,7 @@ require "utils/socket"
 require "cmd/install"
 require "json/add/exception"
 require "utils/output"
+require "extend/pathname/write_mkpath_extension"
 
 # A formula build.
 class Build
@@ -245,6 +246,9 @@ begin
   formula = args.named.to_formulae.first
   options = Options.create(args.flags_only)
   build   = Build.new(formula, options, args:)
+
+  Pathname.prepend WriteMkpathExtension
+
   build.install
 # Any exception means the build did not complete.
 # The `case` for what to do per-exception class is further down.

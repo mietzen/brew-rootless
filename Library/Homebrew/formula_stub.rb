@@ -10,6 +10,8 @@ module Homebrew
     const :pkg_version, PkgVersion
     const :rebuild, Integer, default: 0
     const :sha256, T.nilable(String)
+    const :aliases, T::Array[String], default: []
+    const :oldnames, T::Array[String], default: []
 
     sig { returns(Version) }
     def version
@@ -25,7 +27,12 @@ module Homebrew
     def ==(other)
       case other
       when FormulaStub
-        name == other.name && pkg_version == other.pkg_version && rebuild == other.rebuild && sha256 == other.sha256
+        name == other.name &&
+          pkg_version == other.pkg_version &&
+          rebuild == other.rebuild &&
+          sha256 == other.sha256 &&
+          aliases == other.aliases &&
+          oldnames == other.oldnames
       else
         false
       end

@@ -366,23 +366,16 @@ class Tap
     return @private unless @private.nil?
 
     @private = T.let(
-      if (value = config[:private]).nil?
-        config[:private] = begin
-          if custom_remote?
-            true
-          else
-            # Don't store config if we don't know for sure.
-            return false if (value = GitHub.private_repo?(full_name)).nil?
-
-            value
-          end
-        rescue GitHub::API::HTTPNotFoundError
-          true
-        rescue GitHub::API::Error
+      begin
+        if core_tap? || core_cask_tap? || OFFICIAL_CMD_TAPS.include?(name)
           false
+        elsif custom_remote? || (value = GitHub.private_repo?(full_name)).nil?
+          true
+        else
+          value
         end
-      else
-        value
+      rescue GitHub::API::Error
+        true
       end,
       T.nilable(T::Boolean),
     )

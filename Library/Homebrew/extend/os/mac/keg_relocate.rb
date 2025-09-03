@@ -272,7 +272,7 @@ module OS
         # https://gitlab.kitware.com/cmake/cmake/-/issues/23251
         return true if HOMEBREW_TEMP.to_s == "/private/tmp" && filename.start_with?("/tmp/")
 
-        filename.start_with?(HOMEBREW_TEMP.to_s) || filename.start_with?(HOMEBREW_TEMP.realpath.to_s)
+        filename.start_with?(HOMEBREW_TEMP.to_s, HOMEBREW_TEMP.realpath.to_s)
       end
     end
   end

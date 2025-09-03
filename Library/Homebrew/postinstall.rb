@@ -12,6 +12,7 @@ require "utils/socket"
 require "cli/parser"
 require "cmd/postinstall"
 require "json/add/exception"
+require "extend/pathname/write_mkpath_extension"
 
 begin
   # Undocumented opt-out for internal use.
@@ -24,11 +25,14 @@ begin
 
   trap("INT", old_trap)
 
-  formula = T.must(args.named.to_resolved_formulae.first)
+  formula = args.named.to_resolved_formulae.fetch(0)
   if args.debug? && !Homebrew::EnvConfig.disable_debrew?
     require "debrew"
     formula.extend(Debrew::Formula)
   end
+
+  Pathname.prepend WriteMkpathExtension
+
   formula.run_post_install
 # Handle all possible exceptions.
 rescue Exception => e # rubocop:disable Lint/RescueException

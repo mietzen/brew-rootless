@@ -15,6 +15,7 @@ require "utils/socket"
 require "cli/parser"
 require "dev-cmd/test"
 require "json/add/exception"
+require "extend/pathname/write_mkpath_extension"
 
 DEFAULT_TEST_TIMEOUT_SECONDS = 5 * 60
 
@@ -36,13 +37,15 @@ begin
     raise "Cannot kill child processes without `pkill`, please install!" unless which("pkill")
   end
 
-  formula = T.must(args.named.to_resolved_formulae.first)
+  formula = args.named.to_resolved_formulae.fetch(0)
   formula.extend(Homebrew::Assertions)
   formula.extend(Homebrew::FreePort)
   if args.debug? && !Homebrew::EnvConfig.disable_debrew?
     require "debrew"
     formula.extend(Debrew::Formula)
   end
+
+  Pathname.prepend WriteMkpathExtension
 
   ENV.extend(Stdenv)
   ENV.setup_build_environment(formula:, testing_formula: true)

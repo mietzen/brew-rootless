@@ -61,7 +61,7 @@ module Cask
       tokens.sort.filter_map do |token|
         CaskLoader.load_prefer_installed(token, config:, warn: false)
       rescue TapCaskAmbiguityError => e
-        T.must(e.loaders.first).load(config:)
+        e.loaders.fetch(0).load(config:)
       rescue
         # Don't blow up because of a single unavailable cask.
         nil

@@ -27,7 +27,7 @@ module Cask
 
       quarantine = true if quarantine.nil?
 
-      download_queue = Homebrew::DownloadQueue.new(pour: true) if Homebrew::EnvConfig.download_concurrency > 1
+      download_queue = Homebrew::DownloadQueue.new_if_concurrency_enabled(pour: true)
       cask_installers = casks.map do |cask|
         Installer.new(cask, binaries:, verbose:, force:, skip_cask_deps:, require_sha:, reinstall: true,
                       quarantine:, zap:, download_queue:)

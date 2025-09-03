@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "digest/sha2"
@@ -111,24 +111,6 @@ module Formulary
 
     super
   end
-
-  module PathnameWriteMkpath
-    # TODO: migrate away from refinements here, they don't play nicely with Sorbet
-    # rubocop:todo Sorbet/BlockMethodDefinition
-    refine Pathname do
-      def write(content, offset = nil, **open_args)
-        T.bind(self, Pathname)
-        raise "Will not overwrite #{self}" if exist? && !offset && !open_args[:mode]&.match?(/^a\+?$/)
-
-        dirname.mkpath
-
-        super
-      end
-    end
-    # rubocop:enable Sorbet/BlockMethodDefinition
-  end
-
-  using PathnameWriteMkpath
 
   sig {
     params(
@@ -395,12 +377,16 @@ module Formulary
 
       if (deprecation_date = json_formula["deprecation_date"].presence)
         reason = DeprecateDisable.to_reason_string_or_symbol json_formula["deprecation_reason"], type: :formula
-        deprecate! date: deprecation_date, because: reason
+        replacement_formula = json_formula["deprecation_replacement_formula"]
+        replacement_cask = json_formula["deprecation_replacement_cask"]
+        deprecate! date: deprecation_date, because: reason, replacement_formula:, replacement_cask:
       end
 
       if (disable_date = json_formula["disable_date"].presence)
         reason = DeprecateDisable.to_reason_string_or_symbol json_formula["disable_reason"], type: :formula
-        disable! date: disable_date, because: reason
+        replacement_formula = json_formula["disable_replacement_formula"]
+        replacement_cask = json_formula["disable_replacement_cask"]
+        disable! date: disable_date, because: reason, replacement_formula:, replacement_cask:
       end
 
       json_formula["conflicts_with"]&.each_with_index do |conflict, index|
@@ -521,6 +507,16 @@ module Formulary
 
       define_method :install do
         raise NotImplementedError, "Cannot build from source from abstract stubbed formula."
+      end
+
+      @aliases_array = formula_stub.aliases
+      define_method(:aliases) do
+        self.class.instance_variable_get(:@aliases_array)
+      end
+
+      @oldnames_array = formula_stub.oldnames
+      define_method(:oldnames) do
+        self.class.instance_variable_get(:@oldnames_array)
       end
     end
 
@@ -1350,7 +1346,7 @@ module Formulary
     if (possible_alias = tap.alias_table[alias_table_key].presence)
       # FIXME: Remove the need to split the name and instead make
       #        the alias table only contain short names.
-      name = T.must(possible_alias.split("/").last)
+      name = possible_alias.split("/").fetch(-1)
       type = :alias
     elsif (new_name = tap.formula_renames[name].presence)
       old_name = tap.core_tap? ? name : tapped_name

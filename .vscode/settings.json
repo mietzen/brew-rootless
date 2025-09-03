@@ -27,7 +27,7 @@
   ],
   "rubyLsp.customRubyCommand": "source ../../.vscode/ruby-lsp-activate.sh",
   "rubyLsp.bundleGemfile": "Library/Homebrew/Gemfile",
-  "rubyLsp.formatter": "rubocop_internal",
+  "rubyLsp.formatter": "rubocop",
   "[ruby]": {
     "editor.defaultFormatter": "Shopify.ruby-lsp",
     "editor.formatOnSave": true,

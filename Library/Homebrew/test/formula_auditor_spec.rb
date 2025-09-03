@@ -729,7 +729,7 @@ RSpec.describe Homebrew::FormulaAuditor do
     end
 
     it "suggests a detected default branch for Git head URLs" do
-      fa = formula_auditor "foo", <<~RUBY, online: true
+      fa = formula_auditor "foo", <<~RUBY, online: true, core_tap: true
         class Foo < Formula
           url "https://brew.sh/foo-1.0.tgz"
           sha256 "31cccfc6630528db1c8e3a06f6decf2a370060b982841cfab2b8677400a5092e"
@@ -737,13 +737,13 @@ RSpec.describe Homebrew::FormulaAuditor do
         end
       RUBY
 
-      message = "Git `head` URL must specify a branch name - try `branch: \"main\"`"
+      message = "To use a non-default HEAD branch, add the formula to `head_non_default_branch_allowlist.json`."
       fa.audit_specs
       # This is `.last` because the first problem is the unreachable stable URL.
       expect(fa.problems.last[:message]).to match(message)
     end
 
-    it "ignores a pre-existing correct HEAD branch name" do
+    it "can specify a default branch without an allowlist if not in a core tap" do
       fa = formula_auditor "foo", <<~RUBY, online: true
         class Foo < Formula
           url "https://brew.sh/foo-1.0.tgz"

@@ -13,6 +13,7 @@ require "development_tools"
 module SharedEnvExtension
   extend T::Helpers
   include CompilerConstants
+  include Utils::Output::Mixin
 
   requires_ancestor { Sorbet::Private::Static::ENVClass }
 
@@ -258,7 +259,7 @@ module SharedEnvExtension
     flags = []
 
     if fc
-      ohai "Building with an alternative Fortran compiler", "This is unsupported."
+      opoo "Building with an unsupported Fortran compiler"
       self["F77"] ||= fc
     else
       if (gfortran = which("gfortran", (HOMEBREW_PREFIX/"bin").to_s))

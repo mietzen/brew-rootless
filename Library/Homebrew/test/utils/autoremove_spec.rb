@@ -65,7 +65,8 @@ RSpec.describe Utils::Autoremove do
     include_context "with formulae for dependency testing"
 
     before do
-      allow(Formulary).to receive(:factory).with("three", { warn: false }).and_return(formula_is_build_dep)
+      allow(Formulary).to receive(:factory).with("three", { prefer_stub: false, warn: false })
+                                           .and_return(formula_is_build_dep)
     end
 
     context "when formulae are bottles" do

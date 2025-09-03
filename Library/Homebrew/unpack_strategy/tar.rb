@@ -59,7 +59,7 @@ module UnpackStrategy
     }
     def subextract(extractor, dir, verbose)
       extractor.new(path).extract(to: dir, verbose:)
-      T.must(dir.children.first)
+      dir.children.fetch(0)
     end
   end
 end

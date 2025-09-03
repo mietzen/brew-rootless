@@ -500,7 +500,7 @@ class Reporter
       case status
       when "A", "D"
         full_name = tap.formula_file_to_name(src)
-        name = T.must(full_name.split("/").last)
+        name = full_name.split("/").fetch(-1)
         new_tap = tap.tap_migrations[name]
         @report[T.must(status).to_sym] << full_name unless new_tap
       when "M"
@@ -614,7 +614,7 @@ class Reporter
   sig { void }
   def migrate_tap_migration
     (Array(report[:D]) + Array(report[:DC])).each do |full_name|
-      name = T.must(full_name.split("/").last)
+      name = full_name.split("/").fetch(-1)
       new_tap_name = tap.tap_migrations[name]
       next if new_tap_name.nil? # skip if not in tap_migrations list.
 
@@ -901,7 +901,7 @@ class ReporterHub
       true
     end
     casks.each do |cask|
-      cask_token = T.must(cask.split("/").last)
+      cask_token = cask.split("/").fetch(-1)
       if should_display_descriptions && (desc = cask_description(cask))
         puts "#{cask_token}: #{desc}"
       else
@@ -924,7 +924,7 @@ class ReporterHub
     return if Homebrew::SimulateSystem.simulating_or_running_on_linux?
 
     casks = select_formula_or_cask(:DC).sort.filter_map do |name|
-      name = T.must(name.split("/").last)
+      name = name.split("/").fetch(-1)
       pretty_uninstalled(name) if cask_installed?(name)
     end
 

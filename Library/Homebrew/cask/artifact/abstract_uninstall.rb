@@ -376,7 +376,7 @@ module Cask
         executable_path = staged_path_join_executable(executable)
 
         if (executable_path.absolute? && !executable_path.exist?) ||
-           (!executable_path.absolute? && (which executable_path).nil?)
+           (!executable_path.absolute? && which(executable_path.to_s).nil?)
           message = "uninstall script #{executable} does not exist"
           raise CaskError, "#{message}." unless force
 

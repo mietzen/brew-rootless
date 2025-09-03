@@ -36,8 +36,8 @@ class Dependency
     [name, tags].hash
   end
 
-  def to_formula
-    formula = Formulary.factory(name, warn: false)
+  def to_formula(prefer_stub: false)
+    formula = Formulary.factory(name, warn: false, prefer_stub:)
     formula.build = BuildOptions.new(options, formula.options)
     formula
   end
@@ -45,7 +45,7 @@ class Dependency
   sig { params(minimum_version: T.nilable(Version), minimum_revision: T.nilable(Integer)).returns(T::Boolean) }
   def installed?(minimum_version: nil, minimum_revision: nil)
     formula = begin
-      to_formula
+      to_formula(prefer_stub: true)
     rescue FormulaUnavailableError
       nil
     end
@@ -86,7 +86,7 @@ class Dependency
   end
 
   def missing_options(inherited_options)
-    formula = to_formula
+    formula = to_formula(prefer_stub: true)
     required = options
     required |= inherited_options
     required &= formula.options.to_a

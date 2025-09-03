@@ -32,11 +32,21 @@ module Homebrew
         stub_array = formula_arrays[name]
         raise "No formula stub found for #{name}" unless stub_array
 
+        aliases = formula_aliases.filter_map do |alias_name, original_name|
+          alias_name if original_name == name
+        end
+
+        oldnames = formula_renames.filter_map do |oldname, newname|
+          oldname if newname == name
+        end
+
         stub = Homebrew::FormulaStub.new(
           name:        name,
           pkg_version: PkgVersion.parse(stub_array[0]),
           rebuild:     stub_array[1],
           sha256:      stub_array[2],
+          aliases:,
+          oldnames:,
         )
 
         cache["formula_stubs"] ||= {}

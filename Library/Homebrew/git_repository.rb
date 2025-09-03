@@ -27,7 +27,7 @@ class GitRepository
   end
 
   # Sets the URL of the Git origin remote.
-  sig { params(origin: String).returns(T.nilable(T::Boolean)) }
+  sig { params(origin: String).void }
   def origin_url=(origin)
     return if !git_repository? || !Utils::Git.available?
 

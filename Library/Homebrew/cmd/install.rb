@@ -244,7 +244,7 @@ module Homebrew
 
           installed_casks, new_casks = casks.partition(&:installed?)
 
-          download_queue = Homebrew::DownloadQueue.new(pour: true) if Homebrew::EnvConfig.download_concurrency > 1
+          download_queue = Homebrew::DownloadQueue.new_if_concurrency_enabled(pour: true)
           fetch_casks = Homebrew::EnvConfig.no_install_upgrade? ? new_casks : casks
 
           if download_queue

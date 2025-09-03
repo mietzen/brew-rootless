@@ -2738,9 +2738,11 @@ _brew_unpack() {
   case "${cur}" in
     -*)
       __brewcomp "
+      --cask
       --debug
       --destdir
       --force
+      --formula
       --git
       --help
       --patch
@@ -2752,6 +2754,7 @@ _brew_unpack() {
     *) ;;
   esac
   __brew_complete_formulae
+  __brew_complete_casks
 }
 
 _brew_unpin() {

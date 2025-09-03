@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "formula_support"
+require "keg_only_reason"
 
 RSpec.describe KegOnlyReason do
   describe "#to_s" do

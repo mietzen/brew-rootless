@@ -24,6 +24,7 @@ module Homebrew
       @strict    = options[:strict]
       @only      = options[:only]
       @except    = options[:except]
+      @core_tap  = options[:core_tap]
       @use_homebrew_curl = options[:use_homebrew_curl]
       @problems = []
     end
@@ -84,6 +85,9 @@ module Homebrew
         end
       end
 
+      # TODO: Remove this exception for `lsr` after support for tangled.sh
+      # Git URLs is available in a brew release.
+      return if name == "lsr"
       return if url_strategy != DownloadStrategyDetector.detect("", using)
 
       problem "Redundant `using:` value in URL"
@@ -190,10 +194,15 @@ module Homebrew
       detected_branch = Utils.popen_read("git", "ls-remote", "--symref", url, "HEAD")
                              .match(%r{ref: refs/heads/(.*?)\s+HEAD})&.to_a&.second
 
-      message = "Git `head` URL must specify a branch name"
-      message += " - try `branch: \"#{detected_branch}\"`" if detected_branch.present?
+      if specs[:branch].blank?
+        problem "Git `head` URL must specify a branch name"
+        return
+      end
 
-      problem message if specs[:branch].blank? || detected_branch != specs[:branch]
+      return unless @core_tap
+      return if specs[:branch] == detected_branch
+
+      problem "To use a non-default HEAD branch, add the formula to `head_non_default_branch_allowlist.json`."
     end
 
     def problem(text)
