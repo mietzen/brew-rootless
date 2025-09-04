@@ -7,7 +7,9 @@ raise "Missing `pid` argument!" unless pid
 
 require "fiddle"
 
-libproc = Fiddle.dlopen("/usr/lib/libproc.dylib")
+# Canonically, this is a part of libproc.dylib. libproc is however just a symlink to libSystem
+# and some security tools seem to not support aliases from the dyld shared cache and incorrectly flag this.
+libproc = Fiddle.dlopen("/usr/lib/libSystem.B.dylib")
 
 libproc_proc_pidpath_function = Fiddle::Function.new(
   libproc["proc_pidpath"],

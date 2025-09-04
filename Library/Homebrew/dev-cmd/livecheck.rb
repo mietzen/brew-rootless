@@ -78,9 +78,15 @@ module Homebrew
             formulae + casks
           elsif File.exist?(watchlist_path)
             begin
+              # This removes blank lines, comment lines, and trailing comments
               names = Pathname.new(watchlist_path).read.lines
-                              .reject { |line| line.start_with?("#") || line.blank? }
-                              .map(&:strip)
+                              .filter_map do |line|
+                                comment_index = line.index("#")
+                                next if comment_index&.zero?
+
+                                line = line[0...comment_index] if comment_index
+                                line&.strip.presence
+                              end
 
               named_args = CLI::NamedArgs.new(*names, parent: args)
               named_args.to_formulae_and_casks(ignore_unavailable: true)

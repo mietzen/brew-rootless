@@ -198,8 +198,8 @@ module Homebrew
       FORMULA_CHECKS = T.let([
         :package_or_resource_skip,
         :formula_head_only,
-        :formula_deprecated,
         :formula_disabled,
+        :formula_deprecated,
         :formula_versioned,
       ].freeze, T::Array[Symbol])
       private_constant :FORMULA_CHECKS
@@ -207,8 +207,8 @@ module Homebrew
       # Skip conditions for casks.
       CASK_CHECKS = T.let([
         :package_or_resource_skip,
-        :cask_deprecated,
         :cask_disabled,
+        :cask_deprecated,
         :cask_extract_plist,
         :cask_version_latest,
         :cask_url_unversioned,

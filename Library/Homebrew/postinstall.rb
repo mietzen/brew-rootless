@@ -32,8 +32,8 @@ begin
   end
 
   Pathname.prepend WriteMkpathExtension
-
   formula.run_post_install
+
 # Handle all possible exceptions.
 rescue Exception => e # rubocop:disable Lint/RescueException
   error_pipe&.puts e.to_json

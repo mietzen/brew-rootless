@@ -622,15 +622,17 @@ module Cask
         }.compact
 
         Homebrew::Install.perform_preinstall_checks_once
-        valid_formula_installers = Homebrew::Install.fetch_formulae(primary_container.dependencies)
-
-        primary_container.dependencies.each do |dep|
-          next unless valid_formula_installers.include?(dep)
-
-          fi = FormulaInstaller.new(
+        formula_installers = primary_container.dependencies.map do |dep|
+          FormulaInstaller.new(
             dep,
             **install_options,
           )
+        end
+        valid_formula_installers = Homebrew::Install.fetch_formulae(formula_installers)
+
+        formula_installers.each do |fi|
+          next unless valid_formula_installers.include?(fi)
+
           fi.install
           fi.finish
         end
@@ -753,9 +755,9 @@ module Cask
       latest_version = Homebrew::Livecheck.latest_version(
         cask,
         referenced_formula_or_cask: referenced_cask,
-      )&.fetch(:latest)
+      )&.fetch(:latest, nil)
 
-      return :auto_detected if cask.version.to_s == latest_version.to_s
+      return :auto_detected if latest_version && (cask.version.to_s == latest_version.to_s)
 
       add_error "Version '#{cask.version}' differs from '#{latest_version}' retrieved by livecheck."
 

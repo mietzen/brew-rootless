@@ -183,6 +183,8 @@ class Build
 
             (formula.logs/"00.options.out").write \
               "#{formula.full_name} #{formula.build.used_options.sort.join(" ")}".strip
+
+            Pathname.prepend WriteMkpathExtension
             formula.install
 
             stdlibs = detect_stdlibs
@@ -246,8 +248,6 @@ begin
   formula = args.named.to_formulae.first
   options = Options.create(args.flags_only)
   build   = Build.new(formula, options, args:)
-
-  Pathname.prepend WriteMkpathExtension
 
   build.install
 # Any exception means the build did not complete.
