@@ -68,7 +68,7 @@ module Homebrew
                description: "Output as JSON."
 
         conflicts "--all", "--file"
-        conflicts "--max-wait=", "--no-wait"
+        conflicts "--max-wait", "--no-wait"
 
         named_args %w[list info run start stop kill restart cleanup]
       end

@@ -41,9 +41,9 @@ module Homebrew
         switch "--autobump",
                description: "Include packages that are autobumped by BrewTestBot. By default these are skipped."
 
-        conflicts "--debug", "--json"
-        conflicts "--tap=", "--eval-all", "--installed"
-        conflicts "--cask", "--formula"
+        conflicts "--tap", "--installed", "--eval-all"
+        conflicts "--json", "--debug"
+        conflicts "--formula", "--cask"
         conflicts "--formula", "--extract-plist"
 
         named_args [:formula, :cask], without_api: true

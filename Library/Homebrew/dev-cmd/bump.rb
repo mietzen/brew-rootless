@@ -57,10 +57,10 @@ module Homebrew
         switch "--bump-synced",
                description: "Bump additional formulae marked as synced with the given formulae."
 
-        conflicts "--cask", "--formula"
-        conflicts "--tap=", "--installed"
-        conflicts "--tap=", "--no-autobump"
-        conflicts "--eval-all", "--installed"
+        conflicts "--formula", "--cask"
+        conflicts "--tap", "--installed"
+        conflicts "--tap", "--no-autobump"
+        conflicts "--installed", "--eval-all"
         conflicts "--installed", "--auto"
         conflicts "--no-pull-requests", "--open-pr"
 

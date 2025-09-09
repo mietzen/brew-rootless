@@ -113,6 +113,18 @@ class Keg
         old: "/usr/local/var/log/#{name}",
         new: "#{PREFIX_PLACEHOLDER}/var/log/#{name}",
       },
+      var_run_name: {
+        old: "/usr/local/var/run/#{name}",
+        new: "#{PREFIX_PLACEHOLDER}/var/run/#{name}",
+      },
+      var_db_name:  {
+        old: "/usr/local/var/db/#{name}",
+        new: "#{PREFIX_PLACEHOLDER}/var/db/#{name}",
+      },
+      share_name:   {
+        old: "/usr/local/share/#{name}",
+        new: "#{PREFIX_PLACEHOLDER}/share/#{name}",
+      },
     }
   end
 

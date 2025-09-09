@@ -175,7 +175,7 @@ RSpec.describe Homebrew::CLI::Parser do
         flag      "--flag2=", depends_on: "--flag1="
         flag      "--flag3="
 
-        conflicts "--flag1=", "--flag3="
+        conflicts "--flag1", "--flag3"
       end
     end
 
@@ -204,7 +204,8 @@ RSpec.describe Homebrew::CLI::Parser do
       described_class.new(Cmd) do
         flag      "--flag1="
         flag      "--flag2=", depends_on: "--flag1="
-        conflicts "--flag1=", "--flag2="
+
+        conflicts "--flag1", "--flag2"
       end
     end
 

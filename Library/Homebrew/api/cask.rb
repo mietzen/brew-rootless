@@ -75,18 +75,18 @@ module Homebrew
       end
 
       sig {
-        params(download_queue: T.nilable(::Homebrew::DownloadQueue), stale_seconds: Integer)
+        params(download_queue: T.nilable(::Homebrew::DownloadQueue), stale_seconds: T.nilable(Integer))
           .returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
       }
-      def self.fetch_api!(download_queue: nil, stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
+      def self.fetch_api!(download_queue: nil, stale_seconds: nil)
         Homebrew::API.fetch_json_api_file DEFAULT_API_FILENAME, stale_seconds:, download_queue:
       end
 
       sig {
-        params(download_queue: T.nilable(::Homebrew::DownloadQueue), stale_seconds: Integer)
+        params(download_queue: T.nilable(::Homebrew::DownloadQueue), stale_seconds: T.nilable(Integer))
           .returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
       }
-      def self.fetch_tap_migrations!(download_queue: nil, stale_seconds: Homebrew::API::TAP_MIGRATIONS_STALE_SECONDS)
+      def self.fetch_tap_migrations!(download_queue: nil, stale_seconds: nil)
         Homebrew::API.fetch_json_api_file "cask_tap_migrations.jws.json", stale_seconds:, download_queue:
       end
 

@@ -77,7 +77,6 @@ module Homebrew
                description: "Show the size of installed formulae and casks."
 
         conflicts "--installed", "--eval-all"
-        conflicts "--installed", "--all"
         conflicts "--formula", "--cask"
         conflicts "--fetch-manifest", "--cask"
         conflicts "--fetch-manifest", "--json"

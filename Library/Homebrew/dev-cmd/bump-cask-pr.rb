@@ -49,8 +49,8 @@ module Homebrew
                description: "Use the specified GitHub organization for forking."
 
         conflicts "--dry-run", "--write"
-        conflicts "--version=", "--version-arm="
-        conflicts "--version=", "--version-intel="
+        conflicts "--version", "--version-arm"
+        conflicts "--version", "--version-intel"
 
         named_args :cask, number: 1, without_api: true
       end

@@ -749,7 +749,7 @@ module Homebrew
     end
 
     def audit_specs
-      problem "HEAD-only (no stable download)" if head_only?(formula)
+      problem "HEAD-only (no stable download)" if head_only?(formula) && @core_tap
 
       %w[Stable HEAD].each do |name|
         spec_name = name.downcase.to_sym

@@ -3807,6 +3807,10 @@ Database update for `brew which-formula`.
 
 : Specify a maximum number of formulae to download and update.
 
+`--summary-file`
+
+: Output a summary of the changes to a file.
+
 ## CUSTOM EXTERNAL COMMANDS
 
 Homebrew, like `git`(1), supports external commands. These are executable
@@ -3828,10 +3832,6 @@ can take several different forms:
   tapped repository may conflict with one in `homebrew/core`. You can still
   access these formulae by using a special syntax, e.g. `homebrew/dupes/vim` or
   `homebrew/versions/node4`.
-
-* An arbitrary file: Homebrew can install formulae from a local path. It can
-  point to either a formula file or a bottle. Prefix relative paths with `./` to
-  prevent them from being interpreted as a formula or tap name.
 
 ## SPECIFYING CASKS
 

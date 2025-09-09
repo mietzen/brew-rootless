@@ -17,7 +17,7 @@ module Homebrew
 
     HOMEBREW_CACHE_API = T.let((HOMEBREW_CACHE/"api").freeze, Pathname)
     HOMEBREW_CACHE_API_SOURCE = T.let((HOMEBREW_CACHE/"api-source").freeze, Pathname)
-    TAP_MIGRATIONS_STALE_SECONDS = T.let(86400, Integer) # 1 day
+    DEFAULT_API_STALE_SECONDS = T.let(86400, Integer) # 1 day
 
     sig { params(endpoint: String).returns(T::Hash[String, T.untyped]) }
     def self.fetch(endpoint)
@@ -37,12 +37,25 @@ module Homebrew
       raise ArgumentError, "Invalid JSON file: #{Tty.underline}#{api_url}#{Tty.reset}"
     end
 
+    sig { params(target: Pathname, stale_seconds: T.nilable(Integer)).returns(T::Boolean) }
+    def self.skip_download?(target:, stale_seconds:)
+      return true if Homebrew.running_as_root_but_not_owned_by_root?
+      return false if !target.exist? || target.empty?
+      return true unless stale_seconds
+
+      (Time.now - stale_seconds) < target.mtime
+    end
+
     sig {
-      params(endpoint: String, target: Pathname, stale_seconds: Integer, download_queue: T.nilable(DownloadQueue))
-        .returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
+      params(
+        endpoint:       String,
+        target:         Pathname,
+        stale_seconds:  T.nilable(Integer),
+        download_queue: T.nilable(DownloadQueue),
+      ).returns([T.any(T::Array[T.untyped], T::Hash[String, T.untyped]), T::Boolean])
     }
     def self.fetch_json_api_file(endpoint, target: HOMEBREW_CACHE_API/endpoint,
-                                 stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i, download_queue: nil)
+                                 stale_seconds: nil, download_queue: nil)
       # Lazy-load dependency.
       require "development_tools"
 
@@ -63,12 +76,7 @@ module Homebrew
 
       insecure_download = DevelopmentTools.ca_file_substitution_required? ||
                           DevelopmentTools.curl_substitution_required?
-      skip_download = target.exist? &&
-                      !target.empty? &&
-                      (!Homebrew.auto_update_command? ||
-                        (Homebrew::EnvConfig.no_auto_update? && !Homebrew::EnvConfig.force_api_auto_update?) ||
-                      ((Time.now - stale_seconds) < target.mtime))
-      skip_download ||= Homebrew.running_as_root_but_not_owned_by_root?
+      skip_download = skip_download?(target:, stale_seconds:)
 
       if download_queue
         unless skip_download
@@ -161,17 +169,28 @@ module Homebrew
         require "download_queue"
         Homebrew::DownloadQueue.new
       end
-      stale_seconds = 86400 # 1 day
+
+      stale_seconds = if ENV["HOMEBREW_API_UPDATED"].present? ||
+                         (Homebrew::EnvConfig.no_auto_update? && !Homebrew::EnvConfig.force_api_auto_update?)
+        nil
+      elsif Homebrew.auto_update_command?
+        Homebrew::EnvConfig.api_auto_update_secs.to_i
+      else
+        DEFAULT_API_STALE_SECONDS
+      end
 
       if Homebrew::EnvConfig.use_internal_api?
         Homebrew::API::Internal.fetch_formula_api!(download_queue:, stale_seconds:)
         Homebrew::API::Internal.fetch_cask_api!(download_queue:, stale_seconds:)
       else
         Homebrew::API::Formula.fetch_api!(download_queue:, stale_seconds:)
-        Homebrew::API::Formula.fetch_tap_migrations!(download_queue:, stale_seconds:)
+        Homebrew::API::Formula.fetch_tap_migrations!(download_queue:, stale_seconds: DEFAULT_API_STALE_SECONDS)
         Homebrew::API::Cask.fetch_api!(download_queue:, stale_seconds:)
-        Homebrew::API::Cask.fetch_tap_migrations!(download_queue:, stale_seconds:)
+        Homebrew::API::Cask.fetch_tap_migrations!(download_queue:, stale_seconds: DEFAULT_API_STALE_SECONDS)
       end
+
+      ENV["HOMEBREW_API_UPDATED"] = "1"
+
       return unless download_queue
 
       begin

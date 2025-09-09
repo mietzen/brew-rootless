@@ -55,7 +55,7 @@ module Homebrew
                description: "Include only casks."
 
         conflicts "--formula", "--cask"
-        conflicts "--installed", "--all"
+        conflicts "--installed", "--eval-all"
         conflicts "--missing", "--installed"
 
         named_args :formula, min: 1

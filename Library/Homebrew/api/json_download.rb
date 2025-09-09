@@ -10,13 +10,13 @@ module Homebrew
       def initialize(url, name, version, **meta)
         super
         @target = T.let(meta.fetch(:target), Pathname)
-        @stale_seconds = T.let(meta.fetch(:stale_seconds), Integer)
+        @stale_seconds = T.let(meta[:stale_seconds], T.nilable(Integer))
       end
 
       sig { override.params(timeout: T.nilable(T.any(Integer, Float))).returns(Pathname) }
       def fetch(timeout: nil)
         with_context quiet: quiet? do
-          Homebrew::API.fetch_json_api_file(url, target: cached_location, stale_seconds: meta.fetch(:stale_seconds))
+          Homebrew::API.fetch_json_api_file(url, target: cached_location, stale_seconds: meta[:stale_seconds])
         end
         cached_location
       end
@@ -30,7 +30,7 @@ module Homebrew
     class JSONDownload
       include Downloadable
 
-      sig { params(url: String, target: Pathname, stale_seconds: Integer).void }
+      sig { params(url: String, target: Pathname, stale_seconds: T.nilable(Integer)).void }
       def initialize(url, target:, stale_seconds:)
         super()
         @url = T.let(URL.new(url, using: API::JSONDownloadStrategy, target:, stale_seconds:), URL)

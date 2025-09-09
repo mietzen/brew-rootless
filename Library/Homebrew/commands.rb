@@ -128,7 +128,7 @@ module Commands
     OFFICIAL_CMD_TAPS.flat_map do |tap_name, cmds|
       tap = Tap.fetch(tap_name)
       tap.install(quiet:) unless tap.installed?
-      cmds.map(&method(:external_ruby_v2_cmd_path)).compact
+      cmds.map { external_ruby_v2_cmd_path(_1) }.compact
     end
   end
 

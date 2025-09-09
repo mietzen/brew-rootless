@@ -1,5 +1,5 @@
 ---
-last_review_date: "1970-01-01"
+last_review_date: "2025-09-05"
 ---
 
 # How to Create and Maintain a Tap
@@ -10,11 +10,45 @@ last_review_date: "1970-01-01"
 
 A tap is usually a Git repository available online, but you can use anything as long as it’s a protocol that Git understands, or even just a directory with files in it. If hosted on GitHub, we recommend that the repository’s name start with `homebrew-` so the short `brew tap` command can be used. See the [`brew` manual page](Manpage.md) for more information on repository naming.
 
-The `brew tap-new` command can be used to create a new tap along with some template files.
+The `brew tap-new` command can be used to create a new tap along with some template files:
+
+```console
+$ brew tap-new $YOUR_GITHUB_USERNAME/homebrew-tap
+Initialized empty Git repository in /opt/homebrew/Library/Taps/$YOUR_GITHUB_USERNAME/homebrew-tap/.git/
+...
+==> Created $YOUR_GITHUB_USERNAME/tap
+/opt/homebrew/Library/Taps/$YOUR_GITHUB_USERNAME/homebrew-tap
+```
+
+Next, you can push it to a new GitHub repository:
+
+```console
+$ gh repo create $YOUR_GITHUB_USERNAME/homebrew-tap --push --public --source "$(brew --repository $YOUR_GITHUB_USERNAME/homebrew-tap)"
+✓ Created repository $YOUR_GITHUB_USERNAME/homebrew-tap on github.com
+  https://github.com/$YOUR_GITHUB_USERNAME/homebrew-tap
+✓ Added remote https://github.com/$YOUR_GITHUB_USERNAME/homebrew-tap.git
+...
+✓ Pushed commits to https://github.com/$YOUR_GITHUB_USERNAME/homebrew-tap.git
+```
 
 Tap formulae follow the same format as the core’s ones, and can be added under either the `Formula` subdirectory, the `HomebrewFormula` subdirectory or the repository’s root. The first available directory is used, other locations will be ignored. We recommend the use of subdirectories because it makes the repository organisation easier to grasp, and top-level files are not mixed with formulae.
 
 See [homebrew/core](https://github.com/Homebrew/homebrew-core) for an example of a tap with a `Formula` subdirectory.
+
+### Creating your formula or cask
+
+Run `brew create` to create a formula or cask file in your tap and open it in your text editor:
+
+```console
+$ brew create https://mirror.ibcp.fr/pub/gnu/wget/wget-1.25.0.tar.gz --tap $YOUR_GITHUB_USERNAME/homebrew-tap --set-name $YOUR_GITHUB_USERNAME-wget
+==> Downloading from https://mirror.ibcp.fr/pub/gnu/wget/wget-1.25.0.tar.gz
+...
+Editing /opt/homebrew/Library/Taps/$YOUR_GITHUB_USERNAME/homebrew-tap/Formula/$YOUR_GITHUB_USERNAME-wget.rb
+```
+
+After that, follow the [Adding Software to Homebrew](Adding-Software-to-Homebrew.md) guide to create your formula or cask file.
+
+Finally, `git add`, `git commit` and `git push` your formula or cask to your tap and others can use it too.
 
 ### Naming your formulae to avoid clashes
 
@@ -22,11 +56,11 @@ If a formula in your tap has the same name as a Homebrew/homebrew-core formula t
 
 ## Installing
 
-If it’s on GitHub, users can install any of your formulae with `brew install user/repo/formula`. Homebrew will automatically add your `github.com/user/homebrew-repository` tap before installing the formula. `user/repo/formula` points to the `github.com/user/homebrew-repo/**/formula.rb` file here.
+If it’s on GitHub, users can install any of your formulae with `brew install user/repository/formula`. Homebrew will automatically add your `github.com/user/homebrew-repository` tap before installing the formula. `user/repository/formula` points to the `github.com/user/homebrew-repository/**/formula.rb` file here.
 
 To install your tap without installing any formula at the same time, users can add it with the [`brew tap` command](Taps.md). If it’s on GitHub, they can use `brew tap user/repository`, where `user` is your GitHub username and `homebrew-repository` is your repository. If it’s hosted outside of GitHub, they have to use `brew tap user/repo <URL>`, where `user` and `repository` will be used to refer to your tap and `<URL>` is your Git clone URL.
 
-Users can then install your formulae either with `brew install foo` if there’s no core formula with the same name, or with `brew install user/repo/foo` to avoid conflicts.
+Users can then install your formulae either with `brew install foo` if there’s no core formula with the same name, or with `brew install user/repository/foo` to avoid conflicts.
 
 ## Maintaining a tap
 

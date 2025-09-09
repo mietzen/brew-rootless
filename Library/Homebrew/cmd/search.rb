@@ -37,8 +37,7 @@ module Homebrew
                description: "Search for casks."
         switch "--desc",
                description: "Search for formulae with a description matching <text> and casks with " \
-                            "a name or description matching <text>.",
-               depends_on:  "--eval-all"
+                            "a name or description matching <text>."
         switch "--eval-all",
                description: "Evaluate all available formulae and casks, whether installed or not, to search their " \
                             "descriptions.",

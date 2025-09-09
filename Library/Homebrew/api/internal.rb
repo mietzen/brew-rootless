@@ -56,20 +56,20 @@ module Homebrew
       end
 
       sig {
-        params(download_queue: T.nilable(Homebrew::DownloadQueue), stale_seconds: Integer)
+        params(download_queue: T.nilable(Homebrew::DownloadQueue), stale_seconds: T.nilable(Integer))
           .returns([T::Hash[String, T.untyped], T::Boolean])
       }
-      def self.fetch_formula_api!(download_queue: nil, stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
-        json_contents, updated = (Homebrew::API.fetch_json_api_file formula_endpoint, stale_seconds:, download_queue:)
+      def self.fetch_formula_api!(download_queue: nil, stale_seconds: nil)
+        json_contents, updated = Homebrew::API.fetch_json_api_file(formula_endpoint, stale_seconds:, download_queue:)
         [T.cast(json_contents, T::Hash[String, T.untyped]), updated]
       end
 
       sig {
-        params(download_queue: T.nilable(Homebrew::DownloadQueue), stale_seconds: Integer)
+        params(download_queue: T.nilable(Homebrew::DownloadQueue), stale_seconds: T.nilable(Integer))
           .returns([T::Hash[String, T.untyped], T::Boolean])
       }
-      def self.fetch_cask_api!(download_queue: nil, stale_seconds: Homebrew::EnvConfig.api_auto_update_secs.to_i)
-        json_contents, updated = (Homebrew::API.fetch_json_api_file cask_endpoint, stale_seconds:, download_queue:)
+      def self.fetch_cask_api!(download_queue: nil, stale_seconds: nil)
+        json_contents, updated = Homebrew::API.fetch_json_api_file(cask_endpoint, stale_seconds:, download_queue:)
         [T.cast(json_contents, T::Hash[String, T.untyped]), updated]
       end
 

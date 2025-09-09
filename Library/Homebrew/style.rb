@@ -49,7 +49,7 @@ module Homebrew
       ruby_files = T.let([], T::Array[Pathname])
       shell_files = T.let([], T::Array[Pathname])
       actionlint_files = T.let([], T::Array[Pathname])
-      Array(files).map(&method(:Pathname))
+      Array(files).map { Pathname(_1) }
                   .each do |path|
         case path.extname
         when ".rb"

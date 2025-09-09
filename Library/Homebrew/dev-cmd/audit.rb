@@ -93,11 +93,11 @@ module Homebrew
         switch "--cask", "--casks",
                description: "Treat all named arguments as casks."
 
+        conflicts "--installed", "--eval-all"
         conflicts "--only", "--except"
         conflicts "--only-cops", "--except-cops", "--strict"
         conflicts "--only-cops", "--except-cops", "--only"
         conflicts "--formula", "--cask"
-        conflicts "--installed", "--all"
 
         named_args [:formula, :cask], without_api: true
       end
