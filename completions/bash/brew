@@ -818,8 +818,10 @@ _brew_contributions() {
       --debug
       --from
       --help
+      --organisation
       --quiet
       --repositories
+      --team
       --to
       --user
       --verbose

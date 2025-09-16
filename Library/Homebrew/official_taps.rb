@@ -23,6 +23,7 @@ DEPRECATED_OFFICIAL_TAPS = %w[
   devel-only
   dupes
   emacs
+  formula-analytics
   fuse
   games
   gui

@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 # This script is loaded by formula_installer as a separate instance.
@@ -23,28 +23,40 @@ require "extend/pathname/write_mkpath_extension"
 class Build
   include Utils::Output::Mixin
 
-  attr_reader :formula, :deps, :reqs, :args
+  sig { returns(Formula) }
+  attr_reader :formula
 
+  sig { returns(T::Array[Dependency]) }
+  attr_reader :deps
+
+  sig { returns(Requirements) }
+  attr_reader :reqs
+
+  sig { returns(Homebrew::Cmd::InstallCmd::Args) }
+  attr_reader :args
+
+  sig { params(formula: Formula, options: Options, args: Homebrew::Cmd::InstallCmd::Args).void }
   def initialize(formula, options, args:)
     @formula = formula
     @formula.build = BuildOptions.new(options, formula.options)
-    @args = args
+    @args = T.let(args, Homebrew::Cmd::InstallCmd::Args)
+    @deps = T.let([], T::Array[Dependency])
+    @reqs = T.let(Requirements.new, Requirements)
 
-    if args.ignore_dependencies?
-      @deps = []
-      @reqs = []
-    else
-      @deps = expand_deps
-      @reqs = expand_reqs
-    end
+    return if args.ignore_dependencies?
+
+    @deps = expand_deps
+    @reqs = expand_reqs
   end
 
+  sig { params(dependent: Formula).returns(BuildOptions) }
   def effective_build_options_for(dependent)
     args  = dependent.build.used_options
     args |= Tab.for_formula(dependent).used_options
     BuildOptions.new(args, dependent.options)
   end
 
+  sig { returns(Requirements) }
   def expand_reqs
     formula.recursive_requirements do |dependent, req|
       build = effective_build_options_for(dependent)
@@ -54,6 +66,7 @@ class Build
     end
   end
 
+  sig { returns(T::Array[Dependency]) }
   def expand_deps
     formula.recursive_dependencies do |dependent, dep|
       build = effective_build_options_for(dependent)
@@ -67,6 +80,7 @@ class Build
     end
   end
 
+  sig { void }
   def install
     formula_deps = deps.map(&:to_formula)
     keg_only_deps = formula_deps.select(&:keg_only?)
@@ -79,7 +93,7 @@ class Build
     ENV.activate_extensions!(env: args.env)
 
     if superenv?(args.env)
-      superenv = T.cast(ENV, Superenv)
+      superenv = ENV
       superenv.keg_only_deps = keg_only_deps
       superenv.deps = formula_deps
       superenv.run_time_deps = run_time_deps
@@ -192,7 +206,7 @@ class Build
             tab.write
 
             # Find and link metafiles
-            formula.prefix.install_metafiles formula.buildpath
+            formula.prefix.install_metafiles T.must(formula.buildpath)
             formula.prefix.install_metafiles formula.libexec if formula.libexec.exist?
 
             normalize_pod2man_outputs!(formula)
@@ -202,6 +216,7 @@ class Build
     end
   end
 
+  sig { returns(T::Array[Symbol]) }
   def detect_stdlibs
     keg = Keg.new(formula.prefix)
 
@@ -211,13 +226,15 @@ class Build
     keg.detect_cxx_stdlibs(skip_executables: true)
   end
 
+  sig { params(formula: Formula).void }
   def fixopt(formula)
     path = if formula.linked_keg.directory? && formula.linked_keg.symlink?
       formula.linked_keg.resolved_path
     elsif formula.prefix.directory?
       formula.prefix
-    elsif (kids = formula.rack.children).size == 1 && kids.first.directory?
-      kids.first
+    elsif (children = formula.rack.children.presence) && children.size == 1 &&
+          (first_child = children.first.presence) && first_child.directory?
+      first_child
     else
       raise
     end
@@ -226,6 +243,7 @@ class Build
     raise "#{formula.opt_prefix} not present or broken\nPlease reinstall #{formula.full_name}. Sorry :("
   end
 
+  sig { params(formula: Formula).void }
   def normalize_pod2man_outputs!(formula)
     keg = Keg.new(formula.prefix)
     keg.normalize_pod2man_outputs!
@@ -245,7 +263,7 @@ begin
 
   trap("INT", old_trap)
 
-  formula = args.named.to_formulae.first
+  formula = args.named.to_formulae.fetch(0)
   options = Options.create(args.flags_only)
   build   = Build.new(formula, options, args:)
 

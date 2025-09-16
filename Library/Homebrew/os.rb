@@ -50,6 +50,7 @@ module OS
   LINUX_GLIBC_CI_VERSION = "2.35"
   LINUX_GLIBC_NEXT_CI_VERSION = "2.39"
   LINUX_GCC_CI_VERSION = "11.0"
+  LINUX_LIBSTDCXX_CI_VERSION = "6.0.30" # https://packages.ubuntu.com/jammy/libstdc++6
   LINUX_PREFERRED_GCC_COMPILER_FORMULA = "gcc@11" # https://packages.ubuntu.com/jammy/gcc
   LINUX_PREFERRED_GCC_RUNTIME_FORMULA = "gcc"
 

@@ -164,8 +164,8 @@ RSpec.describe Utils::Git do
   end
 
   describe "::ensure_installed!" do
-    it "returns nil if git already available" do
-      expect(described_class.ensure_installed!).to be_nil
+    it "doesn't fail if git already available" do
+      expect { described_class.ensure_installed! }.not_to raise_error
     end
 
     context "when git is not already available" do

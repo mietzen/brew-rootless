@@ -7,6 +7,7 @@ require "tab"
 require "utils"
 require "utils/bottles"
 require "utils/output"
+require "utils/path"
 require "service"
 require "utils/curl"
 require "deprecate_disable"
@@ -727,29 +728,7 @@ module Formulary
       end
 
       return unless path.expand_path.exist?
-
-      if Homebrew::EnvConfig.forbid_packages_from_paths?
-        path_realpath = path.realpath.to_s
-        path_string = path.to_s
-        if (path_realpath.end_with?(".rb") || path_string.end_with?(".rb")) &&
-           !path_realpath.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/") &&
-           !path_string.start_with?("#{HOMEBREW_CELLAR}/", "#{HOMEBREW_LIBRARY}/Taps/")
-          if path_string.include?("./") || path_string.end_with?(".rb") || path_string.count("/") != 2
-            raise <<~WARNING
-              Homebrew requires formulae to be in a tap, rejecting:
-                #{path_string} (#{path_realpath})
-
-              To create a tap, run e.g.
-                brew tap-new <user|org>/<repository>
-              To create a formula in a tap run e.g.
-                brew create <url> --tap=<user|org>/<repository>
-            WARNING
-          elsif path_string.count("/") == 2
-            # Looks like a tap, let's quietly return but not error.
-            return
-          end
-        end
-      end
+      return unless ::Utils::Path.loadable_package_path?(path, :formula)
 
       if (tap = Tap.from_path(path))
         # Only treat symlinks in taps as aliases.

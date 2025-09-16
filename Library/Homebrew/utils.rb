@@ -160,6 +160,15 @@ module Utils
     params(stem: String, count: Integer, plural: String, singular: String, include_count: T::Boolean).returns(String)
   }
   def self.pluralize(stem, count, plural: "s", singular: "", include_count: false)
+    case stem
+    when "formula"
+      plural = "e"
+    when "dependency", "try"
+      stem = stem.delete_suffix("y")
+      plural = "ies"
+      singular = "y"
+    end
+
     prefix = include_count ? "#{count} " : ""
     suffix = (count == 1) ? singular : plural
     "#{prefix}#{stem}#{suffix}"

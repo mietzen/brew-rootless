@@ -2414,11 +2414,22 @@ Summarise contributions to Homebrew repositories.
 
 `--repositories`
 
-: Specify a comma-separated list of repositories to search. Supported
-  repositories: `brew`, `core`, `cask`, `command-not-found` and `test-bot`.
-  Omitting this flag, or specifying `--repositories=primary`, searches only the
-  main repositories: `brew`, `core`, `cask`. Specifying `--repositories=all`
-  searches all repositories.
+: Specify a comma-separated list of repositories to search. All repositories
+  must be under the same user or organisation. Omitting this flag, or specifying
+  `--repositories=primary`, searches only the main repositories:
+  `Homebrew/brew`, `Homebrew/homebrew-core`, `Homebrew/homebrew-cask`.
+  Specifying `--repositories=all` searches all non-deprecated Homebrew
+  repositories.
+
+`--organisation`
+
+: Specify the organisation to populate sources repositories from. Omitting this
+  flag searches the Homebrew primary repositories.
+
+`--team`
+
+: Specify the team to populate users from. The first part of the team name will
+  be used as the organisation.
 
 `--from`
 
@@ -4533,19 +4544,20 @@ McQuaid, Patrick Linnane and Vanessa Gennarelli.
 Homebrew's Technical Steering Committee is Bo Anderson, Issy Long, Michael Cho,
 Mike McQuaid and Ruoyu Zhong.
 
-Homebrew's maintainers are Alexander Bayandin, Bevan Kay, Bo Anderson, Branch
-Vincent, Caleb Xu, Carlo Cabrera, Daeho Ro, Douglas Eichelberger, Dustin
-Rodrigues, Eric Knibbe, FX Coudert, Issy Long, Justin Krehel, Klaus Hipp, Markus
-Reiter, Michael Cho, Michka Popoff, Mike McQuaid, Nanda H Krishna, Patrick
-Linnane, Rui Chen, Ruoyu Zhong, Rylan Polster, Sam Ford, Sean Molenaar, Štefan
-Baebler, Thierry Moisan, Timothy Sutton and William Woodruff.
+Homebrew's maintainers are Bevan Kay, Bo Anderson, Branch Vincent, Caleb Xu,
+Carlo Cabrera, Daeho Ro, Douglas Eichelberger, Dustin Rodrigues, Eric Knibbe, FX
+Coudert, Issy Long, Justin Krehel, Klaus Hipp, Markus Reiter, Michael Cho,
+Michka Popoff, Mike McQuaid, Nanda H Krishna, Patrick Linnane, Rui Chen, Ruoyu
+Zhong, Rylan Polster, Sam Ford, Sean Molenaar, Štefan Baebler, Thierry Moisan
+and William Woodruff.
 
-Former maintainers with significant contributions include Miccal Matthews, Misty
-De Méo, Shaun Jackman, Vítor Galvão, Claudia Pellegrino, Seeker, Jan Viljanen,
-JCount, commitay, Dominyk Tiller, Tim Smith, Baptiste Fontaine, Xu Cheng, Martin
-Afanasjew, Brett Koonce, Charlie Sharpsteen, Jack Nagel, Adam Vandenberg, Andrew
-Janke, Alex Dunn, neutric, Tomasz Pajor, Uladzislau Shablinski, Alyssa Ross,
-ilovezfs, Chongyu Zhu and Homebrew's creator: Max Howell.
+Former maintainers with significant contributions include Alexander Bayandin,
+Miccal Matthews, Misty De Méo, Shaun Jackman, Vítor Galvão, Claudia Pellegrino,
+Seeker, Jan Viljanen, JCount, commitay, Dominyk Tiller, Tim Smith, Baptiste
+Fontaine, Xu Cheng, Martin Afanasjew, Brett Koonce, Charlie Sharpsteen, Jack
+Nagel, Adam Vandenberg, Andrew Janke, Alex Dunn, neutric, Tomasz Pajor,
+Uladzislau Shablinski, Alyssa Ross, ilovezfs, Chongyu Zhu and Homebrew's
+creator: Max Howell.
 
 ## BUGS
 

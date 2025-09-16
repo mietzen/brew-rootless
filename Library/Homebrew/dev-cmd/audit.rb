@@ -294,9 +294,7 @@ module Homebrew
           errors_summary = Utils.pluralize("problem", total_problems_count, include_count: true)
 
           error_sources = []
-          if formula_count.positive?
-            error_sources << Utils.pluralize("formula", formula_count, plural: "e", include_count: true)
-          end
+          error_sources << Utils.pluralize("formula", formula_count, include_count: true) if formula_count.positive?
           error_sources << Utils.pluralize("cask", cask_count, include_count: true) if cask_count.positive?
           error_sources << Utils.pluralize("tap", tap_count, include_count: true) if tap_count.positive?
 

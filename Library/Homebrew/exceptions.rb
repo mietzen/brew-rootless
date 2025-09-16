@@ -579,7 +579,7 @@ class UnbottledError < RuntimeError
     require "utils"
 
     msg = <<~EOS
-      The following #{Utils.pluralize("formula", formulae.count, plural: "e")} cannot be installed from #{Utils.pluralize("bottle", formulae.count)} and must be
+      The following #{Utils.pluralize("formula", formulae.count)} cannot be installed from #{Utils.pluralize("bottle", formulae.count)} and must be
       built from source.
         #{formulae.to_sentence}
     EOS

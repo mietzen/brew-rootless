@@ -20,9 +20,12 @@ Initialized empty Git repository in /opt/homebrew/Library/Taps/$YOUR_GITHUB_USER
 /opt/homebrew/Library/Taps/$YOUR_GITHUB_USERNAME/homebrew-tap
 ```
 
-Next, you can push it to a new GitHub repository:
+This creates a local tap with the proper directory structure.
+Next, you can push it to a new GitHub repository by running (from any directory):
 
 ```console
+$ brew install gh
+...
 $ gh repo create $YOUR_GITHUB_USERNAME/homebrew-tap --push --public --source "$(brew --repository $YOUR_GITHUB_USERNAME/homebrew-tap)"
 ✓ Created repository $YOUR_GITHUB_USERNAME/homebrew-tap on github.com
   https://github.com/$YOUR_GITHUB_USERNAME/homebrew-tap
@@ -30,6 +33,11 @@ $ gh repo create $YOUR_GITHUB_USERNAME/homebrew-tap --push --public --source "$(
 ...
 ✓ Pushed commits to https://github.com/$YOUR_GITHUB_USERNAME/homebrew-tap.git
 ```
+
+Assuming you leave the default `.github/workflows` files in place,
+["bottles" (binary packages) will be built and uploaded to GitHub Releases](https://brew.sh/2020/11/18/homebrew-tap-with-bottles-uploaded-to-github-releases).
+
+If you run `brew tap-new --github-packages`, you can upload to GitHub Packages instead.
 
 Tap formulae follow the same format as the core’s ones, and can be added under either the `Formula` subdirectory, the `HomebrewFormula` subdirectory or the repository’s root. The first available directory is used, other locations will be ignored. We recommend the use of subdirectories because it makes the repository organisation easier to grasp, and top-level files are not mixed with formulae.
 
@@ -56,19 +64,68 @@ If a formula in your tap has the same name as a Homebrew/homebrew-core formula t
 
 ## Installing
 
-If it’s on GitHub, users can install any of your formulae with `brew install user/repository/formula`. Homebrew will automatically add your `github.com/user/homebrew-repository` tap before installing the formula. `user/repository/formula` points to the `github.com/user/homebrew-repository/**/formula.rb` file here.
+There are two ways users can install formulae from your tap:
 
-To install your tap without installing any formula at the same time, users can add it with the [`brew tap` command](Taps.md). If it’s on GitHub, they can use `brew tap user/repository`, where `user` is your GitHub username and `homebrew-repository` is your repository. If it’s hosted outside of GitHub, they have to use `brew tap user/repo <URL>`, where `user` and `repository` will be used to refer to your tap and `<URL>` is your Git clone URL.
+### Direct installation (recommended)
 
-Users can then install your formulae either with `brew install foo` if there’s no core formula with the same name, or with `brew install user/repository/foo` to avoid conflicts.
+Users can install any of your formulae directly with `brew install user/repository/formula`. Homebrew will automatically add your tap before installing the formula:
+
+```console
+$ brew install alice/homebrew-tap/my-script
+==> Tapping alice/homebrew-tap
+Cloning into '/opt/homebrew/Library/Taps/alice/homebrew-tap'...
+...
+==> Installing my-script from alice/homebrew-tap
+```
+
+This is the most convenient method for users as it requires only one command.
+
+### Manual tap installation
+
+To install your tap without installing any formula at the same time, users can add it with the [`brew tap` command](Taps.md):
+
+```console
+# For GitHub repositories
+$ brew tap user/repository
+
+# For repositories hosted elsewhere
+$ brew tap user/repo <URL>
+```
+
+Where `user` is your GitHub username, `repository` is your repository name, and `<URL>` is your Git clone URL for non-GitHub repositories.
+
+After tapping, users can install your formulae either with:
+
+- `brew install foo` if there's no core formula with the same name
+- `brew install user/repository/foo` to avoid conflicts with core formulae
 
 ## Maintaining a tap
 
-A tap is just a Git repository so you don’t have to do anything specific when making modifications, apart from committing and pushing your changes.
+A tap is just a Git repository so you don't have to do anything specific when making modifications, apart from committing and pushing your changes.
 
 ### Updating
 
 Once your tap is installed, Homebrew will update it each time a user runs `brew update`. Outdated formulae will be upgraded when a user runs `brew upgrade`, like core formulae.
+
+### Best practices
+
+- **Keep your tap up to date**: Regularly update your formulae to the latest versions of the software you're packaging
+- **Test your formulae**: Before pushing changes, test your formulae locally with `brew install --build-from-source user/repository/formula`
+- **Use semantic versioning**: Tag your releases with version numbers (e.g. `1.0.0`) to make it easier for users to track changes
+- **Provide clear documentation**: Include a `README` in your tap repository explaining what your formulae do and how to use them
+- **Handle dependencies**: Make sure your formulae properly declare all dependencies using `depends_on`
+
+### Troubleshooting
+
+- **Formula not found after installation**: Make sure your formula file is in the correct location (`Formula/` subdirectory) and has the right file extension (`.rb`).
+- **Installation fails**: Check that your formula's `url` and `sha256` values are correct. You can verify the SHA256 with:
+
+  ```console
+  curl -L <URL> | shasum -a 256
+  ```
+
+- **Tap not updating**: Users may need to run `brew untap user/repository && brew tap user/repository` to force a fresh clone of your tap.
+- **Conflicts with core formulae**: If your formula conflicts with a core formula, consider renaming it or making it [keg-only](FAQ.md#what-does-keg-only-mean).
 
 ## Casks
 
@@ -78,7 +135,7 @@ See [homebrew/cask](https://github.com/Homebrew/homebrew-cask) for an example of
 
 ### Naming
 
-Unlike formulae, casks must have globally unique names to avoid clashes. This can be achieved by e.g. prepending the cask name with your github username: `username-formula-name`.
+Unlike formulae, casks must have globally unique names to avoid clashes. This can be achieved by e.g. prepending the cask name with your GitHub username: `username-formula-name`.
 
 ## External commands
 

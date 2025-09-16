@@ -251,7 +251,7 @@ module Homebrew
           ohai "No outdated dependents to upgrade!" unless dry_run
         else
           installed_formulae = (dry_run ? formulae : FormulaInstaller.installed.to_a).dup
-          formula_plural = Utils.pluralize("formula", installed_formulae.count, plural: "e")
+          formula_plural = Utils.pluralize("formula", installed_formulae.count)
           upgrade_verb = dry_run ? "Would upgrade" : "Upgrading"
           ohai "#{upgrade_verb} #{Utils.pluralize("dependent", upgradeable.count,
                                                   include_count: true)} of upgraded #{formula_plural}:"

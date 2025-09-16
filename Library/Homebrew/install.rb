@@ -405,8 +405,7 @@ module Homebrew
         return if formulae_names_to_install.empty?
 
         if dry_run
-          ohai "Would install #{Utils.pluralize("formula", formulae_names_to_install.count,
-                                                plural: "e", include_count: true)}:"
+          ohai "Would install #{Utils.pluralize("formula", formulae_names_to_install.count, include_count: true)}:"
           puts formulae_names_to_install.join(" ")
 
           formula_installers.each do |fi|
@@ -429,8 +428,8 @@ module Homebrew
       def print_dry_run_dependencies(formula, dependencies)
         return if dependencies.empty?
 
-        ohai "Would install #{Utils.pluralize("dependenc", dependencies.count, plural: "ies", singular: "y",
-                                            include_count: true)} for #{formula.name}:"
+        ohai "Would install #{Utils.pluralize("dependency", dependencies.count, include_count: true)} " \
+             "for #{formula.name}:"
         formula_names = dependencies.map { |(dep, _options)| yield dep.to_formula }
         puts formula_names.join(" ")
       end
@@ -446,7 +445,7 @@ module Homebrew
 
         sizes = compute_total_sizes(formulae, debug: args.debug?)
 
-        puts "#{::Utils.pluralize("Formula", formulae.count, plural: "e")} \
+        puts "#{::Utils.pluralize("Formula", formulae.count)} \
 (#{formulae.count}): #{formulae.join(", ")}\n\n"
         puts "Download Size: #{disk_usage_readable(sizes.fetch(:download))}"
         puts "Install Size:  #{disk_usage_readable(sizes.fetch(:installed))}"

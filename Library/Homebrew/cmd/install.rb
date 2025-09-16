@@ -233,8 +233,8 @@ module Homebrew
                                        .map(&:name)
               next if dep_names.blank?
 
-              ohai "Would install #{::Utils.pluralize("dependenc", dep_names.count, plural: "ies", singular: "y",
-                                                  include_count: true)} for #{cask.full_name}:"
+              ohai "Would install #{::Utils.pluralize("dependency", dep_names.count, include_count: true)} " \
+                   "for #{cask.full_name}:"
               puts dep_names.join(" ")
             end
             return

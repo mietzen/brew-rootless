@@ -6,6 +6,7 @@ require "cask/cask"
 require "uri"
 require "utils/curl"
 require "utils/output"
+require "utils/path"
 require "extend/hash/keys"
 require "api"
 
@@ -112,9 +113,7 @@ module Cask
 
         return unless path.expand_path.exist?
         return if invalid_path?(path)
-
-        return if Homebrew::EnvConfig.forbid_packages_from_paths? &&
-                  !path.realpath.to_s.start_with?("#{Caskroom.path}/", "#{HOMEBREW_LIBRARY}/Taps/")
+        return unless ::Utils::Path.loadable_package_path?(path, :cask)
 
         new(path)
       end

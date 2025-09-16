@@ -1515,7 +1515,13 @@ Summarise contributions to Homebrew repositories\.
 Specify a comma\-separated list of GitHub usernames or email addresses to find contributions from\. Omitting this flag searches Homebrew maintainers\.
 .TP
 \fB\-\-repositories\fP
-Specify a comma\-separated list of repositories to search\. Supported repositories: \fBbrew\fP, \fBcore\fP, \fBcask\fP, \fBcommand\-not\-found\fP and \fBtest\-bot\fP\&\. Omitting this flag, or specifying \fB\-\-repositories=primary\fP, searches only the main repositories: \fBbrew\fP, \fBcore\fP, \fBcask\fP\&\. Specifying \fB\-\-repositories=all\fP searches all repositories\.
+Specify a comma\-separated list of repositories to search\. All repositories must be under the same user or organisation\. Omitting this flag, or specifying \fB\-\-repositories=primary\fP, searches only the main repositories: \fBHomebrew/brew\fP, \fBHomebrew/homebrew\-core\fP, \fBHomebrew/homebrew\-cask\fP\&\. Specifying \fB\-\-repositories=all\fP searches all non\-deprecated Homebrew repositories\.
+.TP
+\fB\-\-organisation\fP
+Specify the organisation to populate sources repositories from\. Omitting this flag searches the Homebrew primary repositories\.
+.TP
+\fB\-\-team\fP
+Specify the team to populate users from\. The first part of the team name will be used as the organisation\.
 .TP
 \fB\-\-from\fP
 Date (ISO 8601 format) to start searching contributions\. Omitting this flag searches the past year\.
@@ -2976,9 +2982,9 @@ Homebrew\[u2019]s Project Leadership Committee is Colin Dean, Michka Popoff, Mik
 .P
 Homebrew\[u2019]s Technical Steering Committee is Bo Anderson, Issy Long, Michael Cho, Mike McQuaid and Ruoyu Zhong\.
 .P
-Homebrew\[u2019]s maintainers are Alexander Bayandin, Bevan Kay, Bo Anderson, Branch Vincent, Caleb Xu, Carlo Cabrera, Daeho Ro, Douglas Eichelberger, Dustin Rodrigues, Eric Knibbe, FX Coudert, Issy Long, Justin Krehel, Klaus Hipp, Markus Reiter, Michael Cho, Michka Popoff, Mike McQuaid, Nanda H Krishna, Patrick Linnane, Rui Chen, Ruoyu Zhong, Rylan Polster, Sam Ford, Sean Molenaar, Štefan Baebler, Thierry Moisan, Timothy Sutton and William Woodruff\.
+Homebrew\[u2019]s maintainers are Bevan Kay, Bo Anderson, Branch Vincent, Caleb Xu, Carlo Cabrera, Daeho Ro, Douglas Eichelberger, Dustin Rodrigues, Eric Knibbe, FX Coudert, Issy Long, Justin Krehel, Klaus Hipp, Markus Reiter, Michael Cho, Michka Popoff, Mike McQuaid, Nanda H Krishna, Patrick Linnane, Rui Chen, Ruoyu Zhong, Rylan Polster, Sam Ford, Sean Molenaar, Štefan Baebler, Thierry Moisan and William Woodruff\.
 .P
-Former maintainers with significant contributions include Miccal Matthews, Misty De Méo, Shaun Jackman, Vítor Galvão, Claudia Pellegrino, Seeker, Jan Viljanen, JCount, commitay, Dominyk Tiller, Tim Smith, Baptiste Fontaine, Xu Cheng, Martin Afanasjew, Brett Koonce, Charlie Sharpsteen, Jack Nagel, Adam Vandenberg, Andrew Janke, Alex Dunn, neutric, Tomasz Pajor, Uladzislau Shablinski, Alyssa Ross, ilovezfs, Chongyu Zhu and Homebrew\[u2019]s creator: Max Howell\.
+Former maintainers with significant contributions include Alexander Bayandin, Miccal Matthews, Misty De Méo, Shaun Jackman, Vítor Galvão, Claudia Pellegrino, Seeker, Jan Viljanen, JCount, commitay, Dominyk Tiller, Tim Smith, Baptiste Fontaine, Xu Cheng, Martin Afanasjew, Brett Koonce, Charlie Sharpsteen, Jack Nagel, Adam Vandenberg, Andrew Janke, Alex Dunn, neutric, Tomasz Pajor, Uladzislau Shablinski, Alyssa Ross, ilovezfs, Chongyu Zhu and Homebrew\[u2019]s creator: Max Howell\.
 .SH "BUGS"
 See our issues on GitHub:
 .TP

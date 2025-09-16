@@ -40,6 +40,8 @@ module OS
         self["HOMEBREW_RPATH_PATHS"] = determine_rpath_paths(@formula)
         m4_path_deps = ["libtool", "bison"]
         self["M4"] = "#{HOMEBREW_PREFIX}/opt/m4/bin/m4" if deps.any? { m4_path_deps.include?(_1.name) }
+        # Build jemalloc-sys rust crate on ARM64/AArch64 with support for page sizes up to 64K.
+        self["JEMALLOC_SYS_WITH_LG_PAGE"] = "16" if ::Hardware::CPU.arch == :arm64
 
         # Pointer authentication and BTI are hardening techniques most distros
         # use by default on their packages. arm64 Linux we're packaging

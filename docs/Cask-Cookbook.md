@@ -120,7 +120,7 @@ Each of the following stanzas is required for every cask.
 | ---------------------------------- | :---------------------------: | ----- |
 | [`version`](#stanza-version)       | no                            | Application version, or the special value `:latest`. |
 | [`sha256`](#stanza-sha256)         | no                            | SHA-256 checksum of the file downloaded from `url` as calculated by the command `shasum -a 256 <file>`, or the special value `:no_check`. |
-| [`url`](#stanza-url)               | no                            | URL to the `.dmg`/`.zip`/`.tgz`/`.tbz2` file that contains the application. A [comment](#when-url-and-homepage-domains-differ-add-verified) should be added if the domains in the `url` and `homepage` stanzas differ. |
+| [`url`](#stanza-url)               | no                            | URL to the `.dmg`/`.zip`/`.tgz` file (or other common archive formats) that contains the application. A [comment](#when-url-and-homepage-domains-differ-add-verified) should be added if the domains in the `url` and `homepage` stanzas differ. |
 | [`name`](#stanza-name)             | yes                           | String providing the full and proper name defined by the vendor. |
 | [`desc`](#stanza-desc)             | no                            | One-line description of the cask. Shown when running `brew info`. |
 | `homepage`                         | no                            | Application homepage; used for the `brew home` command. |

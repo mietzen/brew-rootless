@@ -169,6 +169,12 @@ class Tap
   sig { returns(String) }
   attr_reader :repository
 
+  # The repository name of this {Tap} including the leading `homebrew-`.
+  #
+  # @api public
+  sig { returns(String) }
+  attr_reader :full_repository
+
   # The name of this {Tap}. It combines {#user} and {#repository} with a slash.
   # {#name} is always in lowercase.
   # e.g. `user/repository`
@@ -210,7 +216,8 @@ class Tap
     @user = user
     @repository = repository
     @name = T.let("#{@user}/#{@repository}".downcase, String)
-    @full_name = T.let("#{@user}/homebrew-#{@repository}", String)
+    @full_repository = T.let("homebrew-#{@repository}", String)
+    @full_name = T.let("#{@user}/#{@full_repository}", String)
     @path = T.let(HOMEBREW_TAP_DIRECTORY/@full_name.downcase, Pathname)
     @git_repository = T.let(GitRepository.new(@path), GitRepository)
   end
@@ -731,7 +738,7 @@ class Tap
     end
 
     if (formula_count = formula_files.count).positive?
-      contents << Utils.pluralize("formula", formula_count, plural: "e", include_count: true)
+      contents << Utils.pluralize("formula", formula_count, include_count: true)
     end
 
     contents

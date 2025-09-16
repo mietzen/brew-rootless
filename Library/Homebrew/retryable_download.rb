@@ -93,7 +93,7 @@ module Homebrew
 
       wait = 2 ** @try
       unless quiet
-        what = Utils.pluralize("tr", tries_remaining, plural: "ies", singular: "y")
+        what = Utils.pluralize("try", tries_remaining)
         ohai "Retrying download in #{wait}s... (#{tries_remaining} #{what} left)"
       end
       sleep wait

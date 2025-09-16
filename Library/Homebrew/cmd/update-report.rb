@@ -842,7 +842,7 @@ class ReporterHub
     msg = ""
 
     if outdated_formulae.positive?
-      noun = Utils.pluralize("formula", outdated_formulae, plural: "e")
+      noun = Utils.pluralize("formula", outdated_formulae)
       msg += "#{Tty.bold}#{outdated_formulae}#{Tty.reset} outdated #{noun}"
     end
 
@@ -974,7 +974,11 @@ class ReporterHub
       # Skip non-homebrew/core formulae for security.
       return if formula.include?("/")
 
-      Formula[formula].desc&.presence
+      begin
+        Formula[formula].desc&.presence
+      rescue FormulaUnavailableError
+        nil
+      end
     else
       all_formula_json.find { |f| f["name"] == formula }
                       &.fetch("desc", nil)
@@ -988,7 +992,11 @@ class ReporterHub
       # Skip non-homebrew/cask formulae for security.
       return if cask.include?("/")
 
-      Cask::CaskLoader.load(cask).desc&.presence
+      begin
+        Cask::CaskLoader.load(cask).desc&.presence
+      rescue Cask::CaskError
+        nil
+      end
     else
       all_cask_json.find { |f| f["token"] == cask }
                    &.fetch("desc", nil)

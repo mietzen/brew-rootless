@@ -1,36 +1,24 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "os/linux/ld"
+require "os/linux/libstdcxx"
 require "utils/output"
 
 module OS
   module Linux
     module Install
       module ClassMethods
-        # This is a list of known paths to the host dynamic linker on Linux if
-        # the host glibc is new enough. The symlink_ld_so method will fail if
-        # the host linker cannot be found in this list.
-        DYNAMIC_LINKERS = %w[
-          /lib64/ld-linux-x86-64.so.2
-          /lib64/ld64.so.2
-          /lib/ld-linux.so.3
-          /lib/ld-linux.so.2
-          /lib/ld-linux-aarch64.so.1
-          /lib/ld-linux-armhf.so.3
-          /system/bin/linker64
-          /system/bin/linker
-        ].freeze
-
         # We link GCC runtime libraries that are not specifically used for Fortran,
         # which are linked by the GCC formula. We only use the versioned shared libraries
         # as the other shared and static libraries are only used at build time where
         # GCC can find its own libraries.
-        GCC_RUNTIME_LIBS = %w[
+        GCC_RUNTIME_LIBS = T.let(%W[
           libatomic.so.1
           libgcc_s.so.1
           libgomp.so.1
-          libstdc++.so.6
-        ].freeze
+          #{OS::Linux::Libstdcxx::SONAME}
+        ].freeze, T::Array[String])
 
         sig { params(all_fatal: T::Boolean).void }
         def perform_preinstall_checks(all_fatal: false)
@@ -67,7 +55,7 @@ module OS
 
           ld_so = HOMEBREW_PREFIX/"opt/glibc/bin/ld.so"
           unless ld_so.readable?
-            ld_so = DYNAMIC_LINKERS.find { |s| File.executable? s }
+            ld_so = OS::Linux::Ld.system_ld_so
             if ld_so.blank?
               ::Kernel.raise "Unable to locate the system's dynamic linker" unless brew_ld_so.readable?
 
