@@ -83,7 +83,7 @@ module Homebrew
             test-bot:
               strategy:
                 matrix:
-                  os: [ ubuntu-22.04, macos-13, macos-15 ]
+                  os: [ ubuntu-22.04, macos-15-intel, macos-26 ]
               runs-on: ${{ matrix.os }}
               permissions:
                 actions: read

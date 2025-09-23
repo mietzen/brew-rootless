@@ -33,6 +33,13 @@ RSpec.describe GitHubRunnerMatrix, :no_api do
     setup_test_runner_formula("testball-depender-newest", ["testball", { macos: symbol }])
   end
 
+  describe "OLDEST_HOMEBREW_CORE_MACOS_RUNNER" do
+    it "is not newer than HOMEBREW_MACOS_OLDEST_SUPPORTED" do
+      oldest_macos_runner = MacOSVersion.from_symbol(described_class::OLDEST_HOMEBREW_CORE_MACOS_RUNNER)
+      expect(oldest_macos_runner).to be <= HOMEBREW_MACOS_OLDEST_SUPPORTED
+    end
+  end
+
   describe "#active_runner_specs_hash" do
     it "returns an object that responds to `#to_json`" do
       expect(

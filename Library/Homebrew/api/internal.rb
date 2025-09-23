@@ -55,6 +55,16 @@ module Homebrew
         stub
       end
 
+      sig { returns(Pathname) }
+      def self.cached_formula_json_file_path
+        HOMEBREW_CACHE_API/formula_endpoint
+      end
+
+      sig { returns(Pathname) }
+      def self.cached_cask_json_file_path
+        HOMEBREW_CACHE_API/cask_endpoint
+      end
+
       sig {
         params(download_queue: T.nilable(Homebrew::DownloadQueue), stale_seconds: T.nilable(Integer))
           .returns([T::Hash[String, T.untyped], T::Boolean])

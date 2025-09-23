@@ -768,7 +768,6 @@ module Cask
     sig { void }
     def audit_min_os
       return unless online?
-      return unless strict?
 
       odebug "Auditing minimum macOS version"
 
@@ -811,8 +810,7 @@ module Cask
       end
       source = T.must(bundle_min_os.to_s <=> sparkle_min_os.to_s).positive? ? "Artifact" : "Upstream"
       add_error "#{source} defined #{app_min_os.to_sym.inspect} as the minimum macOS version " \
-                "but the cask declared #{min_os_definition}",
-                strict_only: true
+                "but the cask declared #{min_os_definition}"
     end
 
     sig { returns(T.nilable(MacOSVersion)) }

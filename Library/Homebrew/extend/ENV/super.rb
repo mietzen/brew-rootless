@@ -70,7 +70,7 @@ module Superenv
     self["PKG_CONFIG_PATH"] = determine_pkg_config_path
     self["PKG_CONFIG_LIBDIR"] = determine_pkg_config_libdir || ""
     self["HOMEBREW_CCCFG"] = determine_cccfg
-    self["HOMEBREW_OPTIMIZATION_LEVEL"] = "Os"
+    self["HOMEBREW_OPTIMIZATION_LEVEL"] = compiler.match?(GNU_GCC_REGEXP) ? "O2" : "Os"
     self["HOMEBREW_BREW_FILE"] = HOMEBREW_BREW_FILE.to_s
     self["HOMEBREW_PREFIX"] = HOMEBREW_PREFIX.to_s
     self["HOMEBREW_CELLAR"] = HOMEBREW_CELLAR.to_s
@@ -244,7 +244,7 @@ module Superenv
     end
 
     # Don't add `llvm` to library paths; this leads to undesired linkage to LLVM's `libunwind`
-    paths << keg_only_deps.reject { |dep| dep.name.match?(/^llvm(@\d+)?$/) }
+    paths += keg_only_deps.reject { |dep| dep.name.match?(/^llvm(@\d+)?$/) }
                           .map(&:opt_lib)
     paths << (HOMEBREW_PREFIX/"lib")
 

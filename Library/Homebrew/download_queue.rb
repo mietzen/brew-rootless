@@ -29,13 +29,23 @@ module Homebrew
       @pool = T.let(Concurrent::FixedThreadPool.new(concurrency), Concurrent::FixedThreadPool)
     end
 
-    sig { params(downloadable: Downloadable).void }
-    def enqueue(downloadable)
+    sig {
+      params(
+        downloadable:      Downloadable,
+        check_attestation: T::Boolean,
+      ).void
+    }
+    def enqueue(downloadable, check_attestation: false)
       downloads[downloadable] ||= Concurrent::Promises.future_on(
-        pool, RetryableDownload.new(downloadable, tries:, pour:), force, quiet
-      ) do |download, force, quiet|
+        pool, RetryableDownload.new(downloadable, tries:, pour:),
+        force, quiet, check_attestation
+      ) do |download, force, quiet, check_attestation|
         download.clear_cache if force
         download.fetch(quiet:)
+        if check_attestation
+          bottle = T.cast(downloadable, Bottle)
+          Utils::Attestation.check_attestation(bottle, quiet: true)
+        end
       end
     end
 
@@ -98,6 +108,11 @@ module Homebrew
                 puts (" " * downloadable.download_queue_type.size) + " SHA-256 checksum of downloaded file: #{actual}"
                 Homebrew.failed = true if downloadable.is_a?(Resource::Patch)
                 next 2
+              elsif exception.is_a?(CannotInstallFormulaError)
+                if (cached_download = downloadable.cached_download)&.exist?
+                  cached_download.unlink
+                end
+                raise exception
               else
                 message = future.reason.to_s
                 ofail message
@@ -141,7 +156,9 @@ module Homebrew
               end
 
               sleep 0.05
-            rescue Interrupt
+            # We want to catch all exceptions to ensure we can cancel any
+            # running downloads and flush the TTY.
+            rescue Exception # rubocop:disable Lint/RescueException
               remaining_downloads.each do |_, future|
                 # FIXME: Implement cancellation of running downloads.
               end

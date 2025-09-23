@@ -218,6 +218,10 @@ Scrub the cache, including downloads for even the latest versions\. Note that do
 Only prune the symlinks and directories from the prefix and remove no other files\.
 .SS "\fBcommand\fP \fIcommand\fP \fR[\.\.\.]"
 Display the path to the file being used when invoking \fBbrew\fP \fIcmd\fP\&\.
+.SS "\fBcommand\-not\-found\-init\fP"
+Print instructions for setting up the command\-not\-found hook for your shell\. If the output is not to a tty, print the appropriate handler script for your shell\.
+.P
+For more information, see: https://docs\.brew\.sh/Command\-Not\-Found
 .SS "\fBcommands\fP \fR[\fB\-\-quiet\fP] \fR[\fB\-\-include\-aliases\fP]"
 Show lists of built\-in and external commands\.
 .TP
@@ -1143,6 +1147,14 @@ Include only formulae\.
 .TP
 \fB\-\-cask\fP
 Include only casks\.
+.SS "\fBwhich\-formula\fP \fR[\fB\-\-explain\fP] \fR[\fB\-\-skip\-update\fP] \fIcommand\fP \fR[\.\.\.]"
+Show which formula(e) provides the given command\.
+.TP
+\fB\-\-explain\fP
+Output explanation of how to get \fIcommand\fP by installing one of the providing formulae\.
+.TP
+\fB\-\-skip\-update\fP
+Skip updating the executables database if any version exists on disk, no matter how old\.
 .SS "\fB\-\-cache\fP \fR[\fIoptions\fP] \fR[\fIformula\fP|\fIcask\fP \.\.\.]"
 Display Homebrew\[u2019]s download cache\. See also \fB$HOMEBREW_CACHE\fP\&\.
 .P
@@ -2218,6 +2230,29 @@ Remove a previously cached version and re\-fetch\.
 .TP
 \fB\-j\fP, \fB\-\-json\fP
 Return JSON for the attestation data for each bottle\.
+.SS "\fBwhich\-update\fP \fR[\fIoptions\fP] \fIdatabase\fP"
+Database update for \fBbrew which\-formula\fP\&\.
+.TP
+\fB\-\-stats\fP
+Print statistics about the database contents (number of commands and formulae, list of missing formulae)\.
+.TP
+\fB\-\-commit\fP
+Commit the changes using \fBgit\fP\&\.
+.TP
+\fB\-\-update\-existing\fP
+Update database entries with outdated formula versions\.
+.TP
+\fB\-\-install\-missing\fP
+Install and update formulae that are missing from the database and don\[u2019]t have bottles\.
+.TP
+\fB\-\-eval\-all\fP
+Evaluate all installed taps, rather than just the core tap\.
+.TP
+\fB\-\-max\-downloads\fP
+Specify a maximum number of formulae to download and update\.
+.TP
+\fB\-\-summary\-file\fP
+Output a summary of the changes to a file\.
 .SH "GLOBAL CASK OPTIONS"
 These options are applicable to the \fBinstall\fP, \fBreinstall\fP and \fBupgrade\fP subcommands with the \fB\-\-cask\fP switch\.
 .TP
@@ -2283,8 +2318,6 @@ Make some output more verbose\.
 \fB\-h\fP, \fB\-\-help\fP
 Show this message\.
 .SH "OFFICIAL EXTERNAL COMMANDS"
-.SS "\fBcommand\-not\-found\-init\fP"
-Print instructions for setting up the command\-not\-found hook for your shell\. If the output is not to a tty, print the appropriate handler script for your shell\.
 .SS "\fBtest\-bot\fP \fR[\fIoptions\fP] \fR[\fIformula\fP]"
 Tests the full lifecycle of a Homebrew change to a tap (Git repository)\. For example, for a GitHub Actions pull request that changes a formula \fBbrew test\-bot\fP will ensure the system is cleaned and set up to test the formula, install the formula, run various tests and checks on it, bottle (package) the binaries and test formulae that depend on it to ensure they aren\[u2019]t broken by these changes\.
 .P
@@ -2415,37 +2448,6 @@ Use these skipped or failed formulae from formulae steps for a formulae dependen
 .TP
 \fB\-\-tested\-formulae\fP
 Use these tested formulae from formulae steps for a formulae dependents step\.
-.SS "\fBwhich\-formula\fP \fR[\fB\-\-explain\fP] \fR[\fB\-\-skip\-update\fP] \fIcommand\fP \fR[\.\.\.]"
-Show which formula(e) provides the given command\.
-.TP
-\fB\-\-explain\fP
-Output explanation of how to get \fIcommand\fP by installing one of the providing formulae\.
-.TP
-\fB\-\-skip\-update\fP
-Skip updating the executables database if any version exists on disk, no matter how old\.
-.SS "\fBwhich\-update\fP \fR[\fIoptions\fP] \fR[\fIdatabase\fP]"
-Database update for \fBbrew which\-formula\fP\&\.
-.TP
-\fB\-\-stats\fP
-Print statistics about the database contents (number of commands and formulae, list of missing formulae)\.
-.TP
-\fB\-\-commit\fP
-Commit the changes using \fBgit\fP\&\.
-.TP
-\fB\-\-update\-existing\fP
-Update database entries with outdated formula versions\.
-.TP
-\fB\-\-install\-missing\fP
-Install and update formulae that are missing from the database and don\[u2019]t have bottles\.
-.TP
-\fB\-\-eval\-all\fP
-Evaluate all installed taps, rather than just the core tap\.
-.TP
-\fB\-\-max\-downloads\fP
-Specify a maximum number of formulae to download and update\.
-.TP
-\fB\-\-summary\-file\fP
-Output a summary of the changes to a file\.
 .SH "CUSTOM EXTERNAL COMMANDS"
 Homebrew, like \fBgit\fP(1), supports external commands\. These are executable scripts that reside somewhere in the \fB$PATH\fP, named \fBbrew\-\fP\fIcmdname\fP or \fBbrew\-\fP\fIcmdname\fP\fB\&\.rb\fP, which can be invoked like \fBbrew\fP \fIcmdname\fP\&\. This allows you to create your own commands without modifying Homebrew\[u2019]s internals\.
 .P
@@ -2879,6 +2881,9 @@ If set, running Homebrew on Linux will simulate certain macOS code paths\. This 
 .TP
 \fBHOMEBREW_SKIP_OR_LATER_BOTTLES\fP
 If set along with \fB$HOMEBREW_DEVELOPER\fP, do not use bottles from older versions of macOS\. This is useful in development on new macOS versions\.
+.TP
+\fBHOMEBREW_SORBET_RECURSIVE\fP
+If set along with \fB$HOMEBREW_SORBET_RUNTIME\fP, enable recursive typechecking using Sorbet\. Auomatically enabled when running tests\.
 .TP
 \fBHOMEBREW_SORBET_RUNTIME\fP
 If set, enable runtime typechecking using Sorbet\. Set by default for \fB$HOMEBREW_DEVELOPER\fP or when running some developer commands\.

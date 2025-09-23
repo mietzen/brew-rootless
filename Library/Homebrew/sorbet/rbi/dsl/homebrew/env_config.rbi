@@ -281,6 +281,9 @@ module Homebrew::EnvConfig
     def skip_or_later_bottles?; end
 
     sig { returns(T::Boolean) }
+    def sorbet_recursive?; end
+
+    sig { returns(T::Boolean) }
     def sorbet_runtime?; end
 
     sig { returns(T.nilable(::String)) }

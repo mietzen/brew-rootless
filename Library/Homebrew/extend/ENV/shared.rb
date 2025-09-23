@@ -53,6 +53,7 @@ module SharedEnvExtension
     @build_bottle = build_bottle
     @bottle_arch = bottle_arch
     @debug_symbols = debug_symbols
+    @testing_formula = testing_formula
     reset
   end
 
@@ -221,12 +222,12 @@ module SharedEnvExtension
 
       if @formula
         compilers = [compiler] + CompilerSelector.compilers
-        compiler = CompilerSelector.select_for(@formula, compilers)
+        compiler = CompilerSelector.select_for(@formula, compilers, testing_formula: @testing_formula)
       end
 
       compiler
     elsif @formula
-      CompilerSelector.select_for(@formula)
+      CompilerSelector.select_for(@formula, testing_formula: @testing_formula)
     else
       DevelopmentTools.default_compiler
     end

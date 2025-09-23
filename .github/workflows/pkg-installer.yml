@@ -25,7 +25,7 @@ defaults:
 jobs:
   build:
     if: github.repository_owner == 'Homebrew' && github.actor != 'dependabot[bot]'
-    runs-on: macos-15
+    runs-on: macos-26
     outputs:
       installer_path: "Homebrew-${{ steps.homebrew-version.outputs.version }}.pkg"
     env:
@@ -152,10 +152,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: macos-14
-            name: macos-14-arm64
+          # Intel
+          - runner: macos-15-intel
+            name: macos-15-x86_64
+          # Apple Silicon
           - runner: macos-15
             name: macos-15-arm64
+          - runner: macos-26
+            name: macos-26-arm64
     steps:
       - name: Download installer from GitHub Actions
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
@@ -205,7 +209,7 @@ jobs:
 
   upload:
     needs: [build, test]
-    runs-on: macos-15
+    runs-on: macos-26
     permissions:
       # To write assets to GitHub release
       contents: write

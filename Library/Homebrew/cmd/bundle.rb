@@ -189,6 +189,8 @@ module Homebrew
 
           if cleanup
             require "bundle/commands/cleanup"
+            # Don't need to reset cleanup specifically but this resets all the dumper modules.
+            Homebrew::Bundle::Commands::Cleanup.reset!
             Homebrew::Bundle::Commands::Cleanup.run(
               global:, file:, zap:,
               force:  true,

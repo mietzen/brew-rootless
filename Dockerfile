@@ -44,7 +44,7 @@ RUN apt-get update \
   uuid-runtime \
   tzdata \
   jq \
-  && if [ "$(. /etc/lsb-release; echo "${DISTRIB_RELEASE}" | cut -d. -f1)" -ge 22 ]; then apt-get install -y --no-install-recommends skopeo; fi \
+  && if [ "$(. /etc/lsb-release; echo "${DISTRIB_RELEASE}" | cut -d. -f1)" -ge 22 ]; then apt-get install -y --no-install-recommends g++-12 skopeo; fi \
   && mkdir -p /etc/apt/keyrings \
   && chmod 0755 /etc /etc/apt /etc/apt/keyrings \
   && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null \

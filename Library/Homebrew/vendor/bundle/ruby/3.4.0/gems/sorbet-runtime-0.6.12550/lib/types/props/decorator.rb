@@ -174,7 +174,9 @@ class T::Props::Decorator
     .checked(:never)
   end
   def prop_get(instance, prop, rules=prop_rules(prop))
-    val = instance.instance_variable_get(rules[:accessor_key]) if instance.instance_variable_defined?(rules[:accessor_key])
+    # `instance_variable_get` will return nil if the variable doesn't exist
+    # which is what we want to have happen for the logic below.
+    val = instance.instance_variable_get(rules[:accessor_key])
     if !val.nil?
       val
     elsif (d = rules[:ifunset])
@@ -194,7 +196,9 @@ class T::Props::Decorator
     .checked(:never)
   end
   def prop_get_if_set(instance, prop, rules=prop_rules(prop))
-    instance.instance_variable_get(rules[:accessor_key]) if instance.instance_variable_defined?(rules[:accessor_key])
+    # `instance_variable_get` will return nil if the variable doesn't exist
+    # which is what we want to have happen for the return value here.
+    instance.instance_variable_get(rules[:accessor_key])
   end
   alias_method :get, :prop_get_if_set # Alias for backwards compatibility
 
@@ -261,6 +265,8 @@ class T::Props::Decorator
   end
 
   SAFE_NAME = T.let(/\A[A-Za-z_][A-Za-z0-9_-]*\z/.freeze, Regexp, checked: false)
+  # Should be exactly the same as `SAFE_NAME`, but with a leading `@`.
+  SAFE_ACCESSOR_KEY_NAME = T.let(/\A@[A-Za-z_][A-Za-z0-9_-]*\z/.freeze, Regexp, checked: false)
 
   # Used to validate both prop names and serialized forms
   sig { params(name: T.any(Symbol, String)).void.checked(:never) }
@@ -321,9 +327,9 @@ class T::Props::Decorator
   sig(:final) { params(name: Symbol).returns(T::Boolean).checked(:never) }
   private def method_defined_on_ancestor?(name)
     (@class.method_defined?(name) || @class.private_method_defined?(name)) &&
-      # Unfortunately, older versions of ruby don't allow the second parameter on
-      # `private_method_defined?`.
-      (!@class.method_defined?(name, false) && !@class.private_method_defined?(name, false))
+    # Unfortunately, older versions of ruby don't allow the second parameter on
+    # `private_method_defined?`.
+    (!@class.method_defined?(name, false) && !@class.private_method_defined?(name, false))
   end
 
   sig(:final) { params(name: Symbol, rules: Rules).void.checked(:never) }
@@ -404,8 +410,6 @@ class T::Props::Decorator
 
     # extra arbitrary metadata attached by the code defining this property
 
-    validate_not_missing_sensitivity(name, rules)
-
     # for backcompat (the `:array` key is deprecated but because the name is
     # so generic it's really hard to be sure it's not being relied on anymore)
     if type.is_a?(T::Types::TypedArray)
@@ -477,35 +481,6 @@ class T::Props::Decorator
         T.unsafe(T.nilable(T.all(T.unsafe(nonnil_type), T.deprecated_enum(enum))))
       else
         T.unsafe(T.all(T.unsafe(type), T.deprecated_enum(enum)))
-      end
-    end
-  end
-
-  # checked(:never) - Rules hash is expensive to check
-  sig { params(prop_name: Symbol, rules: Rules).void.checked(:never) }
-  private def validate_not_missing_sensitivity(prop_name, rules)
-    if rules[:sensitivity].nil?
-      if rules[:redaction]
-        T::Configuration.hard_assert_handler(
-          "#{@class}##{prop_name} has a 'redaction:' annotation but no " \
-          "'sensitivity:' annotation. This is probably wrong, because if a " \
-          "prop needs redaction then it is probably sensitive. Add a " \
-          "sensitivity annotation like 'sensitivity: Opus::Sensitivity::PII." \
-          "whatever', or explicitly override this check with 'sensitivity: []'."
-        )
-      end
-      # TODO(PRIVACYENG-982) Ideally we'd also check for 'password' and possibly
-      # other terms, but this interacts badly with ProtoDefinedDocument because
-      # the proto syntax currently can't declare "sensitivity: []"
-      if /\bsecret\b/.match?(prop_name)
-        T::Configuration.hard_assert_handler(
-          "#{@class}##{prop_name} has the word 'secret' in its name, but no " \
-          "'sensitivity:' annotation. This is probably wrong, because if a " \
-          "prop is named 'secret' then it is probably sensitive. Add a " \
-          "sensitivity annotation like 'sensitivity: Opus::Sensitivity::NonPII." \
-          "security_token', or explicitly override this check with " \
-          "'sensitivity: []'."
-        )
       end
     end
   end

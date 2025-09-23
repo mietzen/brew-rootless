@@ -360,6 +360,13 @@ old. This can be adjusted with `$HOMEBREW_CLEANUP_MAX_AGE_DAYS`.
 
 Display the path to the file being used when invoking `brew` *`cmd`*.
 
+### `command-not-found-init`
+
+Print instructions for setting up the command-not-found hook for your shell. If
+the output is not to a tty, print the appropriate handler script for your shell.
+
+For more information, see: https://docs.brew.sh/Command-Not-Found
+
 ### `commands` \[`--quiet`\] \[`--include-aliases`\]
 
 Show lists of built-in and external commands.
@@ -1844,6 +1851,20 @@ dependency for their stable builds.
 `--cask`
 
 : Include only casks.
+
+### `which-formula` \[`--explain`\] \[`--skip-update`\] *`command`* \[...\]
+
+Show which formula(e) provides the given command.
+
+`--explain`
+
+: Output explanation of how to get *`command`* by installing one of the
+  providing formulae.
+
+`--skip-update`
+
+: Skip updating the executables database if any version exists on disk, no
+  matter how old.
 
 ### `--cache` \[*`options`*\] \[*`formula`*\|*`cask`* ...\]
 
@@ -3483,6 +3504,40 @@ Note that this command depends on the GitHub CLI. Run `brew install gh`.
 
 : Return JSON for the attestation data for each bottle.
 
+### `which-update` \[*`options`*\] *`database`*
+
+Database update for `brew which-formula`.
+
+`--stats`
+
+: Print statistics about the database contents (number of commands and formulae,
+  list of missing formulae).
+
+`--commit`
+
+: Commit the changes using `git`.
+
+`--update-existing`
+
+: Update database entries with outdated formula versions.
+
+`--install-missing`
+
+: Install and update formulae that are missing from the database and don't have
+  bottles.
+
+`--eval-all`
+
+: Evaluate all installed taps, rather than just the core tap.
+
+`--max-downloads`
+
+: Specify a maximum number of formulae to download and update.
+
+`--summary-file`
+
+: Output a summary of the changes to a file.
+
 ## GLOBAL CASK OPTIONS
 
 These options are applicable to the `install`, `reinstall` and `upgrade`
@@ -3576,11 +3631,6 @@ These options are applicable across multiple subcommands.
 : Show this message.
 
 ## OFFICIAL EXTERNAL COMMANDS
-
-### `command-not-found-init`
-
-Print instructions for setting up the command-not-found hook for your shell. If
-the output is not to a tty, print the appropriate handler script for your shell.
 
 ### `test-bot` \[*`options`*\] \[*`formula`*\]
 
@@ -3773,54 +3823,6 @@ and Linux workers.
 `--tested-formulae`
 
 : Use these tested formulae from formulae steps for a formulae dependents step.
-
-### `which-formula` \[`--explain`\] \[`--skip-update`\] *`command`* \[...\]
-
-Show which formula(e) provides the given command.
-
-`--explain`
-
-: Output explanation of how to get *`command`* by installing one of the
-  providing formulae.
-
-`--skip-update`
-
-: Skip updating the executables database if any version exists on disk, no
-  matter how old.
-
-### `which-update` \[*`options`*\] \[*`database`*\]
-
-Database update for `brew which-formula`.
-
-`--stats`
-
-: Print statistics about the database contents (number of commands and formulae,
-  list of missing formulae).
-
-`--commit`
-
-: Commit the changes using `git`.
-
-`--update-existing`
-
-: Update database entries with outdated formula versions.
-
-`--install-missing`
-
-: Install and update formulae that are missing from the database and don't have
-  bottles.
-
-`--eval-all`
-
-: Evaluate all installed taps, rather than just the core tap.
-
-`--max-downloads`
-
-: Specify a maximum number of formulae to download and update.
-
-`--summary-file`
-
-: Output a summary of the changes to a file.
 
 ## CUSTOM EXTERNAL COMMANDS
 
@@ -4412,6 +4414,11 @@ command execution (e.g. `$(cat file)`).
 
 : If set along with `$HOMEBREW_DEVELOPER`, do not use bottles from older
   versions of macOS. This is useful in development on new macOS versions.
+
+`HOMEBREW_SORBET_RECURSIVE`
+
+: If set along with `$HOMEBREW_SORBET_RUNTIME`, enable recursive typechecking
+  using Sorbet. Auomatically enabled when running tests.
 
 `HOMEBREW_SORBET_RUNTIME`
 

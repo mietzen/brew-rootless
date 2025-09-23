@@ -51,7 +51,15 @@ module Formulary
   end
   private_class_method :platform_cache_tag
 
-  sig { returns(T::Hash[Symbol, T::Hash[String, T.class_of(Formula)]]) }
+  sig {
+    returns({
+      api:               T.nilable(T::Hash[String, T.class_of(Formula)]),
+      # TODO: the hash values should be Formula instances, but the linux tests were failing
+      formulary_factory: T.nilable(T::Hash[String, T.untyped]),
+      path:              T.nilable(T::Hash[String, T.class_of(Formula)]),
+      stub:              T.nilable(T::Hash[String, T.class_of(Formula)]),
+    })
+  }
   def self.platform_cache
     cache[platform_cache_tag] ||= {}
   end

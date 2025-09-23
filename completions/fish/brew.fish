@@ -572,6 +572,13 @@ __fish_brew_complete_arg 'command' -l verbose -d 'Make some output more verbose'
 __fish_brew_complete_arg 'command' -a '(__fish_brew_suggest_commands)'
 
 
+__fish_brew_complete_cmd 'command-not-found-init' 'Print instructions for setting up the command-not-found hook for your shell'
+__fish_brew_complete_arg 'command-not-found-init' -l debug -d 'Display any debugging information'
+__fish_brew_complete_arg 'command-not-found-init' -l help -d 'Show this message'
+__fish_brew_complete_arg 'command-not-found-init' -l quiet -d 'Make some output more quiet'
+__fish_brew_complete_arg 'command-not-found-init' -l verbose -d 'Make some output more verbose'
+
+
 __fish_brew_complete_cmd 'commands' 'Show lists of built-in and external commands'
 __fish_brew_complete_arg 'commands' -l debug -d 'Display any debugging information'
 __fish_brew_complete_arg 'commands' -l help -d 'Show this message'
@@ -2008,6 +2015,30 @@ __fish_brew_complete_arg 'verify' -l os -d 'Download for the given operating sys
 __fish_brew_complete_arg 'verify' -l quiet -d 'Make some output more quiet'
 __fish_brew_complete_arg 'verify' -l verbose -d 'Make some output more verbose'
 __fish_brew_complete_arg 'verify' -a '(__fish_brew_suggest_formulae_all)'
+
+
+__fish_brew_complete_cmd 'which-formula' 'Show which formula(e) provides the given command'
+__fish_brew_complete_arg 'which-formula' -l debug -d 'Display any debugging information'
+__fish_brew_complete_arg 'which-formula' -l explain -d 'Output explanation of how to get command by installing one of the providing formulae'
+__fish_brew_complete_arg 'which-formula' -l help -d 'Show this message'
+__fish_brew_complete_arg 'which-formula' -l quiet -d 'Make some output more quiet'
+__fish_brew_complete_arg 'which-formula' -l skip-update -d 'Skip updating the executables database if any version exists on disk, no matter how old'
+__fish_brew_complete_arg 'which-formula' -l verbose -d 'Make some output more verbose'
+__fish_brew_complete_arg 'which-formula' -a '(__fish_brew_suggest_commands)'
+
+
+__fish_brew_complete_cmd 'which-update' 'Database update for `brew which-formula`'
+__fish_brew_complete_arg 'which-update' -l commit -d 'Commit the changes using `git`'
+__fish_brew_complete_arg 'which-update' -l debug -d 'Display any debugging information'
+__fish_brew_complete_arg 'which-update' -l eval-all -d 'Evaluate all installed taps, rather than just the core tap'
+__fish_brew_complete_arg 'which-update' -l help -d 'Show this message'
+__fish_brew_complete_arg 'which-update' -l install-missing -d 'Install and update formulae that are missing from the database and don\'t have bottles'
+__fish_brew_complete_arg 'which-update' -l max-downloads -d 'Specify a maximum number of formulae to download and update'
+__fish_brew_complete_arg 'which-update' -l quiet -d 'Make some output more quiet'
+__fish_brew_complete_arg 'which-update' -l stats -d 'Print statistics about the database contents (number of commands and formulae, list of missing formulae)'
+__fish_brew_complete_arg 'which-update' -l summary-file -d 'Output a summary of the changes to a file'
+__fish_brew_complete_arg 'which-update' -l update-existing -d 'Update database entries with outdated formula versions'
+__fish_brew_complete_arg 'which-update' -l verbose -d 'Make some output more verbose'
 
 
 

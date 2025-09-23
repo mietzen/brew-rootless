@@ -124,7 +124,7 @@ module Homebrew
           greater_than_total = T.let(false, T::Boolean)
           contributions = CONTRIBUTION_TYPES.keys.filter_map do |type|
             type_count = grand_totals[username][type]
-            next if type_count.zero?
+            next if type_count.nil? || type_count.zero?
 
             count_prefix = ""
             if (search_types.include?(type) && type_count == MAX_PR_SEARCH) ||
@@ -234,7 +234,7 @@ module Homebrew
           repository_path, tap = repository_path_and_tap(repository)
           if repository_path && tap && !repository_path.exist?
             opoo "Repository #{repository} not yet tapped! Tapping it now..."
-            tap.install
+            tap.install(force: true)
           end
 
           repository_full_name = tap&.full_name

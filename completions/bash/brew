@@ -759,6 +759,22 @@ _brew_command() {
   __brew_complete_commands
 }
 
+_brew_command_not_found_init() {
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  case "${cur}" in
+    -*)
+      __brewcomp "
+      --debug
+      --help
+      --quiet
+      --verbose
+      "
+      return
+      ;;
+    *) ;;
+  esac
+}
+
 _brew_commands() {
   local cur="${COMP_WORDS[COMP_CWORD]}"
   case "${cur}" in
@@ -3137,6 +3153,48 @@ _brew_verify() {
   __brew_complete_formulae
 }
 
+_brew_which_formula() {
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  case "${cur}" in
+    -*)
+      __brewcomp "
+      --debug
+      --explain
+      --help
+      --quiet
+      --skip-update
+      --verbose
+      "
+      return
+      ;;
+    *) ;;
+  esac
+  __brew_complete_commands
+}
+
+_brew_which_update() {
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  case "${cur}" in
+    -*)
+      __brewcomp "
+      --commit
+      --debug
+      --eval-all
+      --help
+      --install-missing
+      --max-downloads
+      --quiet
+      --stats
+      --summary-file
+      --update-existing
+      --verbose
+      "
+      return
+      ;;
+    *) ;;
+  esac
+}
+
 _brew() {
   local i=1 cmd
 
@@ -3194,6 +3252,7 @@ _brew() {
     cat) _brew_cat ;;
     cleanup) _brew_cleanup ;;
     command) _brew_command ;;
+    command-not-found-init) _brew_command_not_found_init ;;
     commands) _brew_commands ;;
     completions) _brew_completions ;;
     config) _brew_config ;;
@@ -3299,6 +3358,8 @@ _brew() {
     vendor-gems) _brew_vendor_gems ;;
     vendor-install) _brew_vendor_install ;;
     verify) _brew_verify ;;
+    which-formula) _brew_which_formula ;;
+    which-update) _brew_which_update ;;
     *) ;;
   esac
 }

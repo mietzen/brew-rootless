@@ -119,7 +119,7 @@ module Homebrew
           # seeds being output when running parallel tests.
           seed = args.seed || rand(0xFFFF).to_i
 
-          bundle_args = ["-I", HOMEBREW_LIBRARY_PATH/"test"]
+          bundle_args = ["-I", (HOMEBREW_LIBRARY_PATH/"test").to_s]
           bundle_args += %W[
             --seed #{seed}
             --color
@@ -249,6 +249,7 @@ module Homebrew
         ENV["HOMEBREW_TEST_GENERIC_OS"] = "1" if args.generic?
         ENV["HOMEBREW_TEST_ONLINE"] = "1" if args.online?
         ENV["HOMEBREW_SORBET_RUNTIME"] = "1"
+        ENV["HOMEBREW_SORBET_RECURSIVE"] = "1"
 
         ENV["USER"] ||= system_command!("id", args: ["-nu"]).stdout.chomp
 

@@ -351,7 +351,7 @@ class Pathname
     EOS
   end
 
-  sig { params(from: Pathname).void }
+  sig { params(from: T.any(String, Pathname)).void }
   def install_metafiles(from = Pathname.pwd)
     require "metafiles"
 

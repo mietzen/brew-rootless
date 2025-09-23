@@ -154,6 +154,7 @@ __brew_internal_commands() {
     'cat:Display the source of a formula or cask'
     'cleanup:Remove stale lock files and outdated downloads for all formulae and casks, and remove old versions of installed formulae'
     'command:Display the path to the file being used when invoking `brew` cmd'
+    'command-not-found-init:Print instructions for setting up the command-not-found hook for your shell'
     'commands:Show lists of built-in and external commands'
     'completions:Control whether Homebrew automatically links external tap shell completion files'
     'config:Show Homebrew and system configuration info useful for debugging'
@@ -247,6 +248,8 @@ __brew_internal_commands() {
     'vendor-gems:Install and commit Homebrew'\''s vendored gems'
     'vendor-install:Install Homebrew'\''s portable Ruby'
     'verify:Verify the build provenance of bottles using GitHub'\''s attestation tools'
+    'which-formula:Show which formula(e) provides the given command'
+    'which-update:Database update for `brew which-formula`'
   )
   _describe -t internal-commands 'internal commands' commands
 }
@@ -730,6 +733,15 @@ _brew_command() {
     '--verbose[Make some output more verbose]' \
     - command \
     '*:command:__brew_commands'
+}
+
+# brew command-not-found-init
+_brew_command_not_found_init() {
+  _arguments \
+    '--debug[Display any debugging information]' \
+    '--help[Show this message]' \
+    '--quiet[Make some output more quiet]' \
+    '--verbose[Make some output more verbose]'
 }
 
 # brew commands
@@ -2466,6 +2478,35 @@ _brew_verify() {
     '--verbose[Make some output more verbose]' \
     - formula \
     '*:formula:__brew_formulae'
+}
+
+# brew which-formula
+_brew_which_formula() {
+  _arguments \
+    '--debug[Display any debugging information]' \
+    '--explain[Output explanation of how to get command by installing one of the providing formulae]' \
+    '--help[Show this message]' \
+    '--quiet[Make some output more quiet]' \
+    '--skip-update[Skip updating the executables database if any version exists on disk, no matter how old]' \
+    '--verbose[Make some output more verbose]' \
+    - command \
+    '*:command:__brew_commands'
+}
+
+# brew which-update
+_brew_which_update() {
+  _arguments \
+    '(--stats)--commit[Commit the changes using `git`]' \
+    '--debug[Display any debugging information]' \
+    '--eval-all[Evaluate all installed taps, rather than just the core tap]' \
+    '--help[Show this message]' \
+    '(--stats)--install-missing[Install and update formulae that are missing from the database and don'\''t have bottles]' \
+    '(--stats)--max-downloads[Specify a maximum number of formulae to download and update]' \
+    '--quiet[Make some output more quiet]' \
+    '(--commit --install-missing --update-existing --max-downloads)--stats[Print statistics about the database contents (number of commands and formulae, list of missing formulae)]' \
+    '--summary-file[Output a summary of the changes to a file]' \
+    '(--stats)--update-existing[Update database entries with outdated formula versions]' \
+    '--verbose[Make some output more verbose]'
 }
 
 # The main completion function

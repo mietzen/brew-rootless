@@ -2,6 +2,7 @@
 
 require "cmd/shared_examples/args_parse"
 require "cmd/upgrade"
+require "cmd/shared_examples/reinstall_pkgconf_if_needed_spec"
 
 RSpec.describe Homebrew::Cmd::UpgradeCmd do
   include FileUtils
@@ -52,4 +53,6 @@ RSpec.describe Homebrew::Cmd::UpgradeCmd do
       .and be_a_failure
     expect(HOMEBREW_CELLAR/"testball/0.1").not_to exist
   end
+
+  it_behaves_like "reinstall_pkgconf_if_needed"
 end

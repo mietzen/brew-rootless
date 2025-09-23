@@ -330,13 +330,18 @@ module Cask
       }
       def initialize(token, from_json: T.unsafe(nil), path: nil)
         @token = token.sub(%r{^homebrew/(?:homebrew-)?cask/}i, "")
-        @sourcefile_path = path || Homebrew::API::Cask.cached_json_file_path
+        @sourcefile_path = path || Homebrew::API.cached_cask_json_file_path
         @path = path || CaskLoader.default_path(@token)
         @from_json = from_json
       end
 
       def load(config:)
-        json_cask = from_json || Homebrew::API::Cask.all_casks.fetch(token)
+        json_cask = from_json
+        json_cask ||= if Homebrew::EnvConfig.use_internal_api?
+          Homebrew::API::Internal.cask_hashes.fetch(token)
+        else
+          Homebrew::API::Cask.all_casks.fetch(token)
+        end
 
         cask_options = {
           loaded_from_api: true,

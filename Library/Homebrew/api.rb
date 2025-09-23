@@ -315,6 +315,15 @@ module Homebrew
       end
     end
 
+    sig { returns(Pathname) }
+    def self.cached_formula_json_file_path
+      if Homebrew::EnvConfig.use_internal_api?
+        Homebrew::API::Internal.cached_formula_json_file_path
+      else
+        Homebrew::API::Formula.cached_json_file_path
+      end
+    end
+
     sig { returns(T::Array[String]) }
     def self.cask_tokens
       if Homebrew::EnvConfig.use_internal_api?
@@ -339,6 +348,15 @@ module Homebrew
         Homebrew::API::Internal.cask_tap_migrations
       else
         Homebrew::API::Cask.tap_migrations
+      end
+    end
+
+    sig { returns(Pathname) }
+    def self.cached_cask_json_file_path
+      if Homebrew::EnvConfig.use_internal_api?
+        Homebrew::API::Internal.cached_cask_json_file_path
+      else
+        Homebrew::API::Cask.cached_json_file_path
       end
     end
   end

@@ -120,6 +120,11 @@ module Homebrew
         end
       end
 
+      sig { params(dry_run: T::Boolean).void }
+      def reinstall_pkgconf_if_needed!(dry_run: false)
+        nil
+      end
+
       private
 
       sig { params(keg: Keg).void }
@@ -154,3 +159,5 @@ module Homebrew
     end
   end
 end
+
+require "extend/os/reinstall"

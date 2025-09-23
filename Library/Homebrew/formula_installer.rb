@@ -25,6 +25,7 @@ require "attestation"
 require "sbom"
 require "utils/fork"
 require "utils/output"
+require "utils/attestation"
 
 # Installer for a formula.
 class FormulaInstaller
@@ -809,7 +810,7 @@ on_request: installed_on_request?, options:)
     else
       []
     end
-    options += effective_build_options_for(formula).used_options.to_a
+    options += effective_build_options_for(formula).used_options.to_a.map(&:to_s)
     options
   end
 
@@ -1466,76 +1467,21 @@ on_request: installed_on_request?, options:)
       false
     end
 
-    if (download_queue = self.download_queue)
-      download_queue.enqueue(downloadable_object)
-    else
-      downloadable_object.fetch
-    end
-
     # We skip `gh` to avoid a bootstrapping cycle, in the off-chance a user attempts
     # to explicitly `brew install gh` without already having a version for bootstrapping.
     # We also skip bottle installs from local bottle paths, as these are done in CI
     # as part of the build lifecycle before attestations are produced.
-    if check_attestation &&
-       Homebrew::Attestation.enabled? &&
-       formula.tap&.core_tap? &&
-       formula.name != "gh"
-      ohai "Verifying attestation for #{formula.name}"
-      begin
-        Homebrew::Attestation.check_core_attestation T.cast(downloadable_object, Bottle)
-      rescue Homebrew::Attestation::GhIncompatible
-        # A small but significant number of users have developer mode enabled
-        # but *also* haven't upgraded in a long time, meaning that their `gh`
-        # version is too old to perform attestations.
-        raise CannotInstallFormulaError, <<~EOS
-          The bottle for #{formula.name} could not be verified.
-
-          This typically indicates an outdated or incompatible `gh` CLI.
-
-          Please confirm that you're running the latest version of `gh`
-          by performing an upgrade before retrying:
-
-            brew update
-            brew upgrade gh
-        EOS
-      rescue Homebrew::Attestation::GhAuthInvalid
-        # Only raise an error if we explicitly opted-in to verification.
-        raise CannotInstallFormulaError, <<~EOS if Homebrew::EnvConfig.verify_attestations?
-          The bottle for #{formula.name} could not be verified.
-
-          This typically indicates an invalid GitHub API token.
-
-          If you have `$HOMEBREW_GITHUB_API_TOKEN` set, check it is correct
-          or unset it and instead run:
-
-            gh auth login
-        EOS
-
-        # If we didn't explicitly opt-in, then quietly opt-out in the case of invalid credentials.
-        # Based on user reports, a significant number of users are running with stale tokens.
-        ENV["HOMEBREW_NO_VERIFY_ATTESTATIONS"] = "1"
-      rescue Homebrew::Attestation::GhAuthNeeded
-        raise CannotInstallFormulaError, <<~EOS
-          The bottle for #{formula.name} could not be verified.
-
-          This typically indicates a missing GitHub API token, which you
-          can resolve either by setting `$HOMEBREW_GITHUB_API_TOKEN` or
-          by running:
-
-            gh auth login
-        EOS
-      rescue Homebrew::Attestation::MissingAttestationError, Homebrew::Attestation::InvalidAttestationError => e
-        raise CannotInstallFormulaError, <<~EOS
-          The bottle for #{formula.name} has an invalid build provenance attestation.
-
-          This may indicate that the bottle was not produced by the expected
-          tap, or was maliciously inserted into the expected tap's bottle
-          storage.
-
-          Additional context:
-
-          #{e}
-        EOS
+    check_attestation &&= Homebrew::Attestation.enabled? &&
+                          (formula.tap&.core_tap? || false) &&
+                          formula.name != "gh"
+    if (download_queue = self.download_queue)
+      # Check attestation after download completes.
+      download_queue.enqueue(downloadable_object, check_attestation:)
+    else
+      downloadable_object.fetch
+      if check_attestation
+        bottle = T.cast(downloadable_object, Bottle)
+        Utils::Attestation.check_attestation(bottle, quiet: @quiet)
       end
     end
 

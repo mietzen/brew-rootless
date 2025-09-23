@@ -108,6 +108,12 @@ module Stdenv
   sig { returns(T.any(String, Pathname)) }
   def determine_cc
     s = super
+    begin
+      return Formulary.factory("llvm").opt_bin/"clang" if s == "llvm_clang"
+    rescue FormulaUnavailableError
+      # Don't fail and just let callee handle Pathname("llvm_clang")
+    end
+
     DevelopmentTools.locate(s) || Pathname(s)
   end
   private :determine_cc

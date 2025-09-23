@@ -128,13 +128,13 @@ class Keg
     }
   end
 
-  sig { returns(Relocation) }
-  def prepare_relocation_to_placeholders
+  sig { params(new_usr_local_relocation: T::Boolean).returns(Relocation) }
+  def prepare_relocation_to_placeholders(new_usr_local_relocation: new_usr_local_relocation?)
     relocation = Relocation.new
 
     # Use selective HOMEBREW_PREFIX replacement when HOMEBREW_PREFIX=/usr/local
     # This avoids overzealous replacement of system paths when a script refers to e.g. /usr/local/bin
-    if new_usr_local_relocation?
+    if new_usr_local_relocation
       new_usr_local_replacement_pairs.each do |key, value|
         relocation.add_replacement_pair(key, value.fetch(:old), value.fetch(:new), path: true)
       end
@@ -195,6 +195,13 @@ class Keg
     dep_names.find { |d| d.match? Version.formula_optionally_versioned_regex(:openjdk) }
   end
 
+  sig { params(file: Pathname).returns(T::Boolean) }
+  def homebrew_created_file?(file)
+    return false unless file.basename.to_s.start_with?("homebrew.")
+
+    %w[.plist .service .timer].include?(file.extname)
+  end
+
   sig { params(relocation: Relocation, files: T.nilable(T::Array[Pathname])).returns(T::Array[Pathname]) }
   def replace_text_in_files(relocation, files: nil)
     files ||= text_files | libtool_files
@@ -203,7 +210,13 @@ class Keg
     files.map { path.join(_1) }.group_by { |f| f.stat.ino }.each_value do |first, *rest|
       s = first.open("rb", &:read)
 
-      next unless relocation.replace_text!(s)
+      # Use full prefix replacement for Homebrew-created files when using selective relocation
+      file_relocation = if new_usr_local_relocation? && homebrew_created_file?(first)
+        prepare_relocation_to_placeholders(new_usr_local_relocation: false)
+      else
+        relocation
+      end
+      next unless file_relocation.replace_text!(s)
 
       changed_files += [first, *rest].map { |file| file.relative_path_from(path) }
 

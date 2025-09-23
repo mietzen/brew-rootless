@@ -471,6 +471,11 @@ module Homebrew
                      "of macOS. This is useful in development on new macOS versions.",
         boolean:     true,
       },
+      HOMEBREW_SORBET_RECURSIVE:                 {
+        description: "If set along with `$HOMEBREW_SORBET_RUNTIME`, enable recursive typechecking using Sorbet. " \
+                     "Auomatically enabled when running tests.",
+        boolean:     true,
+      },
       HOMEBREW_SORBET_RUNTIME:                   {
         description: "If set, enable runtime typechecking using Sorbet. " \
                      "Set by default for `$HOMEBREW_DEVELOPER` or when running some developer commands.",

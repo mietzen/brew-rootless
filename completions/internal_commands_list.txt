@@ -25,6 +25,7 @@ casks
 cat
 cleanup
 command
+command-not-found-init
 commands
 completions
 config
@@ -128,3 +129,5 @@ uses
 vendor-gems
 vendor-install
 verify
+which-formula
+which-update
