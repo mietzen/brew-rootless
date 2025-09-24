@@ -159,7 +159,13 @@ class GitHubRunnerMatrix
       end
     end
 
-    github_run_id      = ENV.fetch("GITHUB_RUN_ID")
+    # gracefully handle non-GitHub Actions environments
+    github_run_id = if ENV.key?("GITHUB_ACTIONS")
+      ENV.fetch("GITHUB_RUN_ID")
+    else
+      ENV.fetch("GITHUB_RUN_ID", "")
+    end
+
     long_timeout       = ENV.fetch("HOMEBREW_MACOS_LONG_TIMEOUT", "false") == "true"
     use_github_runner  = ENV.fetch("HOMEBREW_MACOS_BUILD_ON_GITHUB_RUNNER", "false") == "true"
 

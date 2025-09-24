@@ -2888,6 +2888,7 @@ class Formula
       TMP:           HOMEBREW_TEMP,
       TERM:          "dumb",
       PATH:          PATH.new(ENV.fetch("PATH"), HOMEBREW_PREFIX/"bin"),
+      HOMEBREW_TERM: ENV.fetch("TERM", nil),
       HOMEBREW_PATH: nil,
     }.merge(common_stage_test_env)
     test_env[:_JAVA_OPTIONS] += " -Djava.io.tmpdir=#{HOMEBREW_TEMP}"

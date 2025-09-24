@@ -51,7 +51,14 @@ module Homebrew
 
         ohai "Runners", JSON.pretty_generate(runners)
 
-        github_output = ENV.fetch("GITHUB_OUTPUT")
+        # gracefully handle non-GitHub Actions environments
+        github_output = if ENV.key?("GITHUB_ACTIONS")
+          ENV.fetch("GITHUB_OUTPUT")
+        else
+          ENV.fetch("GITHUB_OUTPUT", nil)
+        end
+        return unless github_output
+
         File.open(github_output, "a") do |f|
           f.puts("runners=#{runners.to_json}")
           f.puts("runners_present=#{runners.present?}")

@@ -24,7 +24,10 @@ module Kernel
       FileUtils.touch "#{home}/.zshrc"
     end
 
-    Process.wait fork { exec Utils::Shell.preferred_path(default: "/bin/bash") }
+    term = ENV.fetch("HOMEBREW_TERM", ENV.fetch("TERM", nil))
+    with_env(TERM: term) do
+      Process.wait fork { exec Utils::Shell.preferred_path(default: "/bin/bash") }
+    end
 
     return if $CHILD_STATUS.success?
     raise "Aborted due to non-zero exit status (#{$CHILD_STATUS.exitstatus})" if $CHILD_STATUS.exited?
