@@ -2439,8 +2439,6 @@ Summarise contributions to Homebrew repositories.
   must be under the same user or organisation. Omitting this flag, or specifying
   `--repositories=primary`, searches only the main repositories:
   `Homebrew/brew`, `Homebrew/homebrew-core`, `Homebrew/homebrew-cask`.
-  Specifying `--repositories=all` searches all non-deprecated Homebrew
-  repositories.
 
 `--organisation`
 
@@ -3224,6 +3222,198 @@ wrong with the installed formula.
 
 : Retry if a testing fails.
 
+### `test-bot` \[*`options`*\] \[*`formula`*\]
+
+Tests the full lifecycle of a Homebrew change to a tap (Git repository). For
+example, for a GitHub Actions pull request that changes a formula `brew
+test-bot` will ensure the system is cleaned and set up to test the formula,
+install the formula, run various tests and checks on it, bottle (package) the
+binaries and test formulae that depend on it to ensure they aren't broken by
+these changes.
+
+Only supports GitHub Actions as a CI provider. This is because Homebrew uses
+GitHub Actions and it's freely available for public and private use with macOS
+and Linux workers.
+
+`--dry-run`
+
+: Print what would be done rather than doing it.
+
+`--cleanup`
+
+: Clean all state from the Homebrew directory. Use with care!
+
+`--concurrent-downloads`
+
+: Invoke `brew` with `HOMEBREW_DOWNLOAD_CONCURRENCY=auto`.
+
+`--skip-setup`
+
+: Don't check if the local system is set up correctly.
+
+`--build-from-source`
+
+: Build from source rather than building bottles.
+
+`--build-dependents-from-source`
+
+: Build dependents from source rather than testing bottles.
+
+`--junit`
+
+: generate a JUnit XML test results file.
+
+`--keep-old`
+
+: Run `brew bottle --keep-old` to build new bottles for a single platform.
+
+`--skip-relocation`
+
+: Run `brew bottle --skip-relocation` to build new bottles that don't require
+  relocation.
+
+`--only-json-tab`
+
+: Run `brew bottle --only-json-tab` to build new bottles that do not contain a
+  tab.
+
+`--local`
+
+: Ask Homebrew to write verbose logs under `./logs/` and set `$HOME` to
+  `./home/`
+
+`--tap`
+
+: Use the Git repository of the given tap. Defaults to the core tap for syntax
+  checking.
+
+`--fail-fast`
+
+: Immediately exit on a failing step.
+
+`-v`, `--verbose`
+
+: Print test step output in real time. Has the side effect of passing output as
+  raw bytes instead of re-encoding in UTF-8.
+
+`--test-default-formula`
+
+: Use a default testing formula when not building a tap and no other formulae
+  are specified.
+
+`--root-url`
+
+: Use the specified *`URL`* as the root of the bottle's URL instead of
+  Homebrew's default.
+
+`--git-name`
+
+: Set the Git author/committer names to the given name.
+
+`--git-email`
+
+: Set the Git author/committer email to the given email.
+
+`--publish`
+
+: Publish the uploaded bottles.
+
+`--skip-online-checks`
+
+: Don't pass `--online` to `brew audit` and skip `brew livecheck`.
+
+`--skip-new`
+
+: Don't pass `--new` to `brew audit` for new formulae.
+
+`--skip-new-strict`
+
+: Don't pass `--strict` to `brew audit` for new formulae.
+
+`--skip-dependents`
+
+: Don't test any dependents.
+
+`--skip-livecheck`
+
+: Don't test livecheck.
+
+`--skip-recursive-dependents`
+
+: Only test the direct dependents.
+
+`--skip-checksum-only-audit`
+
+: Don't audit checksum-only changes.
+
+`--skip-stable-version-audit`
+
+: Don't audit the stable version.
+
+`--skip-revision-audit`
+
+: Don't audit the revision.
+
+`--only-cleanup-before`
+
+: Only run the pre-cleanup step. Needs `--cleanup`.
+
+`--only-setup`
+
+: Only run the local system setup check step.
+
+`--only-tap-syntax`
+
+: Only run the tap syntax check step.
+
+`--stable`
+
+: Only run the tap syntax checks needed on stable brew.
+
+`--only-formulae`
+
+: Only run the formulae steps.
+
+`--only-formulae-detect`
+
+: Only run the formulae detection steps.
+
+`--only-formulae-dependents`
+
+: Only run the formulae dependents steps.
+
+`--only-bottles-fetch`
+
+: Only run the bottles fetch steps. This optional post-upload test checks that
+  all the bottles were uploaded correctly. It is not run unless requested and
+  only needs to be run on a single machine. The bottle commit to be tested must
+  be on the tested branch.
+
+`--only-cleanup-after`
+
+: Only run the post-cleanup step. Needs `--cleanup`.
+
+`--testing-formulae`
+
+: Use these testing formulae rather than running the formulae detection steps.
+
+`--added-formulae`
+
+: Use these added formulae rather than running the formulae detection steps.
+
+`--deleted-formulae`
+
+: Use these deleted formulae rather than running the formulae detection steps.
+
+`--skipped-or-failed-formulae`
+
+: Use these skipped or failed formulae from formulae steps for a formulae
+  dependents step.
+
+`--tested-formulae`
+
+: Use these tested formulae from formulae steps for a formulae dependents step.
+
 ### `tests` \[*`options`*\]
 
 Run Homebrew's unit and integration tests.
@@ -3629,200 +3819,6 @@ These options are applicable across multiple subcommands.
 `-h`, `--help`
 
 : Show this message.
-
-## OFFICIAL EXTERNAL COMMANDS
-
-### `test-bot` \[*`options`*\] \[*`formula`*\]
-
-Tests the full lifecycle of a Homebrew change to a tap (Git repository). For
-example, for a GitHub Actions pull request that changes a formula `brew
-test-bot` will ensure the system is cleaned and set up to test the formula,
-install the formula, run various tests and checks on it, bottle (package) the
-binaries and test formulae that depend on it to ensure they aren't broken by
-these changes.
-
-Only supports GitHub Actions as a CI provider. This is because Homebrew uses
-GitHub Actions and it's freely available for public and private use with macOS
-and Linux workers.
-
-`--dry-run`
-
-: Print what would be done rather than doing it.
-
-`--cleanup`
-
-: Clean all state from the Homebrew directory. Use with care!
-
-`--concurrent-downloads`
-
-: Invoke `brew` with `HOMEBREW_DOWNLOAD_CONCURRENCY=auto`.
-
-`--skip-setup`
-
-: Don't check if the local system is set up correctly.
-
-`--build-from-source`
-
-: Build from source rather than building bottles.
-
-`--build-dependents-from-source`
-
-: Build dependents from source rather than testing bottles.
-
-`--junit`
-
-: generate a JUnit XML test results file.
-
-`--keep-old`
-
-: Run `brew bottle --keep-old` to build new bottles for a single platform.
-
-`--skip-relocation`
-
-: Run `brew bottle --skip-relocation` to build new bottles that don't require
-  relocation.
-
-`--only-json-tab`
-
-: Run `brew bottle --only-json-tab` to build new bottles that do not contain a
-  tab.
-
-`--local`
-
-: Ask Homebrew to write verbose logs under `./logs/` and set `$HOME` to
-  `./home/`
-
-`--tap`
-
-: Use the Git repository of the given tap. Defaults to the core tap for syntax
-  checking.
-
-`--fail-fast`
-
-: Immediately exit on a failing step.
-
-`-v`, `--verbose`
-
-: Print test step output in real time. Has the side effect of passing output as
-  raw bytes instead of re-encoding in UTF-8.
-
-`--test-default-formula`
-
-: Use a default testing formula when not building a tap and no other formulae
-  are specified.
-
-`--root-url`
-
-: Use the specified *`URL`* as the root of the bottle's URL instead of
-  Homebrew's default.
-
-`--git-name`
-
-: Set the Git author/committer names to the given name.
-
-`--git-email`
-
-: Set the Git author/committer email to the given email.
-
-`--publish`
-
-: Publish the uploaded bottles.
-
-`--skip-online-checks`
-
-: Don't pass `--online` to `brew audit` and skip `brew livecheck`.
-
-`--skip-new`
-
-: Don't pass `--new` to `brew audit` for new formulae.
-
-`--skip-new-strict`
-
-: Don't pass `--strict` to `brew audit` for new formulae.
-
-`--skip-dependents`
-
-: Don't test any dependents.
-
-`--skip-livecheck`
-
-: Don't test livecheck.
-
-`--skip-recursive-dependents`
-
-: Only test the direct dependents.
-
-`--skip-checksum-only-audit`
-
-: Don't audit checksum-only changes.
-
-`--skip-stable-version-audit`
-
-: Don't audit the stable version.
-
-`--skip-revision-audit`
-
-: Don't audit the revision.
-
-`--only-cleanup-before`
-
-: Only run the pre-cleanup step. Needs `--cleanup`.
-
-`--only-setup`
-
-: Only run the local system setup check step.
-
-`--only-tap-syntax`
-
-: Only run the tap syntax check step.
-
-`--stable`
-
-: Only run the tap syntax checks needed on stable brew.
-
-`--only-formulae`
-
-: Only run the formulae steps.
-
-`--only-formulae-detect`
-
-: Only run the formulae detection steps.
-
-`--only-formulae-dependents`
-
-: Only run the formulae dependents steps.
-
-`--only-bottles-fetch`
-
-: Only run the bottles fetch steps. This optional post-upload test checks that
-  all the bottles were uploaded correctly. It is not run unless requested and
-  only needs to be run on a single machine. The bottle commit to be tested must
-  be on the tested branch.
-
-`--only-cleanup-after`
-
-: Only run the post-cleanup step. Needs `--cleanup`.
-
-`--testing-formulae`
-
-: Use these testing formulae rather than running the formulae detection steps.
-
-`--added-formulae`
-
-: Use these added formulae rather than running the formulae detection steps.
-
-`--deleted-formulae`
-
-: Use these deleted formulae rather than running the formulae detection steps.
-
-`--skipped-or-failed-formulae`
-
-: Use these skipped or failed formulae from formulae steps for a formulae
-  dependents step.
-
-`--tested-formulae`
-
-: Use these tested formulae from formulae steps for a formulae dependents step.
 
 ## CUSTOM EXTERNAL COMMANDS
 

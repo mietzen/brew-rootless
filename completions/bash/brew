@@ -2599,6 +2599,63 @@ _brew_test() {
   __brew_complete_installed_formulae
 }
 
+_brew_test_bot() {
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  case "${cur}" in
+    -*)
+      __brewcomp "
+      --added-formulae
+      --build-dependents-from-source
+      --build-from-source
+      --cleanup
+      --concurrent-downloads
+      --debug
+      --deleted-formulae
+      --dry-run
+      --fail-fast
+      --git-email
+      --git-name
+      --help
+      --junit
+      --keep-old
+      --local
+      --only-bottles-fetch
+      --only-cleanup-after
+      --only-cleanup-before
+      --only-formulae
+      --only-formulae-dependents
+      --only-formulae-detect
+      --only-json-tab
+      --only-setup
+      --only-tap-syntax
+      --publish
+      --quiet
+      --root-url
+      --skip-checksum-only-audit
+      --skip-dependents
+      --skip-livecheck
+      --skip-new
+      --skip-new-strict
+      --skip-online-checks
+      --skip-recursive-dependents
+      --skip-relocation
+      --skip-revision-audit
+      --skip-setup
+      --skip-stable-version-audit
+      --skipped-or-failed-formulae
+      --stable
+      --tap
+      --test-default-formula
+      --tested-formulae
+      --testing-formulae
+      --verbose
+      "
+      return
+      ;;
+    *) ;;
+  esac
+}
+
 _brew_tests() {
   local cur="${COMP_WORDS[COMP_CWORD]}"
   case "${cur}" in
@@ -3332,6 +3389,7 @@ _brew() {
     tap-new) _brew_tap_new ;;
     tc) _brew_tc ;;
     test) _brew_test ;;
+    test-bot) _brew_test_bot ;;
     tests) _brew_tests ;;
     typecheck) _brew_typecheck ;;
     unalias) _brew_unalias ;;

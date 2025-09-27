@@ -120,45 +120,6 @@ begin
       ENV["HOMEBREW_#{env}"] = Object.const_get(:"HOMEBREW_#{env}").to_s
     end
     exec "brew-#{cmd}", *ARGV
-  else
-    require "tap"
-
-    possible_tap = OFFICIAL_CMD_TAPS.find { |_, cmds| cmds.include?(cmd) }
-    possible_tap = Tap.fetch(possible_tap.first) if possible_tap
-
-    if !possible_tap ||
-       possible_tap.installed? ||
-       (blocked_tap = Tap.untapped_official_taps.include?(possible_tap.name))
-      if blocked_tap
-        Utils::Output.onoe <<~EOS
-          `brew #{cmd}` is unavailable because #{possible_tap.name} was manually untapped.
-          Run `brew tap #{possible_tap.name}` to reenable `brew #{cmd}`.
-        EOS
-      end
-      # Check for cask explicitly because it's very common in old guides
-      if cmd == "cask"
-        Utils::Output.odie "`brew cask` is no longer a `brew` command. Use `brew <command> --cask` instead."
-      end
-      Utils::Output.odie "Unknown command: brew #{cmd}"
-    end
-
-    # Unset HOMEBREW_HELP to avoid confusing the tap
-    with_env HOMEBREW_HELP: nil do
-      tap_commands = []
-      if (File.exist?("/.dockerenv") ||
-         Homebrew.running_as_root? ||
-         ((cgroup = Utils.popen_read("cat", "/proc/1/cgroup").presence) &&
-          %w[azpl_job actions_job docker garden kubepods].none? { |type| cgroup.include?(type) })) &&
-         Homebrew.running_as_root_but_not_owned_by_root?
-        tap_commands += %W[/usr/bin/sudo -u ##{Homebrew.owner_uid}]
-      end
-      quiet_arg = args.quiet? ? "--quiet" : nil
-      tap_commands += [HOMEBREW_BREW_FILE, "tap", *quiet_arg, possible_tap.name]
-      safe_system(*tap_commands)
-    end
-
-    ARGV << "--help" if help_flag
-    exec HOMEBREW_BREW_FILE, cmd, *ARGV
   end
 rescue UsageError => e
   require "help"

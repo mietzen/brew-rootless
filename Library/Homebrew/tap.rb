@@ -374,7 +374,7 @@ class Tap
 
     @private = T.let(
       begin
-        if core_tap? || core_cask_tap? || OFFICIAL_CMD_TAPS.include?(name)
+        if core_tap? || core_cask_tap?
           false
         elsif custom_remote? || (value = GitHub.private_repo?(full_name)).nil?
           true

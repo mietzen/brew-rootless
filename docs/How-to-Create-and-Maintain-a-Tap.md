@@ -141,8 +141,6 @@ Unlike formulae, casks must have globally unique names to avoid clashes. This ca
 
 You can provide your tap users with custom `brew` commands by adding them in a `cmd` subdirectory. [Read more on external commands](External-Commands.md).
 
-See [Homebrew/test-bot](https://github.com/Homebrew/homebrew-test-bot) for an example of a tap with external commands.
-
 ## Upstream taps
 
 Some upstream software providers like to package their software in their own Homebrew tap. When their software is [eligible for Homebrew/homebrew-core](Acceptable-Formulae.md) we prefer to maintain software there for ease of updates, improved discoverability and use of tools such as [formulae.brew.sh](https://formulae.brew.sh/).

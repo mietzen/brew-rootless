@@ -34,7 +34,6 @@ jobs:
         with:
           core: false
           cask: false
-          test-bot: false
 
       - name: Configure Git user
         if: github.event_name != 'pull_request'

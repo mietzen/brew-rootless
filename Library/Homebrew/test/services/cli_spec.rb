@@ -53,8 +53,7 @@ RSpec.describe Homebrew::Services::Cli do
     it "checks the input exists" do
       expect do
         services_cli.check!("hello")
-      end.not_to raise_error(UsageError,
-                             "Invalid usage: Formula(e) missing, please provide a formula name or use `--all`.")
+      end.not_to raise_error
     end
   end
 

@@ -4,7 +4,7 @@ require "cmd/update-report"
 require "formula_versions"
 require "yaml"
 require "cmd/shared_examples/args_parse"
-require "cmd/shared_examples/reinstall_pkgconf_if_needed_spec"
+require "cmd/shared_examples/reinstall_pkgconf_if_needed"
 
 RSpec.describe Homebrew::Cmd::UpdateReport do
   it_behaves_like "parseable arguments"

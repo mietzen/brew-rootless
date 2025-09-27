@@ -47,7 +47,6 @@ jobs:
         with:
           core: false
           cask: false
-          test-bot: false
 
       - name: Install Pandoc
         run: brew install pandoc

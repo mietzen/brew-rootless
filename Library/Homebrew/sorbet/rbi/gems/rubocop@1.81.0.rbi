@@ -50,18 +50,18 @@ class RuboCop::CLI
   # source://rubocop//lib/rubocop/cli.rb#162
   def act_on_options; end
 
-  # source://rubocop//lib/rubocop/cli.rb#210
+  # source://rubocop//lib/rubocop/cli.rb#209
   def apply_default_formatter; end
 
   # source://rubocop//lib/rubocop/cli.rb#131
   def execute_runners; end
 
-  # source://rubocop//lib/rubocop/cli.rb#194
+  # source://rubocop//lib/rubocop/cli.rb#193
   def handle_editor_mode; end
 
   # @raise [Finished]
   #
-  # source://rubocop//lib/rubocop/cli.rb#199
+  # source://rubocop//lib/rubocop/cli.rb#198
   def handle_exiting_options; end
 
   # source://rubocop//lib/rubocop/cli.rb#150
@@ -70,7 +70,7 @@ class RuboCop::CLI
   # source://rubocop//lib/rubocop/cli.rb#86
   def profile_if_needed; end
 
-  # source://rubocop//lib/rubocop/cli.rb#224
+  # source://rubocop//lib/rubocop/cli.rb#223
   def report_pending_cops; end
 
   # source://rubocop//lib/rubocop/cli.rb#119
@@ -79,10 +79,10 @@ class RuboCop::CLI
   # source://rubocop//lib/rubocop/cli.rb#127
   def run_command(name); end
 
-  # source://rubocop//lib/rubocop/cli.rb#181
+  # source://rubocop//lib/rubocop/cli.rb#180
   def set_options_to_config_loader; end
 
-  # source://rubocop//lib/rubocop/cli.rb#189
+  # source://rubocop//lib/rubocop/cli.rb#188
   def set_options_to_pending_cops_reporter; end
 
   # source://rubocop//lib/rubocop/cli.rb#139
@@ -1012,7 +1012,7 @@ class RuboCop::ConfigLoader
   extend ::RuboCop::FileFinder
 
   class << self
-    # source://rubocop//lib/rubocop/config_loader.rb#130
+    # source://rubocop//lib/rubocop/config_loader.rb#132
     def add_excludes_from_files(config, config_file); end
 
     # Used to add features that were required inside a config or from
@@ -1020,7 +1020,7 @@ class RuboCop::ConfigLoader
     #
     # @api private
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#204
+    # source://rubocop//lib/rubocop/config_loader.rb#206
     def add_loaded_features(loaded_features); end
 
     # Used to add plugins that were required inside a config or from
@@ -1028,10 +1028,10 @@ class RuboCop::ConfigLoader
     #
     # @api private
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#197
+    # source://rubocop//lib/rubocop/config_loader.rb#199
     def add_loaded_plugins(loaded_plugins); end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#83
+    # source://rubocop//lib/rubocop/config_loader.rb#85
     def add_missing_namespaces(path, hash); end
 
     # source://rubocop//lib/rubocop/config_loader.rb#33
@@ -1043,10 +1043,10 @@ class RuboCop::ConfigLoader
     # user's home directory is checked. If there's no .rubocop.yml
     # there either, the path to the default file is returned.
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#111
+    # source://rubocop//lib/rubocop/config_loader.rb#113
     def configuration_file_for(target_dir); end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#115
+    # source://rubocop//lib/rubocop/config_loader.rb#117
     def configuration_from_file(config_file, check: T.unsafe(nil)); end
 
     # Returns the value of attribute debug.
@@ -1066,7 +1066,7 @@ class RuboCop::ConfigLoader
     # source://rubocop//lib/rubocop/config_loader.rb#30
     def debug?; end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#140
+    # source://rubocop//lib/rubocop/config_loader.rb#142
     def default_configuration; end
 
     # Sets the attribute default_configuration
@@ -1134,14 +1134,12 @@ class RuboCop::ConfigLoader
     # so this API is usually not needed. It is intended to be used only when implementing tests
     # that do not use `rubocop/rspec/support`.
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#152
+    # source://rubocop//lib/rubocop/config_loader.rb#154
     def inject_defaults!(config_yml_path); end
 
     # source://rubocop//lib/rubocop/config_loader.rb#45
     def load_file(file, check: T.unsafe(nil)); end
 
-    # @raise [TypeError]
-    #
     # source://rubocop//lib/rubocop/config_loader.rb#70
     def load_yaml_configuration(absolute_path); end
 
@@ -1159,12 +1157,12 @@ class RuboCop::ConfigLoader
     # with the addition that any value that is a hash, and occurs in both
     # arguments, will also be merged. And so on.
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#102
+    # source://rubocop//lib/rubocop/config_loader.rb#104
     def merge(base_hash, derived_hash); end
 
     # Merges the given configuration with the default one.
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#190
+    # source://rubocop//lib/rubocop/config_loader.rb#192
     def merge_with_default(config, config_file, unset_nil: T.unsafe(nil)); end
 
     # Returns the path RuboCop inferred as the root of the project. No file
@@ -1172,31 +1170,31 @@ class RuboCop::ConfigLoader
     #
     # @deprecated Use `RuboCop::ConfigFinder.project_root` instead.
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#180
+    # source://rubocop//lib/rubocop/config_loader.rb#182
     def project_root; end
 
     private
 
-    # source://rubocop//lib/rubocop/config_loader.rb#218
+    # source://rubocop//lib/rubocop/config_loader.rb#220
     def check_duplication(yaml_code, absolute_path); end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#210
+    # source://rubocop//lib/rubocop/config_loader.rb#212
     def file_path(file); end
 
     # Read the specified file, or exit with a friendly, concise message on
     # stderr. Care is taken to use the standard OS exit code for a "file not
     # found" error.
     #
-    # source://rubocop//lib/rubocop/config_loader.rb#238
+    # source://rubocop//lib/rubocop/config_loader.rb#240
     def read_file(absolute_path); end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#214
+    # source://rubocop//lib/rubocop/config_loader.rb#216
     def resolver; end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#244
+    # source://rubocop//lib/rubocop/config_loader.rb#246
     def yaml_tree_to_hash(yaml_tree); end
 
-    # source://rubocop//lib/rubocop/config_loader.rb#254
+    # source://rubocop//lib/rubocop/config_loader.rb#256
     def yaml_tree_to_hash!(yaml_tree); end
   end
 end
@@ -1855,28 +1853,31 @@ class RuboCop::ConfigStore
   # source://rubocop//lib/rubocop/config_store.rb#10
   def initialize; end
 
+  # source://rubocop//lib/rubocop/config_store.rb#28
+  def apply_options!(options); end
+
   # If type (file/dir) is known beforehand,
   # prefer using #for_file or #for_dir for improved performance
   #
-  # source://rubocop//lib/rubocop/config_store.rb#52
+  # source://rubocop//lib/rubocop/config_store.rb#57
   def for(file_or_dir); end
 
-  # source://rubocop//lib/rubocop/config_store.rb#61
+  # source://rubocop//lib/rubocop/config_store.rb#66
   def for_dir(dir); end
 
-  # source://rubocop//lib/rubocop/config_store.rb#42
+  # source://rubocop//lib/rubocop/config_store.rb#47
   def for_file(file); end
 
-  # source://rubocop//lib/rubocop/config_store.rb#46
+  # source://rubocop//lib/rubocop/config_store.rb#51
   def for_pwd; end
 
-  # source://rubocop//lib/rubocop/config_store.rb#33
+  # source://rubocop//lib/rubocop/config_store.rb#38
   def force_default_config!; end
 
-  # source://rubocop//lib/rubocop/config_store.rb#28
+  # source://rubocop//lib/rubocop/config_store.rb#33
   def options_config=(options_config); end
 
-  # source://rubocop//lib/rubocop/config_store.rb#37
+  # source://rubocop//lib/rubocop/config_store.rb#42
   def unvalidated; end
 
   # Returns the value of attribute validated.
@@ -4677,6 +4678,10 @@ RuboCop::Cop::Style::ArrayIntersect::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Arr
 
 RuboCop::Cop::Style::ArrayIntersect::STRAIGHT_METHODS = T.let(T.unsafe(nil), Array)
 
+RuboCop::Cop::Style::ArrayIntersectWithSingleElement::MSG = T.let(T.unsafe(nil), String)
+
+RuboCop::Cop::Style::ArrayIntersectWithSingleElement::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
+
 RuboCop::Cop::Style::ArrayJoin::MSG = T.let(T.unsafe(nil), String)
 
 RuboCop::Cop::Style::ArrayJoin::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
@@ -5541,6 +5546,8 @@ RuboCop::Cop::Style::RedundantRegexpEscape::ALLOWED_OUTSIDE_CHAR_CLASS_METACHAR_
 
 RuboCop::Cop::Style::RedundantRegexpEscape::ALLOWED_WITHIN_CHAR_CLASS_METACHAR_ESCAPES = T.let(T.unsafe(nil), Array)
 
+RuboCop::Cop::Style::RedundantRegexpEscape::INTERPOLATION_SIGILS = T.let(T.unsafe(nil), Array)
+
 RuboCop::Cop::Style::RedundantRegexpEscape::MSG_REDUNDANT_ESCAPE = T.let(T.unsafe(nil), String)
 
 RuboCop::Cop::Style::RedundantReturn::MSG = T.let(T.unsafe(nil), String)
@@ -6035,33 +6042,33 @@ module RuboCop::Cop::Utils; end
 class RuboCop::Cop::Utils::FormatString
   # @return [FormatString] a new instance of FormatString
   #
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#94
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#104
   def initialize(string); end
 
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#98
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#108
   def format_sequences; end
 
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#110
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#120
   def max_digit_dollar_num; end
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#106
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#116
   def named_interpolation?; end
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#102
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#112
   def valid?; end
 
   private
 
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#122
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#132
   def mixed_formats?; end
 
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#116
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#126
   def parse; end
 end
 
@@ -6087,7 +6094,7 @@ class RuboCop::Cop::Utils::FormatString::FormatSequence
 
   # Number of arguments required for the format sequence
   #
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#75
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#85
   def arity; end
 
   # Returns the value of attribute begin_pos.
@@ -6105,7 +6112,7 @@ class RuboCop::Cop::Utils::FormatString::FormatSequence
   # source://rubocop//lib/rubocop/cop/utils/format_string.rb#48
   def flags; end
 
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#79
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#89
   def max_digit_dollar_num; end
 
   # Returns the value of attribute name.
@@ -6123,7 +6130,7 @@ class RuboCop::Cop::Utils::FormatString::FormatSequence
   # source://rubocop//lib/rubocop/cop/utils/format_string.rb#48
   def precision; end
 
-  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#83
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#93
   def style; end
 
   # @return [Boolean]
@@ -6135,6 +6142,14 @@ class RuboCop::Cop::Utils::FormatString::FormatSequence
   #
   # source://rubocop//lib/rubocop/cop/utils/format_string.rb#48
   def type; end
+
+  # @return [Boolean]
+  #
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#74
+  def variable_width?; end
+
+  # source://rubocop//lib/rubocop/cop/utils/format_string.rb#78
+  def variable_width_argument_number; end
 
   # Returns the value of attribute width.
   #

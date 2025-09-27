@@ -11,10 +11,6 @@ module Homebrew
         Homebrew/homebrew-core
         Homebrew/homebrew-cask
       ].freeze, T::Array[String])
-      ALL_REPOS = T.let([
-        *PRIMARY_REPOS,
-        *OFFICIAL_CMD_TAPS.keys,
-      ].freeze, T::Array[String])
       CONTRIBUTION_TYPES = T.let({
         merged_pr_author:   "merged PR author",
         approved_pr_review: "approved PR reviewer",
@@ -37,8 +33,7 @@ module Homebrew
                                  "All repositories must be under the same user or organisation. " \
                                  "Omitting this flag, or specifying `--repositories=primary`, searches only the " \
                                  "main repositories: `Homebrew/brew`, `Homebrew/homebrew-core`, " \
-                                 "`Homebrew/homebrew-cask`. Specifying `--repositories=all` searches all " \
-                                 "non-deprecated Homebrew repositories. "
+                                 "`Homebrew/homebrew-cask`."
         flag   "--organisation=", "--organization=", "--org=",
                description: "Specify the organisation to populate sources repositories from. " \
                             "Omitting this flag searches the Homebrew primary repositories."
@@ -96,8 +91,6 @@ module Homebrew
           case first_repository
           when "primary"
             PRIMARY_REPOS
-          when "all"
-            ALL_REPOS
           else
             Array(first_repository)
           end

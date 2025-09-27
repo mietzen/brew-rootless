@@ -2,7 +2,7 @@
 
 require "cmd/shared_examples/args_parse"
 require "cmd/upgrade"
-require "cmd/shared_examples/reinstall_pkgconf_if_needed_spec"
+require "cmd/shared_examples/reinstall_pkgconf_if_needed"
 
 RSpec.describe Homebrew::Cmd::UpgradeCmd do
   include FileUtils

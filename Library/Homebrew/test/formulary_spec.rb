@@ -603,10 +603,10 @@ RSpec.describe Formulary do
         end.to raise_error(UnsupportedInstallationMethod)
       end
 
-      it "does not raise an error when given a file URL" do
+      it "does not raise an error when given a file URL", :needs_utils_curl do
         expect do
           described_class.factory("file://#{TEST_FIXTURE_DIR}/testball.rb")
-        end.not_to raise_error(UnsupportedInstallationMethod)
+        end.not_to raise_error
       end
     end
 

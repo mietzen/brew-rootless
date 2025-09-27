@@ -1396,7 +1396,7 @@ on_request: installed_on_request?, options:)
 
     unless download_queue
       dependencies_string = deps.map(&:first)
-                                .map { Formatter.identifier(_1) }
+                                .map { |dep| Formatter.identifier(dep) }
                                 .to_sentence
       oh1 "Fetching dependencies for #{formula.full_name}: #{dependencies_string}",
           truncate: false

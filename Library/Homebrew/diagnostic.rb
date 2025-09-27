@@ -741,12 +741,8 @@ module Homebrew
         repos = {
           "Homebrew/brew"          => HOMEBREW_REPOSITORY,
           "Homebrew/homebrew-core" => CoreTap.instance.path,
+          "Homebrew/homebrew-cask" => CoreCaskTap.instance.path,
         }
-
-        OFFICIAL_CASK_TAPS.each do |tap|
-          cask_tap = Tap.fetch "homebrew", tap
-          repos[cask_tap.full_name] = cask_tap.path if cask_tap.installed?
-        end
 
         repos.each do |name, path|
           next unless path.exist?

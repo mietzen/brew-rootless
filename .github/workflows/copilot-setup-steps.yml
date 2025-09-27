@@ -21,7 +21,6 @@ jobs:
         with:
           core: true
           cask: true
-          test-bot: true
 
       - run: brew install-bundler-gems --groups=all
 

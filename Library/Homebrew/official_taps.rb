@@ -1,14 +1,6 @@
 # typed: strict
 # frozen_string_literal: true
 
-OFFICIAL_CASK_TAPS = %w[
-  cask
-].freeze
-
-OFFICIAL_CMD_TAPS = T.let({
-  "homebrew/test-bot" => ["test-bot"],
-}.freeze, T::Hash[String, T::Array[String]])
-
 DEPRECATED_OFFICIAL_TAPS = %w[
   aliases
   apache
@@ -35,6 +27,7 @@ DEPRECATED_OFFICIAL_TAPS = %w[
   python
   science
   services
+  test-bot
   tex
   versions
   x11

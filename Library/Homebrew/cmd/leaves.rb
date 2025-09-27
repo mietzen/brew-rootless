@@ -29,12 +29,12 @@ module Homebrew
           CaskDependent.new(cask).runtime_dependencies.map(&:to_formula)
         end
         leaves_list -= casks_runtime_dependencies
-        leaves_list.select! { installed_on_request?(_1) } if args.installed_on_request?
-        leaves_list.select! { installed_as_dependency?(_1) } if args.installed_as_dependency?
+        leaves_list.select! { |leaf| installed_on_request?(leaf) } if args.installed_on_request?
+        leaves_list.select! { |leaf| installed_as_dependency?(leaf) } if args.installed_as_dependency?
 
         leaves_list.map(&:full_name)
                    .sort
-                   .each { puts(_1) }
+                   .each { |leaf| puts(leaf) }
       end
 
       private

@@ -1527,7 +1527,7 @@ Summarise contributions to Homebrew repositories\.
 Specify a comma\-separated list of GitHub usernames or email addresses to find contributions from\. Omitting this flag searches Homebrew maintainers\.
 .TP
 \fB\-\-repositories\fP
-Specify a comma\-separated list of repositories to search\. All repositories must be under the same user or organisation\. Omitting this flag, or specifying \fB\-\-repositories=primary\fP, searches only the main repositories: \fBHomebrew/brew\fP, \fBHomebrew/homebrew\-core\fP, \fBHomebrew/homebrew\-cask\fP\&\. Specifying \fB\-\-repositories=all\fP searches all non\-deprecated Homebrew repositories\.
+Specify a comma\-separated list of repositories to search\. All repositories must be under the same user or organisation\. Omitting this flag, or specifying \fB\-\-repositories=primary\fP, searches only the main repositories: \fBHomebrew/brew\fP, \fBHomebrew/homebrew\-core\fP, \fBHomebrew/homebrew\-cask\fP\&\.
 .TP
 \fB\-\-organisation\fP
 Specify the organisation to populate sources repositories from\. Omitting this flag searches the Homebrew primary repositories\.
@@ -2042,6 +2042,136 @@ Retain the temporary files created for the test\.
 .TP
 \fB\-\-retry\fP
 Retry if a testing fails\.
+.SS "\fBtest\-bot\fP \fR[\fIoptions\fP] \fR[\fIformula\fP]"
+Tests the full lifecycle of a Homebrew change to a tap (Git repository)\. For example, for a GitHub Actions pull request that changes a formula \fBbrew test\-bot\fP will ensure the system is cleaned and set up to test the formula, install the formula, run various tests and checks on it, bottle (package) the binaries and test formulae that depend on it to ensure they aren\[u2019]t broken by these changes\.
+.P
+Only supports GitHub Actions as a CI provider\. This is because Homebrew uses GitHub Actions and it\[u2019]s freely available for public and private use with macOS and Linux workers\.
+.TP
+\fB\-\-dry\-run\fP
+Print what would be done rather than doing it\.
+.TP
+\fB\-\-cleanup\fP
+Clean all state from the Homebrew directory\. Use with care!
+.TP
+\fB\-\-concurrent\-downloads\fP
+Invoke \fBbrew\fP with \fBHOMEBREW_DOWNLOAD_CONCURRENCY=auto\fP\&\.
+.TP
+\fB\-\-skip\-setup\fP
+Don\[u2019]t check if the local system is set up correctly\.
+.TP
+\fB\-\-build\-from\-source\fP
+Build from source rather than building bottles\.
+.TP
+\fB\-\-build\-dependents\-from\-source\fP
+Build dependents from source rather than testing bottles\.
+.TP
+\fB\-\-junit\fP
+generate a JUnit XML test results file\.
+.TP
+\fB\-\-keep\-old\fP
+Run \fBbrew bottle \-\-keep\-old\fP to build new bottles for a single platform\.
+.TP
+\fB\-\-skip\-relocation\fP
+Run \fBbrew bottle \-\-skip\-relocation\fP to build new bottles that don\[u2019]t require relocation\.
+.TP
+\fB\-\-only\-json\-tab\fP
+Run \fBbrew bottle \-\-only\-json\-tab\fP to build new bottles that do not contain a tab\.
+.TP
+\fB\-\-local\fP
+Ask Homebrew to write verbose logs under \fB\&\./logs/\fP and set \fB$HOME\fP to \fB\&\./home/\fP
+.TP
+\fB\-\-tap\fP
+Use the Git repository of the given tap\. Defaults to the core tap for syntax checking\.
+.TP
+\fB\-\-fail\-fast\fP
+Immediately exit on a failing step\.
+.TP
+\fB\-v\fP, \fB\-\-verbose\fP
+Print test step output in real time\. Has the side effect of passing output as raw bytes instead of re\-encoding in UTF\-8\.
+.TP
+\fB\-\-test\-default\-formula\fP
+Use a default testing formula when not building a tap and no other formulae are specified\.
+.TP
+\fB\-\-root\-url\fP
+Use the specified \fIURL\fP as the root of the bottle\[u2019]s URL instead of Homebrew\[u2019]s default\.
+.TP
+\fB\-\-git\-name\fP
+Set the Git author/committer names to the given name\.
+.TP
+\fB\-\-git\-email\fP
+Set the Git author/committer email to the given email\.
+.TP
+\fB\-\-publish\fP
+Publish the uploaded bottles\.
+.TP
+\fB\-\-skip\-online\-checks\fP
+Don\[u2019]t pass \fB\-\-online\fP to \fBbrew audit\fP and skip \fBbrew livecheck\fP\&\.
+.TP
+\fB\-\-skip\-new\fP
+Don\[u2019]t pass \fB\-\-new\fP to \fBbrew audit\fP for new formulae\.
+.TP
+\fB\-\-skip\-new\-strict\fP
+Don\[u2019]t pass \fB\-\-strict\fP to \fBbrew audit\fP for new formulae\.
+.TP
+\fB\-\-skip\-dependents\fP
+Don\[u2019]t test any dependents\.
+.TP
+\fB\-\-skip\-livecheck\fP
+Don\[u2019]t test livecheck\.
+.TP
+\fB\-\-skip\-recursive\-dependents\fP
+Only test the direct dependents\.
+.TP
+\fB\-\-skip\-checksum\-only\-audit\fP
+Don\[u2019]t audit checksum\-only changes\.
+.TP
+\fB\-\-skip\-stable\-version\-audit\fP
+Don\[u2019]t audit the stable version\.
+.TP
+\fB\-\-skip\-revision\-audit\fP
+Don\[u2019]t audit the revision\.
+.TP
+\fB\-\-only\-cleanup\-before\fP
+Only run the pre\-cleanup step\. Needs \fB\-\-cleanup\fP\&\.
+.TP
+\fB\-\-only\-setup\fP
+Only run the local system setup check step\.
+.TP
+\fB\-\-only\-tap\-syntax\fP
+Only run the tap syntax check step\.
+.TP
+\fB\-\-stable\fP
+Only run the tap syntax checks needed on stable brew\.
+.TP
+\fB\-\-only\-formulae\fP
+Only run the formulae steps\.
+.TP
+\fB\-\-only\-formulae\-detect\fP
+Only run the formulae detection steps\.
+.TP
+\fB\-\-only\-formulae\-dependents\fP
+Only run the formulae dependents steps\.
+.TP
+\fB\-\-only\-bottles\-fetch\fP
+Only run the bottles fetch steps\. This optional post\-upload test checks that all the bottles were uploaded correctly\. It is not run unless requested and only needs to be run on a single machine\. The bottle commit to be tested must be on the tested branch\.
+.TP
+\fB\-\-only\-cleanup\-after\fP
+Only run the post\-cleanup step\. Needs \fB\-\-cleanup\fP\&\.
+.TP
+\fB\-\-testing\-formulae\fP
+Use these testing formulae rather than running the formulae detection steps\.
+.TP
+\fB\-\-added\-formulae\fP
+Use these added formulae rather than running the formulae detection steps\.
+.TP
+\fB\-\-deleted\-formulae\fP
+Use these deleted formulae rather than running the formulae detection steps\.
+.TP
+\fB\-\-skipped\-or\-failed\-formulae\fP
+Use these skipped or failed formulae from formulae steps for a formulae dependents step\.
+.TP
+\fB\-\-tested\-formulae\fP
+Use these tested formulae from formulae steps for a formulae dependents step\.
 .SS "\fBtests\fP \fR[\fIoptions\fP]"
 Run Homebrew\[u2019]s unit and integration tests\.
 .TP
@@ -2317,137 +2447,6 @@ Make some output more verbose\.
 .TP
 \fB\-h\fP, \fB\-\-help\fP
 Show this message\.
-.SH "OFFICIAL EXTERNAL COMMANDS"
-.SS "\fBtest\-bot\fP \fR[\fIoptions\fP] \fR[\fIformula\fP]"
-Tests the full lifecycle of a Homebrew change to a tap (Git repository)\. For example, for a GitHub Actions pull request that changes a formula \fBbrew test\-bot\fP will ensure the system is cleaned and set up to test the formula, install the formula, run various tests and checks on it, bottle (package) the binaries and test formulae that depend on it to ensure they aren\[u2019]t broken by these changes\.
-.P
-Only supports GitHub Actions as a CI provider\. This is because Homebrew uses GitHub Actions and it\[u2019]s freely available for public and private use with macOS and Linux workers\.
-.TP
-\fB\-\-dry\-run\fP
-Print what would be done rather than doing it\.
-.TP
-\fB\-\-cleanup\fP
-Clean all state from the Homebrew directory\. Use with care!
-.TP
-\fB\-\-concurrent\-downloads\fP
-Invoke \fBbrew\fP with \fBHOMEBREW_DOWNLOAD_CONCURRENCY=auto\fP\&\.
-.TP
-\fB\-\-skip\-setup\fP
-Don\[u2019]t check if the local system is set up correctly\.
-.TP
-\fB\-\-build\-from\-source\fP
-Build from source rather than building bottles\.
-.TP
-\fB\-\-build\-dependents\-from\-source\fP
-Build dependents from source rather than testing bottles\.
-.TP
-\fB\-\-junit\fP
-generate a JUnit XML test results file\.
-.TP
-\fB\-\-keep\-old\fP
-Run \fBbrew bottle \-\-keep\-old\fP to build new bottles for a single platform\.
-.TP
-\fB\-\-skip\-relocation\fP
-Run \fBbrew bottle \-\-skip\-relocation\fP to build new bottles that don\[u2019]t require relocation\.
-.TP
-\fB\-\-only\-json\-tab\fP
-Run \fBbrew bottle \-\-only\-json\-tab\fP to build new bottles that do not contain a tab\.
-.TP
-\fB\-\-local\fP
-Ask Homebrew to write verbose logs under \fB\&\./logs/\fP and set \fB$HOME\fP to \fB\&\./home/\fP
-.TP
-\fB\-\-tap\fP
-Use the Git repository of the given tap\. Defaults to the core tap for syntax checking\.
-.TP
-\fB\-\-fail\-fast\fP
-Immediately exit on a failing step\.
-.TP
-\fB\-v\fP, \fB\-\-verbose\fP
-Print test step output in real time\. Has the side effect of passing output as raw bytes instead of re\-encoding in UTF\-8\.
-.TP
-\fB\-\-test\-default\-formula\fP
-Use a default testing formula when not building a tap and no other formulae are specified\.
-.TP
-\fB\-\-root\-url\fP
-Use the specified \fIURL\fP as the root of the bottle\[u2019]s URL instead of Homebrew\[u2019]s default\.
-.TP
-\fB\-\-git\-name\fP
-Set the Git author/committer names to the given name\.
-.TP
-\fB\-\-git\-email\fP
-Set the Git author/committer email to the given email\.
-.TP
-\fB\-\-publish\fP
-Publish the uploaded bottles\.
-.TP
-\fB\-\-skip\-online\-checks\fP
-Don\[u2019]t pass \fB\-\-online\fP to \fBbrew audit\fP and skip \fBbrew livecheck\fP\&\.
-.TP
-\fB\-\-skip\-new\fP
-Don\[u2019]t pass \fB\-\-new\fP to \fBbrew audit\fP for new formulae\.
-.TP
-\fB\-\-skip\-new\-strict\fP
-Don\[u2019]t pass \fB\-\-strict\fP to \fBbrew audit\fP for new formulae\.
-.TP
-\fB\-\-skip\-dependents\fP
-Don\[u2019]t test any dependents\.
-.TP
-\fB\-\-skip\-livecheck\fP
-Don\[u2019]t test livecheck\.
-.TP
-\fB\-\-skip\-recursive\-dependents\fP
-Only test the direct dependents\.
-.TP
-\fB\-\-skip\-checksum\-only\-audit\fP
-Don\[u2019]t audit checksum\-only changes\.
-.TP
-\fB\-\-skip\-stable\-version\-audit\fP
-Don\[u2019]t audit the stable version\.
-.TP
-\fB\-\-skip\-revision\-audit\fP
-Don\[u2019]t audit the revision\.
-.TP
-\fB\-\-only\-cleanup\-before\fP
-Only run the pre\-cleanup step\. Needs \fB\-\-cleanup\fP\&\.
-.TP
-\fB\-\-only\-setup\fP
-Only run the local system setup check step\.
-.TP
-\fB\-\-only\-tap\-syntax\fP
-Only run the tap syntax check step\.
-.TP
-\fB\-\-stable\fP
-Only run the tap syntax checks needed on stable brew\.
-.TP
-\fB\-\-only\-formulae\fP
-Only run the formulae steps\.
-.TP
-\fB\-\-only\-formulae\-detect\fP
-Only run the formulae detection steps\.
-.TP
-\fB\-\-only\-formulae\-dependents\fP
-Only run the formulae dependents steps\.
-.TP
-\fB\-\-only\-bottles\-fetch\fP
-Only run the bottles fetch steps\. This optional post\-upload test checks that all the bottles were uploaded correctly\. It is not run unless requested and only needs to be run on a single machine\. The bottle commit to be tested must be on the tested branch\.
-.TP
-\fB\-\-only\-cleanup\-after\fP
-Only run the post\-cleanup step\. Needs \fB\-\-cleanup\fP\&\.
-.TP
-\fB\-\-testing\-formulae\fP
-Use these testing formulae rather than running the formulae detection steps\.
-.TP
-\fB\-\-added\-formulae\fP
-Use these added formulae rather than running the formulae detection steps\.
-.TP
-\fB\-\-deleted\-formulae\fP
-Use these deleted formulae rather than running the formulae detection steps\.
-.TP
-\fB\-\-skipped\-or\-failed\-formulae\fP
-Use these skipped or failed formulae from formulae steps for a formulae dependents step\.
-.TP
-\fB\-\-tested\-formulae\fP
-Use these tested formulae from formulae steps for a formulae dependents step\.
 .SH "CUSTOM EXTERNAL COMMANDS"
 Homebrew, like \fBgit\fP(1), supports external commands\. These are executable scripts that reside somewhere in the \fB$PATH\fP, named \fBbrew\-\fP\fIcmdname\fP or \fBbrew\-\fP\fIcmdname\fP\fB\&\.rb\fP, which can be invoked like \fBbrew\fP \fIcmdname\fP\&\. This allows you to create your own commands without modifying Homebrew\[u2019]s internals\.
 .P

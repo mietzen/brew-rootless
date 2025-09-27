@@ -122,16 +122,6 @@ module Commands
     find_commands HOMEBREW_DEV_CMD_PATH
   end
 
-  def self.official_external_commands_paths(quiet:)
-    require "tap"
-
-    OFFICIAL_CMD_TAPS.flat_map do |tap_name, cmds|
-      tap = Tap.fetch(tap_name)
-      tap.install(quiet:) unless tap.installed?
-      cmds.map { external_ruby_v2_cmd_path(_1) }.compact
-    end
-  end
-
   def self.internal_commands
     find_internal_commands(HOMEBREW_CMD_PATH).map(&:to_s)
   end
@@ -146,14 +136,14 @@ module Commands
 
   def self.find_internal_commands(path)
     find_commands(path).map(&:basename)
-                       .map { basename_without_extension(_1) }
+                       .map { |basename| basename_without_extension(basename) }
                        .uniq
   end
 
   def self.external_commands
     tap_cmd_directories.flat_map do |path|
       find_commands(path).select(&:executable?)
-                         .map { basename_without_extension(_1) }
+                         .map { |basename| basename_without_extension(basename) }
                          .map { |p| p.to_s.delete_prefix("brew-").strip }
     end.map(&:to_s)
        .sort
