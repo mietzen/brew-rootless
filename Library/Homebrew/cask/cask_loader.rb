@@ -378,14 +378,15 @@ module Cask
           desc json_cask[:desc]
           homepage json_cask[:homepage]
 
-          if (deprecation_date = json_cask[:deprecation_date].presence)
-            reason = DeprecateDisable.to_reason_string_or_symbol json_cask[:deprecation_reason], type: :cask
-            deprecate! date: deprecation_date, because: reason
+          if (date = json_cask[:deprecation_date].presence)
+            because = DeprecateDisable.to_reason_string_or_symbol json_cask[:deprecation_reason], type: :cask
+            deprecate! date:, because:
           end
 
-          if (disable_date = json_cask[:disable_date].presence)
-            reason = DeprecateDisable.to_reason_string_or_symbol json_cask[:disable_reason], type: :cask
-            disable! date: disable_date, because: reason
+          if (date = json_cask[:disable_date].presence)
+            disable_reason = json_cask[:disable_reason].presence || json_cask[:deprecation_reason]
+            because = DeprecateDisable.to_reason_string_or_symbol disable_reason, type: :cask
+            disable! date:, because:
           end
 
           auto_updates json_cask[:auto_updates] unless json_cask[:auto_updates].nil?

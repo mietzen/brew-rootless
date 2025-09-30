@@ -130,6 +130,19 @@ Common reasons to reject a cask from the main `homebrew/cask` repository:
 
 * Cask was submitted to the wrong repository. When drafting a cask, consult [Finding a Home For Your Cask](#finding-a-home-for-your-cask) to see where it belongs.
 
+### Adult Content
+
+Homebrew is a tool where the vast majority of users are adults.
+We have users all over the world with different views on sex, violence, etc.
+As a result, we do not see it as our role to enforce any particular culture's views on adult content onto our users.
+That said, we want to ensure our maintainers don't have to interact with adult content unless they choose to.
+
+We will accept casks with adult content but require the `homepage` and root of the `url` domain to be "safe for work" e.g. not display any images of violence or adult content.
+It is acceptable for these pages to have textual descriptions of adult content.
+
+Homebrew reserves the right to add or remove casks based on how it affects the wider Homebrew ecosystem.
+For a hypothetical example, if a critical infrastructure host said we needed to remove the cask to maintain our infrastructure: we may begrudgingly remove it to maintain continuity for our users.
+
 ### No cask is guaranteed to be accepted
 
 Follow the guidelines above and your submission has a great chance of being accepted. But remember that documentation tends to lag behind current decision-making and we can’t predict every case. Maintainers may override these rules when experience tells us it will lead to a better overall Homebrew.
